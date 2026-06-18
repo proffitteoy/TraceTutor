@@ -1320,6 +1320,24 @@ SQLite.question_id  →  PgSQL.question_asset.id
 
 这样避免两边数据重复。
 
+这里再补一个实现约束，避免后面跨库时主键格式漂移：
+
+```text
+PgSQL 中 question_id / knowledge_point_id / method_id 使用 UUID
+SQLite 中对应字段使用 text 保存这些 UUID 的字符串表示
+Agent 与 API 返回时统一使用字符串形式传输
+```
+
+不要出现：
+
+```text
+PgSQL 里是 uuid
+SQLite 里改成自增整数
+前端再自己维护另一套本地 id
+```
+
+否则后面相似题、复习记录、错题回查都会断链。
+
 如果用户输入的是一道新题，流程应该是：
 
 ```text
@@ -1337,6 +1355,36 @@ SQLite.question_id  →  PgSQL.question_asset.id
 ```
 
 注意：新题不要直接进入 `active`，否则未审核题会污染正式召回。
+
+还要再补一个经常漏掉的业务边界：
+
+```text
+可用于当前会话的草稿题
+≠
+可被全局正式召回的 active 题
+```
+
+也就是说：
+
+```text
+用户当前 session 中为了教学需要生成的新题
+可以写入 PgSQL draft，并带 session / workflow 来源
+可以被当前会话继续引用
+但默认不能参与其他用户、其他 session 的正式召回
+```
+
+只有在经过审核，或者至少通过明确的质量校验后，才允许进入：
+
+```text
+question_asset.status = active
+```
+
+否则会出现一个典型业务问题：
+
+```text
+为了当前用户临时生成的一道变式题
+污染了整个题库的长期推荐结果
+```
 
 ---
 
@@ -1383,3 +1431,26 @@ asset_review_log.review_status
 9. 质量审核
 10. active 后进入正式召回
 ```
+
+如果这道题是“会话内临时题”，那它的生命周期建议单独看成：
+
+```text
+generated_in_session
+  ↓
+draft
+  ↓
+reviewed
+  ↓
+active 或 rejected
+```
+
+这样做的好处是能把：
+
+```text
+导入题
+人工录入题
+用户输入新题
+AI 临时生成题
+```
+
+放进同一个资产生命周期体系里，但又不把它们的上线门槛混为一谈。

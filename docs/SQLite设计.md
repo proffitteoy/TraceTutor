@@ -1003,6 +1003,29 @@ Agent 生成 state_delta
 数据库只接受可验证变化。
 ```
 
+这里要补上“可验证变化”最小校验条件，不然实现时还是会变成“写个待审核表但没人知道审什么”。
+
+建议规则层至少校验：
+
+```text
+1. 是否存在 question_attempt 或 review_event 等事实证据
+2. 是否能拿到 question_id / knowledge_point_id / method_id 等引用
+3. proposed delta 是否属于允许更新的字段集合
+4. mastery_change / priority_change 是否在合法范围
+5. 是否和当前 workflow 状态一致
+```
+
+例如：
+
+```text
+用户提交了答案并已判错
+→ 可以降低相关 mastery_score，提升对应 review priority
+
+主 Agent 说“用户似乎已经理解”
+但没有作答、没有证据
+→ 只能写 memory / summary，不能改正式掌握状态
+```
+
 ---
 
 # 十九、本地事件日志 local_event_log
@@ -1400,7 +1423,6 @@ tool_call_log
 暂时可以不做：
 
 ```text
-pending_state_delta
 agent_memory_item
 active_context_ref
 local_event_log
@@ -1408,7 +1430,32 @@ local_event_log
 多端同步
 ```
 
-但第二阶段一定要补 `pending_state_delta` 和 `agent_memory_item`。
+这里建议再收紧一下：
+
+```text
+如果第一版要让 Agent 直接参与状态建议，
+那么 pending_state_delta 不能省。
+```
+
+只有在下面这个更弱的 MVP 前提成立时，才可以暂时不建 `pending_state_delta`：
+
+```text
+状态更新完全由确定性规则计算
+Agent 不直接提出自由文本 state_delta
+```
+
+否则第一版就会出现业务风险：
+
+```text
+主 Agent 的猜测直接污染长期学习状态
+```
+
+所以更稳妥的建议是：
+
+```text
+第一版最小可行表结构里，把 pending_state_delta 提前纳入
+agent_memory_item / active_context_ref / local_event_log 可以晚一阶段
+```
 
 ---
 

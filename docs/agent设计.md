@@ -201,7 +201,11 @@ PgSQL 查相似题 / 知识点 / 方法资产
   ↓
 Context Compressor 压缩本轮学习信息
   ↓
-SQLite 写入用户状态
+State Delta Generator 生成状态变化建议
+  ↓
+Pending State Writer 写入 pending_state_delta
+  ↓
+Rule Validator 校验通过后更新 SQLite 正式状态
   ↓
 返回 Iris 渲染
 ```
@@ -251,7 +255,9 @@ PgSQL 召回候选题
   ↓
 判题 + 解析
   ↓
-SQLite 回写复习结果
+Pending State Writer 写入状态变化建议
+  ↓
+Rule Validator 校验通过后更新 SQLite 回写复习结果
 ```
 
 复习包不是一道题，而应该是：
@@ -828,6 +834,23 @@ Agent 负责建议
 
 这是防止“模型幻觉污染状态库”的关键。
 
+如果你在 MVP 阶段暂时不想实现完整的 `pending_state_delta` 工作流，也至少要满足一个更强的约束：
+
+```text
+只有规则可直接推导出的状态变化可以落库
+主 Agent 自由生成的状态判断不得直接写正式状态表
+```
+
+例如：
+
+```text
+用户答错 + 已有题目标签 + 已有判题结果
+  → 可以由规则层直接降低 mastery_score
+
+主 Agent 说“用户大概已经掌握”
+  → 不能直接落库
+```
+
 ---
 
 # 十五、上下文压缩与状态写回的区别
@@ -1120,6 +1143,44 @@ POST /state/query
 POST /asset/retrieve
 POST /state/write
 POST /log/write
+```
+
+这里要补一个分层说明，不然后面很容易把“HTTP 接口”和“工具接口”混成一层。
+
+这四个 `POST` 更适合作为：
+
+```text
+API Gateway / BFF / Tool Gateway 的粗粒度入口
+```
+
+而真正给 Agent 暴露的业务工具，仍然应该是前面列的细粒度工具，例如：
+
+```text
+state.query_wrong_questions
+state.query_review_due_items
+asset.search_same_knowledge_different_method
+asset.get_question_detail
+state.write_attempt_result
+```
+
+也就是说分层应该是：
+
+```text
+Iris
+  ↓ HTTP
+扣子
+  ↓ 工具调用
+Tool Gateway
+  ↓ 内部路由
+state.* / asset.* / log.*
+```
+
+这样才能同时满足：
+
+```text
+前端接口干净
+Agent 工具粒度清晰
+后端实现可以替换
 ```
 
 前端只接收渲染结构：
