@@ -1,0 +1,12 @@
+runtime/
+node_modules/
+dist/
+build/
+coverage/
+.DS_Store
+Thumbs.db
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
