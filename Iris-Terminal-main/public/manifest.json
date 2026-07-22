@@ -1,0 +1,26 @@
+{
+  "short_name": "鸢尾花终端",
+  "name": "鸢尾花终端",
+  "icons": [
+    {
+      "src": "/branding/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/branding/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/branding/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512",
+      "purpose":"maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000000"
+}

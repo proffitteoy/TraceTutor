@@ -1,0 +1,346 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @db.Uuid
+  created_at  DateTime @default(now())
+
+  profile     Profile?
+  workspaces  Workspace[]
+  chats       Chat[]
+  messages    Message[]
+  files       File[]
+  file_items  FileItem[]
+  chat_summaries ChatSummary[]
+
+  @@map("users")
+}
+
+model Profile {
+  id          String   @id @db.Uuid
+  user_id     String   @unique @db.Uuid
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+
+  bio                   String @default("")
+  has_onboarded         Boolean @default(true)
+  image_url             String @default("")
+  image_path            String @default("")
+  profile_context       String @default("")
+  display_name          String @default("Local User")
+  use_azure_openai      Boolean @default(false)
+  username              String @default("local_user")
+
+  anthropic_api_key      String? 
+  azure_openai_35_turbo_id String?
+  azure_openai_45_turbo_id String?
+  azure_openai_45_vision_id String?
+  azure_openai_api_key    String?
+  azure_openai_embeddings_id String?
+  azure_openai_endpoint  String?
+  google_gemini_api_key  String?
+  groq_api_key           String?
+  mistral_api_key        String?
+  openai_api_key         String?
+  openai_organization_id String?
+  perplexity_api_key     String?
+  openrouter_api_key     String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Workspace {
+  id          String   @id @db.Uuid
+  user_id     String   @db.Uuid
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+
+  sharing                       String @default("private")
+  default_context_length        Int
+  default_model                 String
+  default_prompt                String
+  default_temperature           Float
+  description                   String @default("")
+  embeddings_provider           String
+  include_profile_context       Boolean
+  include_workspace_instructions Boolean
+  instructions                  String @default("")
+  is_home                       Boolean @default(false)
+  name                          String
+  image_path                    String @default("")
+
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  chats Chat[]
+  file_workspaces FileWorkspace[]
+  chat_summaries ChatSummary[]
+  vaults Vault[]
+
+  @@map("workspaces")
+}
+
+model Chat {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  workspace_id String  @db.Uuid
+  assistant_id String?
+  folder_id    String?
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+
+  sharing                       String @default("private")
+  context_length                Int
+  embeddings_provider           String
+  include_profile_context       Boolean
+  include_workspace_instructions Boolean
+  model                         String
+  name                          String
+  prompt                        String
+  temperature                   Float
+  status                        String @default("active")
+
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  messages  Message[]
+  chat_files ChatFile[]
+  summary   ChatSummary?
+  retrieval_events RetrievalEvent[]
+
+  @@map("chats")
+}
+
+model Message {
+  id             String   @id @default(uuid()) @db.Uuid
+  chat_id        String   @db.Uuid
+  user_id        String   @db.Uuid
+  assistant_id   String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime?
+
+  content         String
+  image_paths     String[]
+  model           String
+  role            String
+  sequence_number Int
+
+  chat   Chat @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  message_file_items MessageFileItem[]
+  retrieval_events RetrievalEvent[]
+
+  @@map("messages")
+}
+
+model File {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  folder_id   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+
+  sharing     String @default("private")
+  description String @default("")
+  file_path   String @default("")
+  name        String
+  size        Int
+  tokens      Int
+  type        String
+
+  user        User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file_items  FileItem[]
+  file_workspaces FileWorkspace[]
+  chat_files   ChatFile[]
+
+  @@map("files")
+}
+
+model FileItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  file_id     String   @db.Uuid
+  user_id     String   @db.Uuid
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+
+  sharing        String @default("private")
+  content        String
+  local_embedding Json?
+  openai_embedding Json?
+  tokens         Int
+
+  file File @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  message_file_items MessageFileItem[]
+
+  @@map("file_items")
+}
+
+model FileWorkspace {
+  user_id      String   @db.Uuid
+  file_id      String   @db.Uuid
+  workspace_id String   @db.Uuid
+  created_at   DateTime @default(now())
+  updated_at   DateTime?
+
+  file      File      @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+
+  @@id([file_id, workspace_id])
+  @@map("file_workspaces")
+}
+
+model ChatFile {
+  user_id  String   @db.Uuid
+  chat_id  String   @db.Uuid
+  file_id  String   @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime?
+
+  chat Chat @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Cascade)
+
+  @@id([chat_id, file_id])
+  @@map("chat_files")
+}
+
+model MessageFileItem {
+  user_id      String   @db.Uuid
+  message_id   String   @db.Uuid
+  file_item_id String   @db.Uuid
+  created_at   DateTime @default(now())
+  updated_at   DateTime?
+
+  message Message @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  file_item FileItem @relation(fields: [file_item_id], references: [id], onDelete: Cascade)
+
+  @@id([message_id, file_item_id])
+  @@map("message_file_items")
+}
+
+model ChatSummary {
+  id           String   @id @default(uuid()) @db.Uuid
+  chat_id      String   @unique @db.Uuid
+  user_id      String   @db.Uuid
+  workspace_id String   @db.Uuid
+  created_at   DateTime @default(now())
+  updated_at   DateTime?
+
+  status        String @default("completed")
+  model         String
+  summary       String
+  local_embedding Json?
+  openai_embedding Json?
+
+  chat      Chat      @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("chat_summaries")
+}
+
+model Vault {
+  id           String   @id @default(uuid()) @db.Uuid
+  workspace_id String?  @db.Uuid
+  name         String
+  root_path    String
+  status       String   @default("active")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  workspace Workspace? @relation(fields: [workspace_id], references: [id], onDelete: SetNull)
+  notes     Note[]
+  links     NoteLink[]
+
+  @@unique([workspace_id, name])
+  @@map("vaults")
+}
+
+model Note {
+  id           String   @id @default(uuid()) @db.Uuid
+  vault_id     String   @db.Uuid
+  path         String
+  title        String
+  aliases      String[] @default([])
+  tags         String[] @default([])
+  frontmatter  Json?
+  content_hash String
+  mtime        DateTime
+  status       String   @default("active")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  vault          Vault      @relation(fields: [vault_id], references: [id], onDelete: Cascade)
+  chunks         NoteChunk[]
+  outgoing_links NoteLink[] @relation("SourceNoteLinks")
+  incoming_links NoteLink[] @relation("TargetNoteLinks")
+
+  @@unique([vault_id, path])
+  @@map("notes")
+}
+
+model NoteChunk {
+  id           String   @id @default(uuid()) @db.Uuid
+  note_id      String   @db.Uuid
+  heading_path String[] @default([])
+  block_id     String?
+  content      String
+  content_hash String
+  token_count  Int
+  start_line   Int?
+  end_line     Int?
+  embedding    Unsupported("vector(1536)")?
+  tsv          Unsupported("tsvector")?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  note Note @relation(fields: [note_id], references: [id], onDelete: Cascade)
+
+  @@index([note_id])
+  @@map("note_chunks")
+}
+
+model NoteLink {
+  id             String   @id @default(uuid()) @db.Uuid
+  vault_id       String   @db.Uuid
+  source_note_id String   @db.Uuid
+  target_note_id String?  @db.Uuid
+  target_path    String
+  link_text      String?
+  link_type      String
+  created_at     DateTime @default(now())
+
+  vault       Vault @relation(fields: [vault_id], references: [id], onDelete: Cascade)
+  source_note Note  @relation("SourceNoteLinks", fields: [source_note_id], references: [id], onDelete: Cascade)
+  target_note Note? @relation("TargetNoteLinks", fields: [target_note_id], references: [id], onDelete: SetNull)
+
+  @@index([vault_id])
+  @@index([source_note_id])
+  @@index([target_note_id])
+  @@map("note_links")
+}
+
+model RetrievalEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  chat_id       String?  @db.Uuid
+  message_id    String?  @db.Uuid
+  query         String
+  mode          String
+  strategy      String
+  recalled_items Json
+  final_context Json?
+  created_at    DateTime @default(now())
+
+  chat    Chat?    @relation(fields: [chat_id], references: [id], onDelete: SetNull)
+  message Message? @relation(fields: [message_id], references: [id], onDelete: SetNull)
+
+  @@index([chat_id, created_at])
+  @@index([message_id])
+  @@map("retrieval_events")
+}

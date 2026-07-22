@@ -1,11 +1,12 @@
 # TraceTutor
 
-TraceTutor 是一个面向数学学习场景的 Agent 驱动教学系统设计仓库。当前阶段以架构、数据边界和工作流设计为主，代码实现尚未正式落地。
+TraceTutor 是一个面向数学学习场景的 Agent 驱动教学系统。当前处于文档先行的早期实现阶段，Iris 前端已形成首个可运行切片，API、数据库迁移和 Agent 配置仍待分别落地。
 
 ## 当前状态
 
 - 仓库已完成冷启动初始化。
-- 当前有明确业务设计，但还没有可运行的前端、API、数据库迁移或 Agent 配置代码。
+- `apps/iris` 已从原有 Iris Terminal 前端中提取品牌与交互语言，落地为独立 Next.js 前端。
+- API、数据库迁移和 Agent 配置尚未落地；前端当前默认使用不访问数据库的演示适配器。
 - 根目录文档和目录骨架已经按实际业务边界拆开，后续实现应在对应子目录内推进，而不是继续把实现细节堆到 `docs/`。
 
 ## 核心边界
@@ -44,18 +45,31 @@ TraceTutor/
 - [docs/agent设计.md](./docs/agent设计.md)：主 Agent、子 Agent、Workflow、Prompt、工具约束
 - [docs/pgsql设计.md](./docs/pgsql设计.md)：题目资产库设计
 - [docs/SQLite设计.md](./docs/SQLite设计.md)：学习状态库设计
+- [docs/数据库协作边界.md](./docs/数据库协作边界.md)：PgSQL、SQLite、API 与 Iris 的并行协作边界
 - [docs/冷启动.md](./docs/冷启动.md)：本仓库初始化遵循的冷启动流程
 - [docs/冷启动结论.md](./docs/冷启动结论.md)：本次仓库初始化的结论与裁剪结果
 
 ## 目前没有的内容
 
-以下内容当前都还不存在，因此不要在实现前假设它们已经成立：
+以下内容当前还不存在，因此不要在实现前假设它们已经成立：
 
-- 真实前端技术栈与包管理器
 - 真实 API 框架与运行命令
 - 真实数据库迁移工具
 - 自动化测试入口
 - CI/CD、部署脚本、环境变量清单
+
+## Iris 前端
+
+前端技术栈已经确定为 Next.js 16、React 19 与 TypeScript，使用 npm。进入 `apps/iris` 后可执行：
+
+```powershell
+npm install
+npm run dev
+npm run type-check
+npm run build
+```
+
+具体网关契约、环境变量和目录约定见 [apps/iris/README.md](./apps/iris/README.md)。
 
 后续只要某一部分真实落地，就必须把对应命令与依赖说明补到这里。
 
