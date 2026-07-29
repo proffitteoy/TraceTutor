@@ -228,6 +228,13 @@ textarea:focus-visible {
   margin-top: 29px;
 }
 
+.empty-rail-copy {
+  margin: 10px 8px;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
 .recent-list header,
 .mastery-block header,
 .boundary-map header {
@@ -875,6 +882,11 @@ textarea:focus-visible {
   color: #9a949b;
 }
 
+.composer textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
 .attach-button,
 .send-button {
   display: grid;
@@ -1036,6 +1048,13 @@ textarea:focus-visible {
   height: 2px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.08);
+}
+
+.mastery-block .state-detail {
+  display: block;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 8px;
+  line-height: 1.6;
 }
 
 .mastery-block em {

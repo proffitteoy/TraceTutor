@@ -1,42 +1,68 @@
 # TraceTutor
 
-TraceTutor 是一个面向数学学习场景的 Agent 驱动教学系统。当前处于文档先行的早期实现阶段，Iris 前端已形成首个可运行切片，API、数据库迁移和 Agent 配置仍待分别落地。
+TraceTutor 是一个面向数学学习场景的 Agent 驱动教学系统，目标是形成“题目—状态—召回—生成—复习”的持续学习闭环。
 
 ## 当前状态
 
-- 仓库已完成冷启动初始化。
-- `apps/iris` 已从原有 Iris Terminal 前端中提取品牌与交互语言，落地为独立 Next.js 前端。
-- API、数据库迁移和 Agent 配置尚未落地；前端当前默认使用不访问数据库的演示适配器。
-- 根目录文档和目录骨架已经按实际业务边界拆开，后续实现应在对应子目录内推进，而不是继续把实现细节堆到 `docs/`。
+非数据库架构已经落地：
+
+- `apps/iris`：可运行的 Next.js 学习终端，只负责输入与渲染。
+- `apps/api`：可运行的 Fastify 服务与本地 Agent Runtime，负责模型 API、Workflow、契约、工具白名单、状态证据校验和降级。
+- `db/pgsql`、`db/sqlite`：仍由数据库协作者交付；当前 API 已预留 `ToolExecutionPort`，不会用假数据代替。
+
+因此现在可以独立验证前端、API 和本地 Agent，但数据库工具接入前，`GET /health/ready` 会正确返回降级状态，不能宣称数据闭环已完成。
 
 ## 核心边界
 
-- `Iris` 前端负责交互展示，不直接碰数据库。
-- `扣子 Agent` 负责意图理解、Workflow 编排和教学输出，不直接充当后端。
-- `API` 层负责查询计划校验、工具调用、安全边界和状态落库。
-- `PgSQL` 负责稳定题目资产、知识点/方法资产、相似关系与召回候选。
-- `SQLite` 负责用户学习状态、做题记录、复习调度、短期记忆与运行日志。
+- Iris 不直接访问数据库，也不推断掌握度。
+- 本地 Agent Runtime 负责意图理解、Workflow、工具调度和教学输出，不直接写数据库。
+- 模型通过 OpenAI-compatible API 接入，只负责结构化生成，不拥有工具权限。
+- API 只暴露有限业务工具，不提供万能 SQL。
+- Agent 只能提出 `state_delta`，正式状态变化必须引用真实作答或复习证据并经过规则层。
+- PgSQL 只存稳定题目资产；SQLite 只存用户学习状态。
+- 未审核题、导入题和 AI 生成题不得进入 active 正式召回池。
 
-## 当前目录
+## 目录
 
 ```text
 TraceTutor/
-├── AGENTS.md
-├── README.md
 ├── apps/
-│   ├── api/
-│   └── iris/
-├── agents/
-│   └── coze/
+│   ├── api/             # Fastify API / Tool Gateway
+│   └── iris/            # Next.js 前端
 ├── db/
-│   ├── pgsql/
-│   │   └── migrations/
-│   └── sqlite/
-│       └── migrations/
-├── docs/
-├── runtime/
-└── tests/
+│   ├── pgsql/           # 数据库协作者范围
+│   └── sqlite/          # 数据库协作者范围
+├── docs/                # 长期设计与协作约束
+├── runtime/             # 本地运行期生成物
+└── tests/               # 跨组件测试入口说明
 ```
+
+## 快速开始
+
+### API
+
+```powershell
+Set-Location apps/api
+npm install
+Copy-Item .env.example .env
+npm run type-check
+npm test
+npm run dev
+```
+
+默认地址为 `http://127.0.0.1:4100`。环境变量和数据库接入点见 [apps/api/README.md](./apps/api/README.md)。
+
+### Iris
+
+```powershell
+Set-Location apps/iris
+npm install
+Copy-Item .env.example .env.local
+npm run type-check
+npm run dev
+```
+
+默认地址为 `http://localhost:3000`。前端只需要公开的 API 地址，详见 [apps/iris/README.md](./apps/iris/README.md)。
 
 ## 文档入口
 
@@ -45,44 +71,13 @@ TraceTutor/
 - [docs/agent设计.md](./docs/agent设计.md)：主 Agent、子 Agent、Workflow、Prompt、工具约束
 - [docs/pgsql设计.md](./docs/pgsql设计.md)：题目资产库设计
 - [docs/SQLite设计.md](./docs/SQLite设计.md)：学习状态库设计
-- [docs/数据库协作边界.md](./docs/数据库协作边界.md)：PgSQL、SQLite、API 与 Iris 的并行协作边界
-- [docs/冷启动.md](./docs/冷启动.md)：本仓库初始化遵循的冷启动流程
-- [docs/冷启动结论.md](./docs/冷启动结论.md)：本次仓库初始化的结论与裁剪结果
+- [docs/数据库协作边界.md](./docs/数据库协作边界.md)：数据库、API 与 Iris 的并行协作边界
 
-## 目前没有的内容
+## 当前尚未完成
 
-以下内容当前还不存在，因此不要在实现前假设它们已经成立：
+- PgSQL / SQLite 的真实迁移、查询与写回实现。
+- `ToolExecutionPort` 与两套数据库实现的装配。
+- 携带真实数据库和真实 Agent 的端到端联调。
+- CI/CD 与生产部署脚本。
 
-- 真实 API 框架与运行命令
-- 真实数据库迁移工具
-- 自动化测试入口
-- CI/CD、部署脚本、环境变量清单
-
-## Iris 前端
-
-前端技术栈已经确定为 Next.js 16、React 19 与 TypeScript，使用 npm。进入 `apps/iris` 后可执行：
-
-```powershell
-npm install
-npm run dev
-npm run type-check
-npm run build
-```
-
-具体网关契约、环境变量和目录约定见 [apps/iris/README.md](./apps/iris/README.md)。
-
-后续只要某一部分真实落地，就必须把对应命令与依赖说明补到这里。
-
-## 建议的实现顺序
-
-1. 先实现 `db/pgsql` 与 `db/sqlite` 的最小迁移脚本。
-2. 再实现 `apps/api` 的查询计划执行器和状态写回规则层。
-3. 然后落 `agents/coze` 的 Prompt、Workflow、工具 schema。
-4. 最后实现 `apps/iris` 的前端渲染与交互联调。
-
-## 初始化原则
-
-- 以文档事实为准，不虚构命令和目录职责。
-- 先固定边界，再逐步填充实现。
-- 题目资产和用户状态严格分层。
-- Agent 只产出计划和建议，落库必须经过规则层校验。
+模型 API 通过 `MODEL_API_BASE_URL`、`MODEL_API_KEY` 和 `MODEL_NAME` 配置。数据库缺口完成前，本仓库的构建和契约测试只能证明非数据库链路自身可用，不能替代真实数据端到端验证。

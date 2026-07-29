@@ -1,7 +1,8 @@
-import type {
-  IrisGateway,
-  LearningRequest,
-  LearningResponse
+import {
+  learningResponseSchema,
+  type IrisGateway,
+  type LearningRequest,
+  type LearningResponse
 } from "@/lib/contracts"
 
 export class HttpGateway implements IrisGateway {
@@ -19,9 +20,21 @@ export class HttpGateway implements IrisGateway {
     })
 
     if (!response.ok) {
-      throw new Error(`教学网关返回异常状态：${response.status}`)
+      const payload = (await response.json().catch(() => null)) as {
+        error?: { message?: string }
+      } | null
+      throw new Error(
+        payload?.error?.message ??
+          `教学网关返回异常状态：${response.status}`
+      )
     }
 
-    return (await response.json()) as LearningResponse
+    const payload: unknown = await response.json()
+    const parsed = learningResponseSchema.safeParse(payload)
+    if (!parsed.success) {
+      throw new Error("教学网关响应不符合 LearningResponse 契约")
+    }
+
+    return parsed.data as LearningResponse
   }
 }

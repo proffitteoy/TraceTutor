@@ -16,8 +16,7 @@
 - 当前仓库是 **文档先行的初始化阶段仓库**，不是可直接运行的成品项目。
 - 当前确认的业务边界：
   - `apps/iris`：前端交互层
-  - `agents/coze`：扣子 Agent / Workflow 编排层
-  - `apps/api`：自有 API / 工具服务层
+  - `apps/api`：自有 API / 本地 Agent Runtime / 工具服务层
   - `db/pgsql`：题目资产库脚本与迁移
   - `db/sqlite`：用户学习状态库脚本与迁移
   - `docs/`：架构、数据模型、冷启动与专项规则
@@ -41,7 +40,7 @@
 ## 4. 设计红线
 
 - 不要让 `Iris` 直接访问数据库。
-- 不要让 `扣子 Agent` 直接充当后端或直接写数据库。
+- 不要让本地 Agent Runtime 或模型 API 直接写数据库。
 - 不要暴露“万能 SQL”接口给 Agent；Agent 只能输出查询计划，真实 SQL 由 API 层生成和校验。
 - 不要把题目资产和用户学习状态混存：
   - `PgSQL` 只存稳定题目资产、相似关系、知识点与方法资产。
@@ -54,8 +53,8 @@
   - 放前端应用代码、前端组件、渲染契约、页面状态与交互测试。
 - `apps/api`
   - 放对 Agent 暴露的安全 API、规则校验、状态写回、查询计划执行器。
-- `agents/coze`
-  - 放 Prompt、Workflow 定义、工具清单、Agent 输出 schema、扣子导出物说明。
+- `apps/api/src/agent`
+  - 放本地 Prompt、Workflow、模型 API 适配、工具调度和 Agent 输出校验。
 - `db/pgsql`
   - 放题目资产表、迁移、种子数据、召回查询与审核相关脚本。
 - `db/sqlite`

@@ -2,7 +2,7 @@
 
 import type {
   InputMode,
-  LearningActionType,
+  LearningAction,
   LearningCard,
   LearningRequest,
   LearningResponse
@@ -16,6 +16,17 @@ interface ConversationEntry {
   role: "user" | "assistant"
   text: string
   response?: LearningResponse
+}
+
+type QuestionCard = Extract<
+  LearningCard,
+  { type: "new_question" | "old_question_review" }
+>
+
+function isQuestionCard(card: LearningCard): card is QuestionCard {
+  return (
+    card.type === "new_question" || card.type === "old_question_review"
+  )
 }
 
 const MODE_LABELS: Record<InputMode, string> = {
@@ -49,6 +60,15 @@ const QUICK_STARTS: Array<{
     prompt: "请从定义、直觉和反例三个角度解释这个概念。"
   }
 ]
+
+function getBrowserIdentity(storage: Storage, key: string): string {
+  const existing = storage.getItem(key)
+  if (existing) return existing
+
+  const created = crypto.randomUUID()
+  storage.setItem(key, created)
+  return created
+}
 
 const ICON_PATHS = {
   plus: "M12 5v14M5 12h14",
@@ -131,17 +151,52 @@ export function TutorShell() {
   const [entries, setEntries] = useState<ConversationEntry[]>([])
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null)
+  const [pendingAction, setPendingAction] = useState<
+    LearningRequest["action"] | null
+  >(null)
 
-  const gatewayEnabled = Boolean(
-    process.env.NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL
-  )
+  const latestResponse = [...entries]
+    .reverse()
+    .find(entry => entry.response)?.response
+  const latestStateCards =
+    latestResponse?.cards.filter(card => card.type === "state_change") ?? []
+  const latestQuestionCards =
+    latestResponse?.cards.filter(isQuestionCard) ?? []
+  const gatewayEnabled = gateway !== null
+
+  const resetSession = () => {
+    sessionStorage.setItem(
+      "tracetutor.session_id",
+      crypto.randomUUID()
+    )
+    setEntries([])
+    setActiveQuestionId(null)
+    setPendingAction(null)
+    setError(null)
+  }
 
   const submit = async (text: string, requestedMode: InputMode = mode) => {
     const normalized = text.trim()
     if (!normalized || isSending) return
 
+    if (!gateway) {
+      setError(
+        "教学网关尚未配置。请先设置 NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL。"
+      )
+      return
+    }
+
+    const identity = {
+      userId: getBrowserIdentity(localStorage, "tracetutor.user_id"),
+      sessionId: getBrowserIdentity(
+        sessionStorage,
+        "tracetutor.session_id"
+      )
+    }
+
     const userEntry: ConversationEntry = {
-      id: `user-${Date.now()}`,
+      id: `user-${crypto.randomUUID()}`,
       role: "user",
       text: normalized
     }
@@ -155,16 +210,24 @@ export function TutorShell() {
     requestController.current = controller
 
     const request: LearningRequest = {
-      session_id: "local-preview-session",
-      user_id: "local-preview-user",
+      session_id: identity.sessionId,
+      user_id: identity.userId,
       input_mode: requestedMode,
       user_text: normalized,
       attachments: [],
-      active_question_id: null
+      active_question_id: activeQuestionId,
+      ...(pendingAction ? { action: pendingAction } : {})
     }
 
     try {
       const response = await gateway.send(request, controller.signal)
+      const nextQuestion = response.cards.find(
+        card => card.type === "new_question"
+      )
+      if (nextQuestion && "question_id" in nextQuestion) {
+        setActiveQuestionId(nextQuestion.question_id)
+      }
+      setPendingAction(null)
       setEntries(current => [
         ...current,
         {
@@ -195,14 +258,23 @@ export function TutorShell() {
     void submit(input)
   }
 
-  const handleAction = (action: LearningActionType) => {
-    const prompts: Record<LearningActionType, string> = {
-      submit_answer: "我准备提交答案，请告诉我需要填写哪些步骤。",
+  const handleAction = (action: LearningAction) => {
+    const prompts: Record<LearningAction["type"], string> = {
+      submit_answer: "这是我的答案：",
       request_hint: "只给我下一步提示，先不要揭晓完整答案。",
       generate_variant: "基于刚才的方法，再生成一道结构不同的变式题。"
     }
 
-    setInput(prompts[action])
+    if (action.question_id) {
+      setActiveQuestionId(action.question_id)
+    }
+    setPendingAction({
+      type: action.type,
+      ...(action.question_id ? { question_id: action.question_id } : {}),
+      ...(action.schedule_id ? { schedule_id: action.schedule_id } : {}),
+      client_event_id: crypto.randomUUID()
+    })
+    setInput(prompts[action.type])
   }
 
   return (
@@ -220,7 +292,7 @@ export function TutorShell() {
           </div>
         </div>
 
-        <button className="new-session" onClick={() => setEntries([])}>
+        <button className="new-session" onClick={resetSession}>
           <Icon name="plus" size={18} />
           新建学习会话
           <kbd>⌘ K</kbd>
@@ -241,23 +313,25 @@ export function TutorShell() {
 
         <section className="recent-list">
           <header>
-            <p>待复习</p>
-            <span>演示数据</span>
+            <p>本轮题目</p>
+            <span>{latestQuestionCards.length ? "Agent 返回" : "暂无数据"}</span>
           </header>
-          <button>
-            <i className="status-dot amber" />
-            <span>
-              <strong>夹逼结构识别</strong>
-              <small>今天 · 方法薄弱项</small>
-            </span>
-          </button>
-          <button>
-            <i className="status-dot violet" />
-            <span>
-              <strong>一致连续性</strong>
-              <small>明天 · 概念迁移</small>
-            </span>
-          </button>
+          {latestQuestionCards.length ? (
+            latestQuestionCards.map(card => (
+              <button
+                key={card.question_id}
+                onClick={() => setActiveQuestionId(card.question_id)}
+              >
+                <i className="status-dot violet" />
+                <span>
+                  <strong>{card.title}</strong>
+                  <small>{card.question_id}</small>
+                </span>
+              </button>
+            ))
+          ) : (
+            <p className="empty-rail-copy">完成一次真实调用后显示题目引用。</p>
+          )}
         </section>
 
         <div className="rail-note">
@@ -276,7 +350,7 @@ export function TutorShell() {
             <h1>{entries.length ? MODE_LABELS[mode] : "新的学习会话"}</h1>
           </div>
           <div className="header-status">
-            <span>{gatewayEnabled ? "网关已配置" : "本地演示模式"}</span>
+            <span>{gatewayEnabled ? "网关已配置" : "等待网关配置"}</span>
             <i className={gatewayEnabled ? "online" : "demo"} />
           </div>
         </header>
@@ -303,6 +377,7 @@ export function TutorShell() {
                     key={item.eyebrow}
                     onClick={() => {
                       setMode(item.mode)
+                      setPendingAction(null)
                       setInput(item.prompt)
                     }}
                   >
@@ -343,7 +418,10 @@ export function TutorShell() {
                         </div>
                         <div className="response-actions">
                           {entry.response.actions.map(action => (
-                            <button key={action.type} onClick={() => handleAction(action.type)}>
+                            <button
+                              key={`${action.type}-${action.question_id ?? "none"}-${action.schedule_id ?? "none"}`}
+                              onClick={() => handleAction(action)}
+                            >
                               {action.label}
                               <span>→</span>
                             </button>
@@ -374,7 +452,10 @@ export function TutorShell() {
               <button
                 className={mode === item ? "active" : ""}
                 key={item}
-                onClick={() => setMode(item)}
+                onClick={() => {
+                  setMode(item)
+                  setPendingAction(null)
+                }}
               >
                 {MODE_LABELS[item]}
               </button>
@@ -396,6 +477,7 @@ export function TutorShell() {
               }}
               placeholder="输入题目、复习目标，或追问一个没有想通的步骤……"
               rows={1}
+              disabled={!gatewayEnabled}
             />
             {isSending ? (
               <button
@@ -407,12 +489,21 @@ export function TutorShell() {
                 <span />
               </button>
             ) : (
-              <button className="send-button" type="submit" disabled={!input.trim()} aria-label="发送">
+              <button
+                className="send-button"
+                type="submit"
+                disabled={!gatewayEnabled || !input.trim()}
+                aria-label="发送"
+              >
                 <Icon name="send" size={21} />
               </button>
             )}
           </form>
-          <p>Enter 发送 · Shift + Enter 换行 · 演示适配器不会写入真实学习状态</p>
+          <p>
+            {gatewayEnabled
+              ? "Enter 发送 · Shift + Enter 换行 · 状态变化以规则层结果为准"
+              : "请配置 NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL 后开始学习"}
+          </p>
         </footer>
       </section>
 
@@ -424,33 +515,37 @@ export function TutorShell() {
 
         <section className="focus-card">
           <div className="focus-ring">
-            <span>63</span>
-            <small>演示值</small>
+            <span>{latestResponse ? latestResponse.cards.length : "—"}</span>
+            <small>结果卡片</small>
           </div>
           <div>
-            <small>当前主题</small>
-            <strong>数列极限</strong>
-            <p>正在建立“目标反推 → 构造上下界”的稳定路径。</p>
+            <small>当前工作流</small>
+            <strong>{latestResponse?.mode ?? MODE_LABELS[mode]}</strong>
+            <p>
+              {latestResponse?.summary ??
+                "尚无真实 Agent 响应；这里不会展示伪造掌握度。"}
+            </p>
           </div>
         </section>
 
         <section className="mastery-block">
           <header>
-            <span>方法掌握</span>
-            <small>仅展示</small>
+            <span>状态写回</span>
+            <small>规则层结果</small>
           </header>
-          <div>
-            <p><span>夹逼定理</span><b>42%</b></p>
-            <i><em style={{ width: "42%" }} /></i>
-          </div>
-          <div>
-            <p><span>等价无穷小</span><b>71%</b></p>
-            <i><em style={{ width: "71%" }} /></i>
-          </div>
-          <div>
-            <p><span>单调有界</span><b>58%</b></p>
-            <i><em style={{ width: "58%" }} /></i>
-          </div>
+          {latestStateCards.length ? (
+            latestStateCards.map((card, index) => (
+              <div key={`${card.title}-${index}`}>
+                <p>
+                  <span>{card.title}</span>
+                  <b>{card.status}</b>
+                </p>
+                <small className="state-detail">{card.content}</small>
+              </div>
+            ))
+          ) : (
+            <p className="empty-rail-copy">暂无经过规则层确认的状态变化。</p>
+          )}
         </section>
 
         <section className="boundary-map">

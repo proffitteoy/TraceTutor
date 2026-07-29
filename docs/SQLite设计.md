@@ -872,7 +872,7 @@ agent_runtime_state 给系统恢复运行状态。
 
 # 十六、Workflow 运行表 workflow_run
 
-每次扣子 Workflow 运行都要记录。
+每次本地 Agent Workflow 运行都要记录。
 
 ```sql
 create table workflow_run (
@@ -1461,7 +1461,7 @@ agent_memory_item / active_context_ref / local_event_log 可以晚一阶段
 
 # 二十八、SQLite API 设计
 
-扣子不要直接访问 SQLite。还是通过你自己的 API 层。
+本地 Agent Runtime 不直接访问 SQLite，必须通过 `ToolExecutionPort`。
 
 建议提供这些接口：
 
@@ -1568,7 +1568,7 @@ SQLite 写入流程：
 ```text
 PgSQL 是题目资产网络。
 SQLite 是用户学习状态机。
-扣子 Agent 是状态机的调度器和解释器。
+本地 Agent Runtime 是状态机的调度器和解释器。
 Iris 是状态变化的可视化界面。
 ```
 
