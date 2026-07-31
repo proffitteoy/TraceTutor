@@ -1,5 +1,4 @@
 import { TablesInsert, TablesUpdate } from "@/types/database"
-import mammoth from "mammoth"
 import { toast } from "sonner"
 import { unsupportedLocalFeature } from "./unsupported"
 
@@ -47,26 +46,7 @@ export const createFileBasedOnExtension = async (
   fileRecord: TablesInsert<"files">,
   workspace_id: string,
   embeddingsProvider: "openai" | "local"
-) => {
-  const fileExtension = file.name.split(".").pop()
-
-  if (fileExtension === "docx") {
-    const arrayBuffer = await file.arrayBuffer()
-    const result = await mammoth.extractRawText({
-      arrayBuffer
-    })
-
-    return createDocXFile(
-      result.value,
-      file,
-      fileRecord,
-      workspace_id,
-      embeddingsProvider
-    )
-  } else {
-    return createFile(file, fileRecord, workspace_id, embeddingsProvider)
-  }
-}
+) => createFile(file, fileRecord, workspace_id, embeddingsProvider)
 
 export const createFile = async (
   file: File,
@@ -96,33 +76,12 @@ export const createFile = async (
 }
 
 export const createDocXFile = async (
-  text: string,
+  _text: string,
   file: File,
-  _fileRecord: TablesInsert<"files">,
+  fileRecord: TablesInsert<"files">,
   workspace_id: string,
   embeddingsProvider: "openai" | "local"
-) => {
-  const formData = new FormData()
-  formData.append("file", file)
-  formData.append("workspace_id", workspace_id)
-  formData.append("embeddingsProvider", embeddingsProvider)
-  formData.append("text", text)
-
-  const response = await fetch("/api/local/files", {
-    method: "POST",
-    body: formData
-  })
-
-  if (!response.ok) {
-    const message = await getErrorMessageFromResponse(response)
-    toast.error(`\u6587\u6863\u5904\u7406\u5931\u8d25\uff1a${message}`, {
-      duration: 10000
-    })
-    throw new Error("Failed to upload docx file")
-  }
-
-  return await response.json()
-}
+) => createFile(file, fileRecord, workspace_id, embeddingsProvider)
 
 export const createFiles = async (
   _files: TablesInsert<"files">[],

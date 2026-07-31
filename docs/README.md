@@ -16,8 +16,9 @@
 4. [接口与闭环设计.md](./接口与闭环设计.md)
 5. [agent设计.md](./agent设计.md)
 6. [pgsql设计.md](./pgsql设计.md)
-7. [SQLite设计.md](./SQLite设计.md)
-8. [数据库协作边界.md](./数据库协作边界.md)
+7. [题库摄取与审核.md](./题库摄取与审核.md)
+8. [SQLite设计.md](./SQLite设计.md)
+9. [数据库协作边界.md](./数据库协作边界.md)
 
 ## 项目核心文档
 
@@ -27,6 +28,7 @@
 | [接口与闭环设计.md](./接口与闭环设计.md) | 跨文档总装配图 | 把题目导入、解题、复习、状态写回、日志串成端到端闭环 |
 | [agent设计.md](./agent设计.md) | Agent / Workflow / Prompt / 工具设计 | 定义主 Agent、子 Agent、Workflow 和工具约束 |
 | [pgsql设计.md](./pgsql设计.md) | 题目资产库设计 | 定义题目、知识点、方法、相似关系和题库生命周期 |
+| [题库摄取与审核.md](./题库摄取与审核.md) | 题目沉淀流程 | 定义 JSONL 初始化、AI 标签、用户题 draft、人工复核和 PgSQL 端口 |
 | [SQLite设计.md](./SQLite设计.md) | 用户状态库设计 | 定义学习行为、掌握度、复习调度、上下文与运行日志 |
 | [数据库协作边界.md](./数据库协作边界.md) | 并行开发边界 | 约束 PgSQL、SQLite、API 与 Iris 的所有权和唯一耦合面 |
 
@@ -71,4 +73,4 @@ pgsql设计 + SQLite设计
 - [../apps/iris/README.md](../apps/iris/README.md)：前端运行、网关配置和渲染契约
 - [../apps/api/README.md](../apps/api/README.md)：本地 Agent Runtime、模型 API、工具和运行步骤
 
-当前仍缺数据库迁移、业务工具实现和真实数据端到端联调；对应内容交付后应先更新各组件 README，再回填本索引。
+数据库迁移、15 个业务工具和题库摄取已落地；当前仍需在目标部署环境完成两套数据库、模型 API 与 Iris 的联合端到端验收。

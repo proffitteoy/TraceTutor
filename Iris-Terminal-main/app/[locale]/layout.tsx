@@ -11,7 +11,6 @@ import {
 import { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { ReactNode } from "react"
-import "katex/dist/katex.min.css"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -66,7 +65,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0f1115"
+  themeColor: "#f7f7f5"
 }
 
 const i18nNamespaces = ["translation"]
@@ -80,7 +79,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers attribute="class" defaultTheme="dark">
+        <Providers attribute="class" defaultTheme="light">
           <TranslationsProvider
             namespaces={i18nNamespaces}
             locale={locale}

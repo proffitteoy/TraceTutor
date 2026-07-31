@@ -103,7 +103,10 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       </div>
 
       <div
-        className="bg-muted/50 relative flex w-screen min-w-[90%] grow flex-col sm:min-w-fit"
+        className={cn(
+          "relative flex w-screen min-w-[90%] grow flex-col sm:min-w-fit",
+          pathname.includes("/chat/") ? "bg-transparent" : "bg-muted/50"
+        )}
         onDrop={onFileDrop}
         onDragOver={onDragOver}
         onDragEnter={handleDragEnter}

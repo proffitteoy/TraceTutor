@@ -1,0 +1,913 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "复旦大学",
+    "year": 2025,
+    "subject_code": "advanced_algebra",
+    "subject_name": "高等代数",
+    "source_file": "E:\\考研真题\\MinerU_markdown_复旦大学2025解析_2082763904587440128.md",
+    "source_scope": "与题面文件 MinerU_markdown_复旦大学2025_(1)_2082765958701682688.md 配对；共 9 题",
+    "curation_method": "逐题独立重算，原解析仅用于交叉核对；发现原解析或 OCR 不可靠处单独标记",
+    "question_count": 9,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-001",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第1题；解析文件第5—68行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "matrix_powers"
+      },
+      "title": "常对角元与常非对角元矩阵的高次幂",
+      "stem": "设 $A$ 为 $n$ 阶矩阵，其对角元均为 $2$，非对角元均为 $1$。求 $A^{2024}$。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "记 $J=\\mathbf 1\\mathbf 1^T$ 为全 $1$ 矩阵，则\n$$A^{2024}=I_n+\\frac{(n+1)^{2024}-1}{n}J.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "按两个特征子空间作投影分解",
+          "solution_type": "teaching",
+          "text": "有 $A=I_n+J$ 且 $J^2=nJ$。在 $\\operatorname{span}\\{\\mathbf1\\}$ 上，$J$ 的特征值为 $n$；在 $\\mathbf1^\\perp$ 上为 $0$，所以 $A$ 的对应特征值为 $n+1$ 与 $1$。两个投影分别为 $J/n$ 与 $I_n-J/n$。因此 $A^{2024}=(n+1)^{2024}J/n+(I_n-J/n)$，化简即得答案。",
+          "main_method_code": "spectral_projector_power",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "写成 $A=I_n+J$，其中 $J$ 为全 $1$ 矩阵。"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "识别 $\\operatorname{span}\\{\\mathbf1\\}$ 与 $\\mathbf1^\\perp$ 为不变子空间，$A$ 在其上的特征值分别为 $n+1$ 和 $1$。",
+              "knowledge_point_code": "eigenspace_decomposition"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "使用投影 $J/n$ 与 $I_n-J/n$ 对幂进行谱计算。",
+              "method_code": "spectral_projector_power"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "得到 $A^{2024}=I_n+((n+1)^{2024}-1)J/n$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "matrix_powers",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "eigenspace_decomposition",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "spectral_projector_power",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "constant_diagonal_off_diagonal",
+          "high_matrix_power",
+          "rank_one_perturbation"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "OCR 打散了矩阵排版；依据完整行列模式恢复为一般 n 阶矩阵。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-002",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第2题；解析文件第69—134行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "linear_functionals"
+      },
+      "title": "相似不变的矩阵线性泛函",
+      "stem": "设 $K$ 为数域，$f:M_n(K)\\to K$ 为线性映射，并且相似矩阵具有相同的函数值。求所有可能的 $f$。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "全部解为\n$$f(X)=c\\operatorname{tr}(X),\\qquad c\\in K.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "用矩阵单位的共轭关系确定线性泛函",
+          "solution_type": "teaching",
+          "text": "记矩阵单位为 $E_{ij}$。对 $i\\ne j$，令 $S=I+E_{ij}$，则 $S$ 可逆且 $SE_{jj}S^{-1}=E_{jj}+E_{ij}$。相似不变性与线性性给出 $f(E_{ij})=0$。各 $E_{ii}$ 两两相似，故 $f(E_{ii})=c$ 与 $i$ 无关。将任意 $X=(x_{ij})$ 按矩阵单位展开，便有 $f(X)=c\\sum_i x_{ii}=c\\operatorname{tr}(X)$。反之迹在相似变换下不变，故这些函数全部满足条件。",
+          "main_method_code": "matrix_unit_conjugation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "用 $S=I+E_{ij}$ 共轭 $E_{jj}$，得到 $E_{jj}+E_{ij}$。",
+              "method_code": "matrix_unit_conjugation"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "由相似不变和线性性推出所有非对角矩阵单位的函数值为零。"
+            },
+            {
+              "order": 3,
+              "role": "understand_problem",
+              "text": "利用对角矩阵单位两两相似，得到其函数值均为同一常数 $c$。",
+              "knowledge_point_code": "trace_and_similarity"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "按矩阵单位展开任意矩阵，得 $f=c\\operatorname{tr}$。"
+            },
+            {
+              "order": 5,
+              "role": "check",
+              "text": "迹确实在相似变换下不变。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "trace_and_similarity",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "matrix_units",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "matrix_unit_conjugation",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "classification_of_linear_functionals",
+          "similarity_invariance"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "题面 OCR 有散字，但映射定义和相似不变条件可完整恢复。原解析用缩放共轭并取 t≠1，在二元域上会失效；这里改用初等幂零共轭，适用于任意数域。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-003",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第3题；解析文件第135—168行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "linear_transformations"
+      },
+      "title": "矩阵空间右乘算子的秩",
+      "stem": "定义线性映射 $f:M_{m\\times n}(K)\\to M_{m\\times n}(K)$ 为 $f(X)=XA$，其中 $A$ 是秩为 $r$ 的 $n\\times n$ 矩阵。求 $f$ 的秩。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "numeric",
+          "answer_text": "$\\operatorname{rank}f=mr$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "按行分解右乘映射",
+          "solution_type": "teaching",
+          "text": "把 $X$ 的 $m$ 行写成 $x_1,\\ldots,x_m$。每一行在 $f$ 下独立变为 $x_iA$。行向量右乘 $A$ 的像空间就是 $A$ 的行空间，维数为 $r$；$m$ 个行位置彼此独立，因此总像空间是 $m$ 个 $r$ 维空间的直和，维数为 $mr$。",
+          "main_method_code": "rowwise_matrix_decomposition",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把矩阵 $X$ 按 $m$ 个行向量分解。",
+              "method_code": "rowwise_matrix_decomposition"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "每行的映射 $x\\mapsto xA$ 的像维数等于 $\\operatorname{rank}A=r$。",
+              "knowledge_point_code": "image_and_rank"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "对 $m$ 个相互独立的行位置求维数和，得到 $mr$。",
+              "method_code": "dimension_counting"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "right_multiplication_operator",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "image_and_rank",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "matrix_space",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "rowwise_matrix_decomposition",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "dimension_counting",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 7,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "linear_map_on_matrix_space",
+          "independent_rows"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-004",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第4题；解析文件第169—240行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "jordan_canonical_form"
+      },
+      "title": "双边乘法算子的若尔当标准型",
+      "stem": "设\n$$A=\\begin{pmatrix}2024&1\\\\0&2024\\end{pmatrix}.$$\n在 $M_2(K)$ 上定义线性映射 $\\varphi(X)=AXA$。求 $\\varphi$ 的矩阵的若尔当标准型。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "在特征为 $0$ 的数域上，\n$$J_3(2024^2)\\oplus J_1(2024^2).$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "计算幂零部分的秩序列",
+          "solution_type": "teaching",
+          "text": "令 $\\lambda=2024$、$A=\\lambda I+N$，其中 $N=E_{12}$。$\\varphi$ 的唯一特征值为 $\\lambda^2$。令 $T=\\varphi-\\lambda^2I$。在基 $E_{11},E_{12},E_{21},E_{22}$ 下直接计算可得 $\\operatorname{rank}T=2$、$\\operatorname{rank}T^2=1$ 且 $T^3=0$。四维幂零算子的这些秩数据唯一对应块大小 $3,1$，故结论为 $J_3(\\lambda^2)\\oplus J_1(\\lambda^2)$。",
+          "main_method_code": "nilpotent_rank_sequence",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "写 $A=\\lambda I+N$，并从 $\\varphi$ 中减去唯一特征值 $\\lambda^2$。",
+              "knowledge_point_code": "nilpotent_operator"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "在矩阵单位基下计算 $T(E_{ij})$。"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "得到 $r(T)=2$、$r(T^2)=1$、$T^3=0$。",
+              "method_code": "nilpotent_rank_sequence"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "幂零块为 $J_3(0)\\oplus J_1(0)$，平移后即为 $J_3(2024^2)\\oplus J_1(2024^2)$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "jordan_canonical_form",
+          "role": "primary",
+          "confidence": 0.96
+        },
+        {
+          "code": "nilpotent_operator",
+          "role": "primary",
+          "confidence": 0.96
+        },
+        {
+          "code": "matrix_units",
+          "role": "secondary",
+          "confidence": 0.94
+        }
+      ],
+      "methods": [
+        {
+          "code": "nilpotent_rank_sequence",
+          "role": "primary",
+          "confidence": 0.96
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "two_sided_matrix_multiplication",
+          "single_eigenvalue",
+          "nilpotent_rank_profile"
+        ],
+        "curation_confidence": 0.82,
+        "ocr_quality": "ambiguous",
+        "ocr_note": "原题 OCR 将映射公式识别为“J×J”，与给出的 A 和求若尔当形不相容；按最可能的原题恢复为 φ(X)=AXA。需对照原卷图像人工确认后才能 active。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-005",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第5题；解析文件第241—286行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "finite_fields"
+      },
+      "title": "元素取自 1、2、3 的三阶行列式计数",
+      "stem": "所有元素均从 $\\{1,2,3\\}$ 中选取的三阶行列式中，行列式值不是 $3$ 的倍数的共有多少个？",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "numeric",
+          "answer_text": "$11232$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "模 3 转化为可逆矩阵计数",
+          "solution_type": "teaching",
+          "text": "把每个元素模 $3$ 化简，$1,2,3$ 分别对应 $\\mathbb F_3$ 的 $1,2,0$，故所有题设矩阵与 $M_3(\\mathbb F_3)$ 一一对应。行列式不是 $3$ 的倍数当且仅当模 $3$ 后可逆。依次选三列：第一列有 $3^3-1$ 种，第二列有 $3^3-3$ 种，第三列有 $3^3-3^2$ 种，因此总数为 $26\\cdot24\\cdot18=11232$。",
+          "main_method_code": "reduction_modulo_prime",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "将整数矩阵逐项模 $3$，得到 $\\mathbb F_3$ 上的任意三阶矩阵。",
+              "method_code": "reduction_modulo_prime"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "原行列式不被 $3$ 整除等价于模 $3$ 矩阵可逆。",
+              "knowledge_point_code": "finite_field_matrix"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "逐列计数线性无关的有序三元组，得 $(27-1)(27-3)(27-9)$。",
+              "method_code": "count_ordered_independent_vectors"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "乘积为 $11232$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "finite_field_matrix",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "general_linear_group_order",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "reduction_modulo_prime",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "count_ordered_independent_vectors",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "determinant_divisibility",
+          "finite_field_counting"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-006",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第6题；解析文件第287—370行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "vector_spaces"
+      },
+      "title": "由线性映射的任意指定性刻画一组基",
+      "stem": "设 $V,W$ 是数域 $K$ 上的非零向量空间，其中 $V$ 有限维。若 $\\alpha_1,\\ldots,\\alpha_n\\in V$ 满足：对任意 $\\beta_1,\\ldots,\\beta_n\\in W$，存在唯一线性映射 $\\varphi:V\\to W$ 使 $\\varphi(\\alpha_i)=\\beta_i$，证明 $\\alpha_1,\\ldots,\\alpha_n$ 是 $V$ 的一组基。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$\\alpha_1,\\ldots,\\alpha_n$ 既张成 $V$ 又线性无关，因此是 $V$ 的一组基。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "分别用唯一性和存在性证明张成与无关",
+          "solution_type": "teaching",
+          "text": "令 $U=\\operatorname{span}\\{\\alpha_i\\}$。若 $U\\ne V$，有限维性保证存在非零线性泛函 $g:V\\to K$ 且 $g|_U=0$。取 $0\\ne w\\in W$，则 $v\\mapsto g(v)w$ 与零映射都把各 $\\alpha_i$ 送到零，违背唯一性，故 $U=V$。若有非平凡关系 $\\sum c_i\\alpha_i=0$，取 $c_j\\ne0$ 并指定 $\\beta_j=w\\ne0$、其余 $\\beta_i=0$，则任何满足指定值的线性映射都会给出 $0=\\sum c_i\\beta_i=c_jw\\ne0$，违背存在性。因此这组向量线性无关。",
+          "main_method_code": "prove_spanning_and_independence",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "反设不张成，构造在其张成空间上为零的非零线性泛函。",
+              "method_code": "prove_spanning_and_independence"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "由零映射与非零映射具有相同指定值，和唯一性矛盾，故张成 $V$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "反设有非平凡线性关系，指定一个对应的像为非零而其余为零。"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "该指定与线性关系矛盾，故线性无关，进而为基。",
+              "knowledge_point_code": "basis_and_linear_maps"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "basis_and_linear_maps",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "vector_subspace",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "prove_spanning_and_independence",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 16,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "universal_mapping_property",
+          "existence_and_uniqueness",
+          "basis_characterization"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-007",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第7题；解析文件第371—432行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "matrix_spaces"
+      },
+      "title": "所有置换矩阵张成空间的维数",
+      "stem": "设 $V$ 是 $M_n(\\mathbb C)$ 中所有 $n$ 阶置换矩阵张成的子空间。求 $\\dim V$。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\dim V=(n-1)^2+1$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "刻画公共行列和约束并构造基",
+          "solution_type": "teaching",
+          "text": "置换矩阵的所有行和、列和都为 $1$，故其线性组合满足所有行和相等且所有列和相等。记此空间为 $U$。在 $\\mathbb C$ 上，行和相等给出 $n-1$ 个独立约束，列和相等再给出 $n-1$ 个独立约束，所以 $\\dim U=n^2-2(n-1)=(n-1)^2+1$。反过来，$U$ 由 $I$ 和 $F_{ij}=E_{ij}-E_{in}-E_{nj}+E_{nn}$（$i,j<n$）张成。$F_{11}=I-P_{(1n)}$ 是两个置换矩阵之差；通过左右乘置换矩阵可得到所有 $F_{ij}$，故这些向量都在置换矩阵的张成空间内。因此 $V=U$。",
+          "main_method_code": "constraint_space_dimension",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "从置换矩阵得到“所有行和相等、所有列和相等”的必要条件。",
+              "knowledge_point_code": "row_column_sum_constraints"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "计算该约束空间维数为 $n^2-2(n-1)$。",
+              "method_code": "constraint_space_dimension"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "构造零行和、零列和的基向量 $F_{ij}$。",
+              "method_code": "permutation_difference_construction"
+            },
+            {
+              "order": 4,
+              "role": "check",
+              "text": "将每个 $F_{ij}$ 表为置换矩阵之差的左右置换，证明充分性。"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "$V=U$ 且 $\\dim V=(n-1)^2+1$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "span_of_permutation_matrices",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "row_column_sum_constraints",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "permutation_matrix",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "constraint_space_dimension",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "permutation_difference_construction",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 22,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "matrix_span",
+          "linear_constraints",
+          "constructive_reverse_inclusion"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-008",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第8题；解析文件第433—558行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "bilinear_forms"
+      },
+      "title": "惯性指数为 1 与 n−1 的双线性型",
+      "stem": "设 $f$ 是 $n$ 维实向量空间 $V$ 上的实对称双线性型，正、负惯性指数分别为 $1,n-1$。\n\n(1) 若 $f(\\alpha,\\alpha)>0$ 且 $f(\\alpha,\\beta)=0$，证明 $f(\\beta,\\beta)\\le0$，且等号成立当且仅当 $\\beta=0$。\n\n(2) 若 $f(\\alpha,\\alpha)=f(\\alpha,\\beta)=f(\\beta,\\beta)=0$，证明 $\\alpha,\\beta$ 线性相关。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "(1) $f|_{\\alpha^\\perp}$ 负定，故结论成立；(2) 在惯性标准形下用 Cauchy–Schwarz 等号条件可得 $\\beta=t\\alpha$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "正交补上的惯性与 Cauchy–Schwarz 等号条件",
+          "solution_type": "teaching",
+          "text": "(1) $\\alpha$ 张成正定的一维子空间，而整个型只有一个正方向。又 $f(\\alpha,\\alpha)\\ne0$，故 $V=\\operatorname{span}\\{\\alpha\\}\\oplus\\alpha^\\perp$，限制 $f|_{\\alpha^\\perp}$ 的惯性指数为 $(0,n-1)$，即负定。因 $\\beta\\in\\alpha^\\perp$，得到严格结论。\n\n(2) 取标准坐标使 $f(x,y)=x_1y_1-x'\\cdot y'$。若任一向量为零，结论显然。否则，迷向条件给出 $|a_1|=\\|a'\\|$、$|b_1|=\\|b'\\|$，正交条件给出 $a_1b_1=a'\\cdot b'$。这使 Cauchy–Schwarz 取等，故 $b'=ta'$。再代回可得 $b_1=ta_1$，于是 $\\beta=t\\alpha$。",
+          "main_method_code": "orthogonal_complement_inertia",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "把 $V$ 分解为正向量张成空间与其正交补，并由惯性指数判断正交补负定。",
+              "method_code": "orthogonal_complement_inertia"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "第一问由 $\\beta\\in\\alpha^\\perp$ 立即得到。"
+            },
+            {
+              "order": 3,
+              "role": "transform",
+              "text": "第二问把型化为 $x_1y_1-x'\\cdot y'$ 的标准形。",
+              "knowledge_point_code": "inertia_index"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "三项为零迫使欧氏 Cauchy–Schwarz 不等式取等。",
+              "method_code": "cauchy_schwarz_equality"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "空间部分及首坐标使用同一比例，故两向量线性相关。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "symmetric_bilinear_form",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "inertia_index",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "isotropic_vectors",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "orthogonal_complement_inertia",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "cauchy_schwarz_equality",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 24,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "lorentzian_signature",
+          "orthogonal_complement",
+          "null_orthogonal_vectors"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-aa-009",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年高等代数试卷",
+        "reference": "第9题；解析文件第559—617行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "positive_definite_matrices"
+      },
+      "title": "通过特征值配对构造正交矩阵",
+      "stem": "设 $A$ 为 $n$ 阶实可逆矩阵，$H$ 为 $n$ 阶实对称正定矩阵。证明：存在 $n$ 阶正交矩阵 $P$，使\n$$(H^T+I)A^TA(I+H)-P^TA^TAP$$\n为实对称正定矩阵。",
+      "question_type": "proof",
+      "difficulty_level": 5,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "结论成立。令 $M=A^TA$、$C=I+H$。由 $C^2>I$ 得 $M^{1/2}C^2M^{1/2}>M$，从而 $CMC$ 的各有序特征值严格大于 $M$ 的对应特征值；将两组正交特征基按同序配对即可构造所需 $P$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Loewner 序比较特征值后按谱配对",
+          "solution_type": "teaching",
+          "text": "令 $M=A^TA>0$、$C=I+H>0$，则第一项为 $B=CMC$。矩阵 $B$ 与 $M^{1/2}C^2M^{1/2}$ 有相同特征值。因为 $C^2-I=2H+H^2>0$，所以 $M^{1/2}C^2M^{1/2}>M$。按从小到大排列，记 $B$ 和 $M$ 的特征值为 $\\lambda_i$、$\\mu_i$，由实对称矩阵特征值的严格单调性得 $\\lambda_i>\\mu_i$。取正交矩阵 $U,V$ 使 $B=U\\operatorname{diag}(\\lambda_i)U^T$、$M=V\\operatorname{diag}(\\mu_i)V^T$，令 $P=VU^T$。则 $P$ 正交，且 $P^TMP=U\\operatorname{diag}(\\mu_i)U^T$，所以 $B-P^TMP=U\\operatorname{diag}(\\lambda_i-\\mu_i)U^T>0$。",
+          "main_method_code": "loewner_eigenvalue_matching",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "记 $M=A^TA$、$C=I+H$，把第一项写为 $B=CMC$。",
+              "knowledge_point_code": "positive_definite_matrix"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "利用 $C^2-I=2H+H^2>0$ 得 $M^{1/2}C^2M^{1/2}>M$。",
+              "knowledge_point_code": "loewner_order"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "由严格特征值单调性，$B$ 的第 $i$ 个有序特征值严格大于 $M$ 的对应特征值。",
+              "knowledge_point_code": "eigenvalue_monotonicity"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "按相同次序对齐 $B$ 与 $M$ 的正交特征基，令 $P=VU^T$。",
+              "method_code": "loewner_eigenvalue_matching"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "差矩阵在 $U$ 基下为正对角矩阵 $\\operatorname{diag}(\\lambda_i-\\mu_i)$，故实对称正定。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "positive_definite_matrix",
+          "role": "primary",
+          "confidence": 0.93
+        },
+        {
+          "code": "loewner_order",
+          "role": "primary",
+          "confidence": 0.93
+        },
+        {
+          "code": "eigenvalue_monotonicity",
+          "role": "primary",
+          "confidence": 0.93
+        },
+        {
+          "code": "spectral_theorem",
+          "role": "secondary",
+          "confidence": 0.93
+        }
+      ],
+      "methods": [
+        {
+          "code": "loewner_eigenvalue_matching",
+          "role": "primary",
+          "confidence": 0.93
+        },
+        {
+          "code": "orthogonal_diagonalization",
+          "role": "secondary",
+          "confidence": 0.93
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 28,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "positive_definite_congruence",
+          "eigenvalue_matching",
+          "existence_of_orthogonal_matrix"
+        ],
+        "curation_confidence": 0.78,
+        "ocr_quality": "ambiguous",
+        "ocr_note": "OCR 题面末尾仅有“为实对称矩阵”，这会使结论对任意 P 都平凡成立，也不需要 A 可逆或 H 正定。结合全部条件和考研题难度，原题极可能为“实对称正定矩阵”。原附解析把它按平凡版本处理，不能采信；本条按“正定”重建并独立给出非平凡证明，必须对照原卷图像复核。"
+      }
+    }
+  ]
+}

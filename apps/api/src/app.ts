@@ -5,13 +5,19 @@ import Fastify, {
   type FastifyRequest
 } from "fastify"
 import { timingSafeEqual } from "node:crypto"
-import { ZodError, type ZodType } from "zod"
+import { z, ZodError, type ZodType } from "zod"
 import type { LocalAgentRuntime } from "./agent/local-agent.js"
 import type { AppConfig } from "./config.js"
+import type { QuestionIngestionService } from "./ingestion/question-ingestion.js"
+import {
+  importChunkRequestSchema,
+  reviewDecisionSchema
+} from "./ingestion/contracts.js"
 import {
   learningRequestSchema,
   queryPlanSchema,
   stateDeltaSchema,
+  toolNames,
   toolResultSchema
 } from "./contracts.js"
 import { AppError } from "./errors.js"
@@ -22,7 +28,24 @@ export interface AppDependencies {
   config: AppConfig
   agentRuntime?: LocalAgentRuntime
   toolExecution?: ToolExecutionPort
+  sqliteToolExecution?: ToolExecutionPort
+  pgsqlToolExecution?: ToolExecutionPort
+  questionIngestion?: QuestionIngestionService
 }
+
+const reviewQueueQuerySchema = z
+  .object({
+    status: z.enum(["pending", "needs_fix"]).default("pending"),
+    limit: z.coerce.number().int().min(1).max(100).default(20),
+    cursor: z.string().trim().min(1).max(1_000).optional()
+  })
+  .strict()
+
+const reviewParamsSchema = z
+  .object({
+    reviewItemId: z.string().trim().min(1).max(128)
+  })
+  .strict()
 
 function parseWith<T>(schema: ZodType<T>, value: unknown): T {
   const parsed = schema.safeParse(value)
@@ -72,6 +95,23 @@ async function requireToolAuthentication(
   }
 }
 
+async function readPortHealth(
+  port: ToolExecutionPort | undefined,
+  readyDetail: string
+): Promise<{ ready: boolean; detail: string } | undefined> {
+  if (!port) return undefined
+  try {
+    return (
+      (await port.health?.()) ?? { ready: true, detail: readyDetail }
+    )
+  } catch (error) {
+    return {
+      ready: false,
+      detail: error instanceof Error ? error.message : `${readyDetail}健康检查失败`
+    }
+  }
+}
+
 function registerHealthRoutes(
   app: FastifyInstance,
   dependencies: AppDependencies
@@ -85,10 +125,96 @@ function registerHealthRoutes(
     const modelHealth = dependencies.agentRuntime
       ? await dependencies.agentRuntime.modelHealth()
       : { ready: false, detail: "本地 Agent Runtime 未装配" }
+    let toolHealth = {
+      ready: dependencies.toolExecution !== undefined,
+      detail:
+        dependencies.toolExecution !== undefined
+          ? "数据库工具端口已装配"
+          : "数据库工具端口未装配"
+    }
+    if (dependencies.toolExecution?.health) {
+      try {
+        toolHealth = await dependencies.toolExecution.health()
+      } catch (error) {
+        toolHealth = {
+          ready: false,
+          detail:
+            error instanceof Error
+              ? error.message
+              : "数据库工具端口健康检查失败"
+        }
+      }
+    }
+    const missingCapabilities = dependencies.toolExecution
+      ? toolNames.filter(
+          capability =>
+            !dependencies.toolExecution?.capabilities.has(capability)
+        )
+      : [...toolNames]
+    const toolExecutionReady =
+      toolHealth.ready && missingCapabilities.length === 0
+    const inferredSQLitePort =
+      dependencies.sqliteToolExecution ??
+      (dependencies.toolExecution?.capabilities.has("state.query_user_snapshot")
+        ? dependencies.toolExecution
+        : undefined)
+    const inferredPgSQLPort =
+      dependencies.pgsqlToolExecution ??
+      (dependencies.toolExecution?.capabilities.has("asset.get_question_detail")
+        ? dependencies.toolExecution
+        : undefined)
+    const sqliteHealth = await readPortHealth(
+      inferredSQLitePort,
+      "SQLite 状态服务已装配"
+    )
+    const pgsqlHealth = await readPortHealth(
+      inferredPgSQLPort,
+      "PostgreSQL 资产库已装配"
+    )
+    let ingestionHealth = {
+      ready: dependencies.questionIngestion !== undefined,
+      detail:
+        dependencies.questionIngestion !== undefined
+          ? "题目摄取处理器已装配"
+          : "题目摄取处理器未装配"
+    }
+    if (dependencies.questionIngestion) {
+      try {
+        ingestionHealth = await dependencies.questionIngestion.health()
+      } catch (error) {
+        ingestionHealth = {
+          ready: false,
+          detail:
+            error instanceof Error
+              ? error.message
+              : "题目摄取处理器健康检查失败"
+        }
+      }
+    }
     const dependencyStatus = {
       local_agent_runtime: dependencies.agentRuntime ? "ready" : "unconfigured",
       model_api: modelHealth.ready ? "ready" : modelHealth.detail,
-      tool_execution: dependencies.toolExecution ? "ready" : "unconfigured",
+      sqlite_state: inferredSQLitePort
+        ? sqliteHealth?.ready
+          ? "ready"
+          : sqliteHealth?.detail
+        : "unconfigured",
+      pgsql_asset: inferredPgSQLPort
+        ? pgsqlHealth?.ready
+          ? "ready"
+          : pgsqlHealth?.detail
+        : "unconfigured",
+      tool_execution:
+        dependencies.toolExecution === undefined
+          ? "unconfigured"
+          : missingCapabilities.length > 0
+            ? `partial: missing ${missingCapabilities.join(", ")}`
+            : toolHealth.ready
+              ? "ready"
+              : toolHealth.detail,
+      question_ingestion: ingestionHealth.ready
+        ? "ready"
+        : ingestionHealth.detail,
       tool_auth:
         dependencies.config.toolToken !== undefined
           ? "ready"
@@ -99,7 +225,8 @@ function registerHealthRoutes(
     const ready =
       dependencies.agentRuntime !== undefined &&
       modelHealth.ready &&
-      dependencies.toolExecution !== undefined
+      toolExecutionReady &&
+      ingestionHealth.ready
 
     return reply.code(ready ? 200 : 503).send({
       status: ready ? "ready" : "degraded",
@@ -144,6 +271,64 @@ function registerValidationRoutes(
       disposition: "pending"
     }
   })
+}
+
+function registerQuestionIngestionRoutes(
+  app: FastifyInstance,
+  dependencies: AppDependencies
+): void {
+  app.post("/internal/question-ingestion/import-chunk", async request => {
+    await requireToolAuthentication(request, dependencies.config)
+    if (!dependencies.questionIngestion) {
+      throw new AppError(
+        "DEPENDENCY_UNAVAILABLE",
+        "PgSQL 题目摄取端口尚未接入",
+        503
+      )
+    }
+    const input = parseWith(importChunkRequestSchema, request.body)
+    return dependencies.questionIngestion.importChunk(input, {
+      requestId: request.id
+    })
+  })
+
+  app.get("/internal/question-ingestion/review-queue", async request => {
+    await requireToolAuthentication(request, dependencies.config)
+    if (!dependencies.questionIngestion) {
+      throw new AppError(
+        "DEPENDENCY_UNAVAILABLE",
+        "PgSQL 人工复核端口尚未接入",
+        503
+      )
+    }
+    const query = parseWith(reviewQueueQuerySchema, request.query)
+    return dependencies.questionIngestion.listReviewQueue({
+      status: query.status,
+      limit: query.limit,
+      ...(query.cursor ? { cursor: query.cursor } : {})
+    })
+  })
+
+  app.post(
+    "/internal/question-ingestion/reviews/:reviewItemId",
+    async request => {
+      await requireToolAuthentication(request, dependencies.config)
+      if (!dependencies.questionIngestion) {
+        throw new AppError(
+          "DEPENDENCY_UNAVAILABLE",
+          "PgSQL 人工复核端口尚未接入",
+          503
+        )
+      }
+      const params = parseWith(reviewParamsSchema, request.params)
+      const decision = parseWith(reviewDecisionSchema, request.body)
+      return dependencies.questionIngestion.review(
+        params.reviewItemId,
+        decision,
+        request.id
+      )
+    }
+  )
 }
 
 function registerToolRoutes(
@@ -282,6 +467,7 @@ export async function createApp(
   registerHealthRoutes(app, dependencies)
   registerAgentRoutes(app, dependencies)
   registerValidationRoutes(app, dependencies)
+  registerQuestionIngestionRoutes(app, dependencies)
   registerToolRoutes(app, dependencies)
   registerErrorHandler(app)
 

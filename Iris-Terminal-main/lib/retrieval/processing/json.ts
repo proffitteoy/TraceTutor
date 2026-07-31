@@ -2,7 +2,7 @@ import { FileItemChunk } from "@/types"
 import { encode } from "gpt-tokenizer"
 import { JSONLoader } from "langchain/document_loaders/fs/json"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
-import { CHUNK_OVERLAP, CHUNK_SIZE } from "."
+import { CHUNK_OVERLAP, CHUNK_SIZE } from "./constants"
 
 export const processJSON = async (json: Blob): Promise<FileItemChunk[]> => {
   const loader = new JSONLoader(json)

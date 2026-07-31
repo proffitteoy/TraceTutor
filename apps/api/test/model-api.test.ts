@@ -181,7 +181,8 @@ describe("OpenAICompatibleModel", () => {
       modelApiBaseUrl: `${modelBaseUrl}/v1`,
       modelName: "test-model",
       modelResponseFormat: "json_schema",
-      modelTimeoutMs: 2_000
+      modelTimeoutMs: 2_000,
+      sqliteTimeoutMs: 1_000
     }
     const api = await createApp({
       config,

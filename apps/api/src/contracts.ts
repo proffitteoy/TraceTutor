@@ -105,7 +105,16 @@ export const learningResponseSchema = z
       .object({
         source: z.enum(["local_agent", "degraded"]),
         request_id: z.string().min(1),
-        workflow_run_id: z.string().min(1).optional()
+        workflow_run_id: z.string().min(1).optional(),
+        question_deposit: z
+          .object({
+            status: z.enum(["draft_created", "duplicate", "failed"]),
+            reason: z.string().min(1),
+            question_id: z.string().min(1).optional(),
+            review_item_id: z.string().min(1).optional()
+          })
+          .strict()
+          .optional()
       })
       .strict()
   })

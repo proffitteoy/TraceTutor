@@ -9,6 +9,12 @@ const optionalSecret = (minimumLength: number) =>
     z.string().min(minimumLength).optional()
   )
 
+const optionalUrl = z.preprocess(
+  value =>
+    typeof value === "string" && value.trim() === "" ? undefined : value,
+  z.url().optional()
+)
+
 const configSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
@@ -31,6 +37,27 @@ const configSchema = z.object({
     .min(1_000)
     .max(300_000)
     .default(120_000),
+  TRACE_TUTOR_SQLITE_SERVICE_URL: optionalUrl,
+  TRACE_TUTOR_SQLITE_SERVICE_TOKEN: optionalSecret(16),
+  TRACE_TUTOR_SQLITE_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(100)
+    .max(60_000)
+    .default(5_000),
+  TRACE_TUTOR_PGSQL_URL: optionalSecret(1),
+  TRACE_TUTOR_PGSQL_MAX_CONNECTIONS: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(50)
+    .default(10),
+  TRACE_TUTOR_PGSQL_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(100)
+    .max(60_000)
+    .default(5_000),
   TRACE_TUTOR_TOOL_TOKEN: optionalSecret(16)
 }).superRefine((config, context) => {
   if (
@@ -41,6 +68,18 @@ const configSchema = z.object({
       code: "custom",
       path: ["TRACE_TUTOR_TOOL_TOKEN"],
       message: "production 环境必须配置 TRACE_TUTOR_TOOL_TOKEN"
+    })
+  }
+  if (
+    config.NODE_ENV === "production" &&
+    config.TRACE_TUTOR_SQLITE_SERVICE_URL !== undefined &&
+    config.TRACE_TUTOR_SQLITE_SERVICE_TOKEN === undefined
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["TRACE_TUTOR_SQLITE_SERVICE_TOKEN"],
+      message:
+        "production 环境配置 SQLite 服务地址时必须同时配置内部 service token"
     })
   }
 })
@@ -56,6 +95,12 @@ export interface AppConfig {
   modelName: string
   modelResponseFormat: "json_schema" | "json_object"
   modelTimeoutMs: number
+  sqliteServiceUrl?: string
+  sqliteServiceToken?: string
+  sqliteTimeoutMs: number
+  pgsqlUrl?: string
+  pgsqlMaxConnections?: number
+  pgsqlTimeoutMs?: number
   toolToken?: string
 }
 
@@ -80,6 +125,23 @@ export function loadConfig(
     modelName: parsed.MODEL_NAME,
     modelResponseFormat: parsed.MODEL_RESPONSE_FORMAT,
     modelTimeoutMs: parsed.MODEL_TIMEOUT_MS,
+    ...(parsed.TRACE_TUTOR_SQLITE_SERVICE_URL
+      ? {
+          sqliteServiceUrl: parsed.TRACE_TUTOR_SQLITE_SERVICE_URL.replace(
+            /\/$/,
+            ""
+          )
+        }
+      : {}),
+    ...(parsed.TRACE_TUTOR_SQLITE_SERVICE_TOKEN
+      ? { sqliteServiceToken: parsed.TRACE_TUTOR_SQLITE_SERVICE_TOKEN }
+      : {}),
+    sqliteTimeoutMs: parsed.TRACE_TUTOR_SQLITE_TIMEOUT_MS,
+    ...(parsed.TRACE_TUTOR_PGSQL_URL
+      ? { pgsqlUrl: parsed.TRACE_TUTOR_PGSQL_URL }
+      : {}),
+    pgsqlMaxConnections: parsed.TRACE_TUTOR_PGSQL_MAX_CONNECTIONS,
+    pgsqlTimeoutMs: parsed.TRACE_TUTOR_PGSQL_TIMEOUT_MS,
     ...(parsed.TRACE_TUTOR_TOOL_TOKEN
       ? { toolToken: parsed.TRACE_TUTOR_TOOL_TOKEN }
       : {})

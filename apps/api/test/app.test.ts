@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest"
 import type { FastifyInstance } from "fastify"
+import { LocalAgentRuntime } from "../src/agent/local-agent.js"
+import type { LocalModel } from "../src/agent/local-model.js"
 import { createApp } from "../src/app.js"
 import type { AppConfig } from "../src/config.js"
+import type { ToolExecutionPort } from "../src/ports.js"
 
 const config: AppConfig = {
   nodeEnv: "test",
@@ -12,7 +15,8 @@ const config: AppConfig = {
   modelApiBaseUrl: "http://127.0.0.1:11434/v1",
   modelName: "test-model",
   modelResponseFormat: "json_schema",
-  modelTimeoutMs: 1_000
+  modelTimeoutMs: 1_000,
+  sqliteTimeoutMs: 1_000
 }
 
 let app: FastifyInstance | undefined
@@ -37,6 +41,44 @@ describe("health routes", () => {
       dependencies: {
         local_agent_runtime: "unconfigured",
         tool_execution: "unconfigured"
+      }
+    })
+  })
+
+  it("SQLite 已就绪但 PgSQL 工具缺失时仍标记为部分可用", async () => {
+    const model: LocalModel = {
+      async health() {
+        return { ready: true, detail: "test model ready" }
+      },
+      async generateJson() {
+        throw new Error("not used")
+      }
+    }
+    const sqliteOnlyPort: ToolExecutionPort = {
+      capabilities: new Set(["state.query_user_snapshot"]),
+      async health() {
+        return { ready: true, detail: "SQLite state service ready" }
+      },
+      async execute() {
+        throw new Error("not used")
+      }
+    }
+    app = await createApp({
+      config,
+      agentRuntime: new LocalAgentRuntime(model, sqliteOnlyPort),
+      toolExecution: sqliteOnlyPort
+    })
+
+    const ready = await app.inject({ method: "GET", url: "/health/ready" })
+
+    expect(ready.statusCode).toBe(503)
+    expect(ready.json()).toMatchObject({
+      status: "degraded",
+      dependencies: {
+        local_agent_runtime: "ready",
+        model_api: "ready",
+        sqlite_state: "ready",
+        tool_execution: expect.stringContaining("asset.get_question_detail")
       }
     })
   })

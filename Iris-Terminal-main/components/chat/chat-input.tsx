@@ -13,7 +13,14 @@ import {
   IconSend
 } from "@tabler/icons-react"
 import Image from "next/image"
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from "react"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { Input } from "../ui/input"
@@ -104,6 +111,7 @@ export const ChatInput: FC<ChatInputProps> = () => {
   } = useChatHistoryHandler()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const summaryLoadStartedRef = useRef(false)
 
   const chatStatus = selectedChat?.status || "active"
   const isChatLocked = selectedChat !== null && chatStatus !== "active"
@@ -117,7 +125,10 @@ export const ChatInput: FC<ChatInputProps> = () => {
     return () => clearTimeout(timer)
   }, [selectedPreset, selectedAssistant, handleFocusChatInput])
 
-  useEffect(() => {
+  const loadSummaryKeywordSources = useCallback(() => {
+    if (summaryLoadStartedRef.current) return
+    summaryLoadStartedRef.current = true
+
     getChatSummariesByWorkspaceId(undefined, false, 120)
       .then((summaries: ChatSummaryDetail[]) => {
         const normalized = summaries
@@ -343,6 +354,7 @@ export const ChatInput: FC<ChatInputProps> = () => {
               : "\u8f93\u5165\u6d88\u606f\uff0c\u652f\u6301 / \u6307\u4ee4\u3001@ \u52a9\u624b\u3001+ \u6587\u4ef6"
           }
           onValueChange={handleInputChange}
+          onFocus={loadSummaryKeywordSources}
           value={userInput}
           minRows={1}
           maxRows={18}

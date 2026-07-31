@@ -1,0 +1,941 @@
+{
+  "schema_version": "1.0",
+  "subjects": [
+    {
+      "code": "advanced_algebra",
+      "name": "高等代数"
+    },
+    {
+      "code": "mathematical_analysis",
+      "name": "数学分析"
+    },
+    {
+      "code": "analytic_geometry",
+      "name": "解析几何"
+    }
+  ],
+  "knowledge_points": [
+    {
+      "code": "elementary_row_operations",
+      "name": "矩阵的初等行变换",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "inverse_matrix",
+      "name": "逆矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "left_inverse_and_invertibility",
+      "name": "左逆与方阵可逆性",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "permutation_matrix",
+      "name": "置换矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "vector_subspace",
+      "name": "向量子空间",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "basis_extension_theorem",
+      "name": "基扩充定理",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "hyperplane",
+      "name": "余维一子空间与超平面",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "linear_transformation",
+      "name": "线性变换",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "matrix_space",
+      "name": "矩阵空间",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "image_and_rank",
+      "name": "线性映射的像与秩",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "real_symmetric_matrix",
+      "name": "实对称矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "positive_semidefinite_matrix",
+      "name": "半正定矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "spectral_theorem",
+      "name": "实对称矩阵谱定理",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "positive_semidefinite_square_root",
+      "name": "半正定矩阵的平方根",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "generalized_inverse",
+      "name": "矩阵的广义逆",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "rank_normal_form",
+      "name": "矩阵的秩标准形",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "block_matrix",
+      "name": "分块矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "polynomial_divisibility",
+      "name": "多项式整除",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "roots_of_unity",
+      "name": "单位根",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "polynomial_root_count",
+      "name": "多项式次数与根的个数",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "point_line_reflection",
+      "name": "点关于空间直线的对称",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "distance_between_skew_lines",
+      "name": "异面直线的距离",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "implicit_curve_tangent",
+      "name": "隐式平面曲线的切线",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "cylindrical_surface",
+      "name": "柱面及其母线",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "line_parallel_to_plane",
+      "name": "直线平行于平面",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "ruled_surface",
+      "name": "直纹面的参数表示",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "surface_of_revolution",
+      "name": "旋转曲面",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "quadric_surface",
+      "name": "二次曲面分类",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "principal_axes_of_quadric",
+      "name": "二次曲面的主轴变换",
+      "subject_code": "analytic_geometry"
+    },
+    {
+      "code": "sequence_limit",
+      "name": "数列极限",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "exponential_indeterminate_form",
+      "name": "幂指型未定式",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "indefinite_integral",
+      "name": "不定积分",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "function_limit",
+      "name": "函数极限",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "telescoping_identity",
+      "name": "望远镜恒等式",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "plane_section_of_quadric",
+      "name": "二次曲面的平面截线",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "surface_area_element",
+      "name": "曲面面积元素",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "line_integral",
+      "name": "曲线积分",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "winding_number",
+      "name": "闭曲线绕点的环绕数",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "improper_integral_convergence",
+      "name": "反常积分敛散性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "numerical_series_convergence",
+      "name": "数项级数敛散性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "taylor_expansion",
+      "name": "Taylor 展开",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "matrix_powers",
+      "name": "矩阵的幂",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "eigenspace_decomposition",
+      "name": "特征子空间分解",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "trace_and_similarity",
+      "name": "矩阵的迹与相似不变量",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "matrix_units",
+      "name": "矩阵单位",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "right_multiplication_operator",
+      "name": "矩阵空间上的右乘算子",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "jordan_canonical_form",
+      "name": "若尔当标准型",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "nilpotent_operator",
+      "name": "幂零线性算子",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "finite_field_matrix",
+      "name": "有限域上的矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "general_linear_group_order",
+      "name": "有限域上一般线性群的阶",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "basis_and_linear_maps",
+      "name": "基与线性映射的存在唯一性",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "span_of_permutation_matrices",
+      "name": "置换矩阵张成的空间",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "row_column_sum_constraints",
+      "name": "矩阵行和与列和约束",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "symmetric_bilinear_form",
+      "name": "实对称双线性型",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "inertia_index",
+      "name": "二次型的惯性指数",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "isotropic_vectors",
+      "name": "双线性型的迷向向量",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "positive_definite_matrix",
+      "name": "实对称正定矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "loewner_order",
+      "name": "实对称矩阵的 Loewner 序",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "eigenvalue_monotonicity",
+      "name": "实对称矩阵特征值的单调性",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "uniform_convergence_of_function_series",
+      "name": "函数项级数的一致收敛",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "beta_gamma_functions",
+      "name": "Beta 函数与 Gamma 函数",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "surface_area",
+      "name": "曲面面积",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "green_formula",
+      "name": "Green 公式",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "rolle_theorem",
+      "name": "Rolle 中值定理",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "termwise_differentiation",
+      "name": "函数项级数的逐项求导",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "riemann_zeta_function",
+      "name": "Riemann ζ 函数",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "tonelli_fubini_theorem",
+      "name": "Tonelli–Fubini 定理",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "oscillatory_improper_integral",
+      "name": "振荡型反常积分",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "dirichlet_integral",
+      "name": "Dirichlet 积分",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "power_series_and_differential_equations",
+      "name": "幂级数与微分方程",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "lyapunov_stability",
+      "name": "Lyapunov 稳定性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "lasalle_invariance_principle",
+      "name": "LaSalle 不变性原理",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "holomorphic_open_mapping",
+      "name": "全纯函数的开映射定理",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "zeros_of_holomorphic_function",
+      "name": "全纯函数零点的孤立性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "subharmonic_mean_inequality",
+      "name": "次调和函数的圆周平均不等式",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "lebesgue_integrability",
+      "name": "Lebesgue 可积性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "periodic_averaging",
+      "name": "周期函数的快速振荡平均",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "hermite_interpolation",
+      "name": "Hermite 插值与高重根条件",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "low_rank_matrix_update",
+      "name": "矩阵的低秩扰动",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "right_inverse",
+      "name": "右逆与满行秩",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "square_zero_matrix",
+      "name": "平方为零的矩阵",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "ldl_congruence_decomposition",
+      "name": "对称矩阵的 LDL^T 合同分解",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "leading_principal_minors",
+      "name": "顺序主子式",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "spectral_mapping_for_matrices",
+      "name": "矩阵有理函数的谱映射",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "polynomial_quotient_space",
+      "name": "多项式商空间",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "quadratic_norm_under_linear_constraint",
+      "name": "线性约束下的平方和",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "hadamard_determinant_bound",
+      "name": "Hadamard 行列式界",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "row_column_orthogonality",
+      "name": "矩阵行向量与列向量的正交性",
+      "subject_code": "advanced_algebra"
+    },
+    {
+      "code": "uniform_continuity",
+      "name": "一致连续性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "derivative_and_local_monotonicity",
+      "name": "导数符号与局部单调性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "newton_leibniz_conditions",
+      "name": "Newton–Leibniz 公式的适用条件",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "positive_series",
+      "name": "正项级数",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "directional_and_multiple_limits",
+      "name": "方向极限与多元函数极限",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "exponential_limit",
+      "name": "指数型极限",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "riemann_sum_error",
+      "name": "Riemann 和的误差渐近",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "gronwall_inequality",
+      "name": "Gronwall 不等式",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "mixed_power_series_convergence",
+      "name": "交错异指数幂级数的敛散性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "monotone_convergence_theorem",
+      "name": "单调收敛定理",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "multivariable_continuity",
+      "name": "多元函数连续性",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "flux_surface_integral",
+      "name": "第二类曲面积分与通量",
+      "subject_code": "mathematical_analysis"
+    },
+    {
+      "code": "multivariate_gaussian_integral",
+      "name": "多元高斯积分",
+      "subject_code": "mathematical_analysis"
+    }
+  ],
+  "methods": [
+    {
+      "code": "track_elementary_matrix_product",
+      "name": "追踪初等矩阵乘积",
+      "method_type": "transform"
+    },
+    {
+      "code": "use_left_inverse_criterion",
+      "name": "使用左逆判定方阵可逆",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "basis_extension_construction",
+      "name": "扩充基并构造子空间",
+      "method_type": "construction"
+    },
+    {
+      "code": "coordinate_uniqueness_argument",
+      "name": "利用基坐标唯一性证明集合相等",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "columnwise_matrix_decomposition",
+      "name": "按列分解矩阵映射",
+      "method_type": "transform"
+    },
+    {
+      "code": "dimension_counting",
+      "name": "独立分量维数计数",
+      "method_type": "computation"
+    },
+    {
+      "code": "orthogonal_diagonalization",
+      "name": "正交对角化",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "spectral_function_construction",
+      "name": "按谱构造矩阵函数",
+      "method_type": "construction"
+    },
+    {
+      "code": "rank_normal_form_reduction",
+      "name": "化为秩标准形",
+      "method_type": "transform"
+    },
+    {
+      "code": "block_matrix_multiplication",
+      "name": "分块矩阵乘法",
+      "method_type": "computation"
+    },
+    {
+      "code": "evaluate_at_roots_of_unity",
+      "name": "代入单位根",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "auxiliary_polynomial",
+      "name": "构造低次辅助多项式",
+      "method_type": "construction"
+    },
+    {
+      "code": "root_count_argument",
+      "name": "次数—根数论证",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "orthogonal_projection_to_line",
+      "name": "向空间直线作正交投影",
+      "method_type": "computation"
+    },
+    {
+      "code": "midpoint_reflection",
+      "name": "利用中点关系求对称点",
+      "method_type": "computation"
+    },
+    {
+      "code": "scalar_triple_product_distance",
+      "name": "用混合积求异面直线距离",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "gradient_normal_method",
+      "name": "用梯度作曲线法向量",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "common_null_direction",
+      "name": "求线性形式的公共零方向",
+      "method_type": "computation"
+    },
+    {
+      "code": "parameter_elimination",
+      "name": "参数消元",
+      "method_type": "transform"
+    },
+    {
+      "code": "axis_projection_and_distance_invariants",
+      "name": "使用轴向投影与轴距旋转不变量",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "principal_axes_transformation",
+      "name": "二次型主轴变换",
+      "method_type": "transform"
+    },
+    {
+      "code": "logarithmic_transform",
+      "name": "对数化处理幂指极限",
+      "method_type": "transform"
+    },
+    {
+      "code": "recognize_exact_derivative",
+      "name": "识别整体导数",
+      "method_type": "computation"
+    },
+    {
+      "code": "dyadic_telescoping",
+      "name": "二分望远镜展开",
+      "method_type": "transform"
+    },
+    {
+      "code": "projection_area_scaling",
+      "name": "投影面积与面积元素换算",
+      "method_type": "computation"
+    },
+    {
+      "code": "polar_angle_differential",
+      "name": "识别极角微分",
+      "method_type": "transform"
+    },
+    {
+      "code": "periodic_zero_localization",
+      "name": "按周期零点分区估计",
+      "method_type": "estimation"
+    },
+    {
+      "code": "scaling_substitution",
+      "name": "尺度换元",
+      "method_type": "transform"
+    },
+    {
+      "code": "asymptotic_equivalence_comparison",
+      "name": "渐近等价比较判别",
+      "method_type": "estimation"
+    },
+    {
+      "code": "taylor_expansion_method",
+      "name": "使用 Taylor 展开",
+      "method_type": "computation"
+    },
+    {
+      "code": "spectral_projector_power",
+      "name": "按特征子空间投影计算矩阵幂",
+      "method_type": "computation"
+    },
+    {
+      "code": "matrix_unit_conjugation",
+      "name": "用矩阵单位与共轭变换刻画线性泛函",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "rowwise_matrix_decomposition",
+      "name": "按行分解矩阵映射",
+      "method_type": "transform"
+    },
+    {
+      "code": "nilpotent_rank_sequence",
+      "name": "用幂零部分的秩序列判定若尔当块",
+      "method_type": "computation"
+    },
+    {
+      "code": "reduction_modulo_prime",
+      "name": "模素数化简并转化为有限域问题",
+      "method_type": "transform"
+    },
+    {
+      "code": "count_ordered_independent_vectors",
+      "name": "逐列计数有序线性无关向量组",
+      "method_type": "computation"
+    },
+    {
+      "code": "prove_spanning_and_independence",
+      "name": "分别证明张成性与线性无关性",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "constraint_space_dimension",
+      "name": "由独立线性约束计算空间维数",
+      "method_type": "computation"
+    },
+    {
+      "code": "permutation_difference_construction",
+      "name": "用置换矩阵之差构造零行列和基",
+      "method_type": "construction"
+    },
+    {
+      "code": "orthogonal_complement_inertia",
+      "name": "在正交补上使用惯性指数",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "cauchy_schwarz_equality",
+      "name": "使用 Cauchy–Schwarz 等号条件",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "loewner_eigenvalue_matching",
+      "name": "利用 Loewner 序比较特征值并正交配对",
+      "method_type": "construction"
+    },
+    {
+      "code": "weierstrass_m_test",
+      "name": "使用 Weierstrass 优级数判别法",
+      "method_type": "estimation"
+    },
+    {
+      "code": "uniform_cauchy_countersequence",
+      "name": "构造尾和反例否定一致 Cauchy 条件",
+      "method_type": "construction"
+    },
+    {
+      "code": "beta_integral_evaluation",
+      "name": "化为 Beta 积分并用反射公式求值",
+      "method_type": "computation"
+    },
+    {
+      "code": "polar_surface_area",
+      "name": "用极坐标计算图形曲面面积",
+      "method_type": "computation"
+    },
+    {
+      "code": "green_formula_symmetry",
+      "name": "使用 Green 公式并以奇偶对称消项",
+      "method_type": "computation"
+    },
+    {
+      "code": "compose_taylor_expansions",
+      "name": "复合 Taylor 展开并合并同阶项",
+      "method_type": "computation"
+    },
+    {
+      "code": "auxiliary_function_repeated_rolle",
+      "name": "构造辅助函数并重复使用 Rolle 定理",
+      "method_type": "construction"
+    },
+    {
+      "code": "local_uniform_derivative_series",
+      "name": "在紧子区间控制导数级数",
+      "method_type": "estimation"
+    },
+    {
+      "code": "tonelli_exchange_sum_integral",
+      "name": "用 Tonelli 定理交换非负级数与积分",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "polar_dirichlet_reduction",
+      "name": "极坐标换元化为 Dirichlet 积分",
+      "method_type": "transform"
+    },
+    {
+      "code": "roots_of_unity_filter",
+      "name": "使用单位根筛选幂级数项",
+      "method_type": "transform"
+    },
+    {
+      "code": "lyapunov_function_construction",
+      "name": "构造能量型 Lyapunov 函数",
+      "method_type": "construction"
+    },
+    {
+      "code": "lasalle_invariant_set_check",
+      "name": "检查零导数集中的最大不变集",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "discrete_image_open_mapping",
+      "name": "用离散像集与开映射定理反证",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "log_modulus_circle_mean",
+      "name": "对 log|f| 使用圆周平均并令半径趋于无穷",
+      "method_type": "estimation"
+    },
+    {
+      "code": "tonelli_translation_norm",
+      "name": "用 Tonelli 与平移不变性计算 L1 范数",
+      "method_type": "computation"
+    },
+    {
+      "code": "step_function_density_averaging",
+      "name": "先证阶梯函数再以 L1 稠密性推广周期平均",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "odd_hermite_interpolation",
+      "name": "利用对称性化为奇多项式的 Hermite 插值",
+      "method_type": "computation"
+    },
+    {
+      "code": "matrix_determinant_lemma",
+      "name": "使用矩阵行列式引理处理低秩扰动",
+      "method_type": "computation"
+    },
+    {
+      "code": "choose_preimages_as_columns",
+      "name": "为标准基选择原像并组成右逆",
+      "method_type": "construction"
+    },
+    {
+      "code": "rank_one_nilpotent_factorization",
+      "name": "用秩一分解刻画平方零矩阵",
+      "method_type": "construction"
+    },
+    {
+      "code": "ldl_diagonalization",
+      "name": "用 LDL^T 分解求二次型标准形",
+      "method_type": "transform"
+    },
+    {
+      "code": "factor_matrix_equation",
+      "name": "因式分解矩阵方程并作谱映射",
+      "method_type": "transform"
+    },
+    {
+      "code": "quotient_space_linear_dependence",
+      "name": "在多项式商空间中使用维数判定线性相关",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "cauchy_schwarz_minimum",
+      "name": "用 Cauchy–Schwarz 求线性约束下的最小范数",
+      "method_type": "computation"
+    },
+    {
+      "code": "hadamard_bound_and_attainment",
+      "name": "使用 Hadamard 不等式并构造等号矩阵",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "explicit_counterexample",
+      "name": "构造显式反例",
+      "method_type": "construction"
+    },
+    {
+      "code": "jump_across_missing_point",
+      "name": "在被删点两侧构造跳跃反例",
+      "method_type": "construction"
+    },
+    {
+      "code": "oscillatory_derivative_counterexample",
+      "name": "构造导数振荡变号反例",
+      "method_type": "construction"
+    },
+    {
+      "code": "unbounded_derivative_counterexample",
+      "name": "用无界导函数否定积分公式的无条件使用",
+      "method_type": "construction"
+    },
+    {
+      "code": "logarithmic_series_counterexample",
+      "name": "用对数修正级数构造临界反例",
+      "method_type": "construction"
+    },
+    {
+      "code": "curved_path_counterexample",
+      "name": "用非直线路径否定多元极限",
+      "method_type": "construction"
+    },
+    {
+      "code": "identify_taylor_coefficients_from_limit",
+      "name": "由极限识别 Taylor 系数",
+      "method_type": "computation"
+    },
+    {
+      "code": "cellwise_riemann_sum_expansion",
+      "name": "逐小区间展开 Riemann 和误差",
+      "method_type": "estimation"
+    },
+    {
+      "code": "gronwall_zero_solution",
+      "name": "用 Gronwall 型估计证明零初值解恒为零",
+      "method_type": "theorem_application"
+    },
+    {
+      "code": "split_odd_even_subseries",
+      "name": "拆分奇偶子级数比较发散阶",
+      "method_type": "transform"
+    },
+    {
+      "code": "zeta_endpoint_countersequence",
+      "name": "在 ζ 函数奇异端点构造一致连续反例",
+      "method_type": "construction"
+    },
+    {
+      "code": "monotone_domain_exhaustion_polar",
+      "name": "用单调区域耗尽并作极坐标积分",
+      "method_type": "computation"
+    },
+    {
+      "code": "logarithm_quotient_continuation",
+      "name": "提取 ln(1+u)/u 的连续延拓因子",
+      "method_type": "transform"
+    },
+    {
+      "code": "gaussian_spherical_identity",
+      "name": "比较直角坐标与球坐标高斯积分",
+      "method_type": "computation"
+    }
+  ],
+  "notes": [
+    "知识点表示学什么，方法表示怎么做。",
+    "code 是人工可读稳定标识；UUID 由 PgSQL 适配器生成。",
+    "本字典会随逐套真题标注扩充，新增 code 必须避免与既有语义重复。"
+  ]
+}

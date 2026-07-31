@@ -2,7 +2,7 @@
 
 ## 1. 定位
 
-TraceTutor 不再依赖扣子或其他外部 Agent 平台。Agent Runtime 直接运行在 `apps/api` 进程内，模型仅通过 OpenAI-compatible Chat Completions API 接入。
+TraceTutor 不依赖任何外部 Agent 平台。Agent Runtime 直接运行在 `apps/api` 进程内，模型仅通过 OpenAI-compatible Chat Completions API 接入。
 
 ```text
 Iris
@@ -45,7 +45,7 @@ apps/api/src/
 └── ports.ts             # ToolExecutionPort
 ```
 
-不再维护 `agents/coze`、插件 OpenAPI 或平台导出物。Agent 是 API 应用的一部分，与请求、鉴权、工具和日志在同一部署单元内运行。
+不维护外部平台工作流、插件 OpenAPI 或平台导出物。Agent 是 API 应用的一部分，与请求、鉴权、工具和日志在同一部署单元内运行。
 
 ## 3. 单轮状态机
 

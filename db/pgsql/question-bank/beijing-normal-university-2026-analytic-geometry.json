@@ -1,0 +1,613 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "北京师范大学",
+    "year": 2026,
+    "subject_code": "analytic_geometry",
+    "subject_name": "解析几何",
+    "source_file": "E:\\考研真题\\MinerU_markdown_北京师范大学2026解析_2082765471906570240.md",
+    "source_scope": "原文件第7—10题；第7题含4个独立小题，按原子题拆为7条",
+    "curation_method": "逐题重算并与原解析交叉核对",
+    "question_count": 7,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-007a",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第7题第1小题；MinerU Markdown 第571—652行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "line_and_point"
+      },
+      "title": "点关于空间直线的对称点",
+      "stem": "求点 $P(2,-1,3)$ 关于直线\n$$L:\\frac{x-1}{1}=\\frac{y}{2}=\\frac{z+2}{-2}$$\n的对称点坐标。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\left(-\\frac{22}{9},-\\frac{35}{9},-\\frac{19}{9}\\right)$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "先求垂足再作中点反射",
+          "solution_type": "teaching",
+          "text": "直线过 $A=(1,0,-2)$，方向向量 $d=(1,2,-2)$。垂足 $H=A+td$ 中，$t=((P-A)\\cdot d)/(d\\cdot d)=-11/9$，故 $H=(-2/9,-22/9,4/9)$。对称点 $P'=2H-P=(-22/9,-35/9,-19/9)$。",
+          "main_method_code": "orthogonal_projection_to_line",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "compute",
+              "text": "由 $(P-H)\\cdot d=0$ 求得垂足参数 $t=-11/9$。",
+              "method_code": "orthogonal_projection_to_line"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "得到垂足 $H=(-2/9,-22/9,4/9)$。"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "利用 $H$ 是 $PP'$ 中点，计算 $P'=2H-P$。",
+              "method_code": "midpoint_reflection"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "point_line_reflection",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "orthogonal_projection_to_line",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "midpoint_reflection",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 6,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "point_line_symmetry"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-007b",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第7题第2小题；MinerU Markdown 第573、653—704行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "spatial_lines"
+      },
+      "title": "两条异面直线之间的距离",
+      "stem": "求直线\n$$L_1:\\frac{x-1}{2}=\\frac{y}{-1}=\\frac{z+1}{3}$$\n与\n$$L_2:\\frac{x}{1}=\\frac{y-1}{2}=\\frac{z-2}{-1}$$\n之间的距离。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\frac{5\\sqrt3}{3}$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "异面直线距离公式",
+          "solution_type": "teaching",
+          "text": "取 $P_1=(1,0,-1)$、$d_1=(2,-1,3)$，$P_2=(0,1,2)$、$d_2=(1,2,-1)$。有 $d_1\\times d_2=(-5,5,5)$、$P_2-P_1=(-1,1,3)$。距离为 $|(P_2-P_1)\\cdot(d_1\\times d_2)|/\\|d_1\\times d_2\\|=25/(5\\sqrt3)=5\\sqrt3/3$。",
+          "main_method_code": "scalar_triple_product_distance",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "提取两直线的定点和方向向量。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "计算 $d_1\\times d_2=(-5,5,5)$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "将混合积绝对值除以叉积模长。",
+              "method_code": "scalar_triple_product_distance"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "distance_between_skew_lines",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "scalar_triple_product_distance",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 6,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "skew_lines"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-007c",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第7题第3小题；MinerU Markdown 第575、705—752行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "plane_curves"
+      },
+      "title": "隐式二次曲线在给定点的切线",
+      "stem": "求平面曲线\n$$3x^2+4xy+5y^2-7x-8y-3=0$$\n在点 $(-1,1)$ 处的切线方程。",
+      "question_type": "calculation",
+      "difficulty_level": 1,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$9x+2y+7=0$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "以梯度作为法向量",
+          "solution_type": "teaching",
+          "text": "令 $F(x,y)=3x^2+4xy+5y^2-7x-8y-3$。先验证 $F(-1,1)=0$。又 $F_x=6x+4y-7$、$F_y=4x+10y-8$，在该点为 $(-9,-2)$。因此切线为 $-9(x+1)-2(y-1)=0$，即 $9x+2y+7=0$。",
+          "main_method_code": "gradient_normal_method",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "验证给定点确在曲线上。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "求梯度并代入点得到法向量 $(-9,-2)$。",
+              "method_code": "gradient_normal_method"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "写出点法式切线并化简。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "implicit_curve_tangent",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "gradient_normal_method",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 5,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "implicit_curve"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-007d",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第7题第4小题；MinerU Markdown 第577、753—788行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "surfaces"
+      },
+      "title": "由两个线性形式确定柱面母线方向",
+      "stem": "方程\n$$f(x+y+z,\\,2x-3y)=0$$\n表示空间中的一个柱面。求其母线的单位方向向量。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\displaystyle \\pm\\frac{1}{\\sqrt{38}}(3,2,-5)$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "保持两个线性形式不变",
+          "solution_type": "teaching",
+          "text": "设母线方向为 $(a,b,c)$。沿母线移动时两个自变量均不变，所以 $a+b+c=0$、$2a-3b=0$。取 $b=2$ 得 $(a,b,c)=(3,2,-5)$，模长为 $\\sqrt{38}$，单位方向为其正负归一化。",
+          "main_method_code": "common_null_direction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "母线方向必须同时落在两个线性形式的零变化方向中。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "解 $a+b+c=0$、$2a-3b=0$，取方向 $(3,2,-5)$。",
+              "method_code": "common_null_direction"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "除以 $\\sqrt{38}$ 得单位方向。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "cylindrical_surface",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "common_null_direction",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 5,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "surface_from_two_linear_forms"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-008",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第8题；MinerU Markdown 第789—906行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "ruled_surfaces"
+      },
+      "title": "与两直线相交且平行于平面的动直线轨迹",
+      "stem": "给定平面 $\\Sigma:x+y+1=0$。求所有平行于 $\\Sigma$，且同时与\n$$L_1:\\frac{x-2}{1}=\\frac{y+3}{2}=\\frac{z-5}{1},\\qquad L_2:\\frac{x}{1}=\\frac{y-2}{2}=\\frac{z+1}{0}$$\n相交的动直线所形成的曲面方程。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$(2x-y+2)(x+y+19)-27(z+1)=0$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "参数化交点并消元",
+          "solution_type": "teaching",
+          "text": "设交点 $P(s)=(2+s,-3+2s,5+s)\\in L_1$、$Q(t)=(t,2+2t,-1)\\in L_2$。连线平行于 $\\Sigma$ 等价于 $(Q-P)\\cdot(1,1,0)=0$，得 $s=t+1$。动直线可参数化为 $(x,y,z)=Q(t)+\\lambda(P(t+1)-Q(t))$，即 $x=t+3\\lambda$、$y=2+2t-3\\lambda$、$z=-1+\\lambda(t+7)$。由前两式得 $t=(x+y-2)/3$、$\\lambda=(2x-y+2)/9$，代入第三式即得答案。",
+          "main_method_code": "parameter_elimination",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "参数化动直线在 $L_1,L_2$ 上的两个交点。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "用方向向量与平面法向量正交，求得两交点参数关系 $s=t+1$。"
+            },
+            {
+              "order": 3,
+              "role": "transform",
+              "text": "写出动直线的双参数方程。"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "消去 $t,\\lambda$ 得隐式曲面方程。",
+              "method_code": "parameter_elimination"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "line_parallel_to_plane",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "ruled_surface",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "parameter_elimination",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "two_directrices",
+          "ruled_surface_parameter_elimination"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-009",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第9题；MinerU Markdown 第907—1024行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "surfaces_of_revolution"
+      },
+      "title": "异面直线绕直线旋转所得曲面",
+      "stem": "设\n$$L_1:\\frac{x-1}{2}=\\frac{y+1}{1}=\\frac{z-2}{0},\\qquad L_2:\\frac{x}{1}=\\frac{y-2}{-1}=\\frac{z-1}{2}.$$\n求 $L_2$ 绕 $L_1$ 旋转所得的曲面方程。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$23x^2+24xy-70x+5y^2-38y-z^2+4z+53=0$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "保持轴向投影和到轴距离",
+          "solution_type": "teaching",
+          "text": "取轴上一点 $A=(1,-1,2)$、轴向量 $u=(2,1,0)$，并参数化 $L_2$ 为 $Q(t)=(t,2-t,1+2t)$。旋转保持 $u\\cdot(X-A)$ 与点到轴的距离不变。由轴向投影得 $t=2x+y-2$。再令 $5\\|X-A\\|^2-[u\\cdot(X-A)]^2=5\\|Q(t)-A\\|^2-[u\\cdot(Q(t)-A)]^2$，右端化为 $29t^2-62t+54$。代入 $t$ 并整理，得到所求方程。",
+          "main_method_code": "axis_projection_and_distance_invariants",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "确定旋转轴的点 $A$ 和方向 $u$，参数化母线 $L_2$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "比较轴向投影，得到源点参数 $t=2x+y-2$。",
+              "method_code": "axis_projection_and_distance_invariants"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "比较到旋转轴距离的平方，写出第二个不变量方程。"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "代入 $t$ 展开整理，得到二次曲面方程。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "surface_of_revolution",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "distance_between_skew_lines",
+          "role": "secondary",
+          "confidence": 0.9
+        }
+      ],
+      "methods": [
+        {
+          "code": "axis_projection_and_distance_invariants",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 25,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "line_rotated_about_skew_axis",
+          "quadratic_surface"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-ag-010",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年解析几何试题",
+        "reference": "第10题；MinerU Markdown 第1025—1149行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "analytic_geometry",
+        "chapter_code": "quadric_surfaces"
+      },
+      "title": "正交坐标变换化二次曲面为标准形",
+      "stem": "已知二次曲面\n$$2x^2+5y^2+5z^2+4xy-4xz-8yz-9=0.$$\n使用直角坐标变换将其化为标准方程，并判断曲面类型；要求写出坐标变换及其求法。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "可取\n$$T=\\begin{pmatrix}\\frac2{\\sqrt5}&\\frac2{3\\sqrt5}&-\\frac13\\\\-\\frac1{\\sqrt5}&\\frac4{3\\sqrt5}&-\\frac23\\\\0&\\frac5{3\\sqrt5}&\\frac23\\end{pmatrix},\\quad \\begin{pmatrix}x\\\\y\\\\z\\end{pmatrix}=T\\begin{pmatrix}\\xi\\\\\\eta\\\\\\zeta\\end{pmatrix}.$$\n标准形为 $\\xi^2+\\eta^2+10\\zeta^2=9$，即椭球面。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "对二次型矩阵作正交对角化",
+          "solution_type": "teaching",
+          "text": "二次项矩阵为 $M=\\begin{pmatrix}2&2&-2\\\\2&5&-4\\\\-2&-4&5\\end{pmatrix}$，其特征值为 $1,1,10$。可取对应的两两正交特征向量 $(2,-1,0)^T$、$(2,4,5)^T$、$(-1,-2,2)^T$，单位化后作为 $T$ 的列。于是 $T^TMT=\\operatorname{diag}(1,1,10)$，代换 $X=T(\\xi,\\eta,\\zeta)^T$ 得 $\\xi^2+\\eta^2+10\\zeta^2=9$。三个主系数均正，故为椭球面。",
+          "main_method_code": "principal_axes_transformation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把二次曲面写成 $X^TMX=9$。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "求实对称矩阵 $M$ 的特征值和正交特征向量。",
+              "method_code": "orthogonal_diagonalization"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "用单位特征向量组成正交矩阵 $T$ 并作主轴变换。",
+              "method_code": "principal_axes_transformation"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "得到 $\\xi^2+\\eta^2+10\\zeta^2=9$，判定为椭球面。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "principal_axes_of_quadric",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "quadric_surface",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "real_symmetric_matrix",
+          "role": "prerequisite",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "principal_axes_transformation",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "orthogonal_diagonalization",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "central_quadric",
+          "principal_axes"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    }
+  ]
+}

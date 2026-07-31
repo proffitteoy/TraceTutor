@@ -1,7 +1,9 @@
 "use client"
 
-import { ChatUI } from "@/components/chat/chat-ui"
+import { ChatTreeUI } from "@/components/chat-tree/chat-tree-ui"
+import { useParams } from "next/navigation"
 
 export default function ChatIDPage() {
-  return <ChatUI />
+  const params = useParams()
+  return <ChatTreeUI treeId={params.chatid as string} />
 }

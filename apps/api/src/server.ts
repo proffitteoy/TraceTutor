@@ -1,8 +1,12 @@
 import "dotenv/config"
+import { HttpSQLiteToolExecutionPort } from "./adapters/sqlite-tool-execution.js"
+import { CompositeToolExecutionPort } from "./adapters/composite-tool-execution.js"
+import { PgSQLAssetAdapter } from "./adapters/pgsql.js"
 import { LocalAgentRuntime } from "./agent/local-agent.js"
 import { OpenAICompatibleModel } from "./agent/local-model.js"
 import { createApp, type AppDependencies } from "./app.js"
 import { loadConfig } from "./config.js"
+import { QuestionIngestionService } from "./ingestion/question-ingestion.js"
 
 const config = loadConfig()
 const model = new OpenAICompatibleModel(
@@ -12,11 +16,37 @@ const model = new OpenAICompatibleModel(
   config.modelTimeoutMs,
   config.modelResponseFormat
 )
-const agentRuntime = new LocalAgentRuntime(model)
+const sqliteToolExecution = config.sqliteServiceUrl
+  ? new HttpSQLiteToolExecutionPort(
+      config.sqliteServiceUrl,
+      config.sqliteServiceToken,
+      config.sqliteTimeoutMs
+    )
+  : undefined
+const pgsql = config.pgsqlUrl
+  ? new PgSQLAssetAdapter(
+      config.pgsqlUrl,
+      config.pgsqlMaxConnections ?? 10,
+      config.pgsqlTimeoutMs ?? 5_000
+    )
+  : undefined
+const ports = [sqliteToolExecution, pgsql].filter(
+  (port): port is NonNullable<typeof port> => port !== undefined
+)
+const toolExecution =
+  ports.length > 0 ? new CompositeToolExecutionPort(ports) : undefined
+const agentRuntime = new LocalAgentRuntime(model, toolExecution)
+const questionIngestion = pgsql
+  ? new QuestionIngestionService(model, pgsql)
+  : undefined
 
 const dependencies: AppDependencies = {
   config,
-  agentRuntime
+  agentRuntime,
+  ...(toolExecution ? { toolExecution } : {}),
+  ...(sqliteToolExecution ? { sqliteToolExecution } : {}),
+  ...(pgsql ? { pgsqlToolExecution: pgsql } : {}),
+  ...(questionIngestion ? { questionIngestion } : {})
 }
 
 const app = await createApp(dependencies)
@@ -24,6 +54,7 @@ const app = await createApp(dependencies)
 const close = async (signal: string) => {
   app.log.info({ signal }, "Stopping TraceTutor API")
   await app.close()
+  await pgsql?.close()
   process.exit(0)
 }
 

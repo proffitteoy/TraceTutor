@@ -6,6 +6,9 @@
 
 - Next.js 16 + React 19 + TypeScript。
 - 新题解析、复习调度、自由追问三种输入模式。
+- 对话与卡片树画布双视图；支持深入子卡片、同级发散卡片和历史分支卡片。
+- 可在单条 Agent 回答中框选文本并右键使用 Ask 创建引用式深入卡片。
+- 卡片位置、分支关系和各分支对话保存在浏览器本地，刷新后可恢复；它们不是数据库学习状态。
 - 解题步骤、方法诊断、变式题、旧题回顾和状态写回卡片。
 - 浏览器生成并保存稳定的 `user_id` 与会话级 `session_id`，不再使用固定预览身份。
 - 对 `LearningResponse` 做 Zod 运行时校验，拒绝不符合契约的网关响应。
@@ -61,9 +64,11 @@ POST {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/agent/chat
 apps/iris/
 ├── app/                 # 页面、布局和全局视觉样式
 ├── components/          # 纯前端交互与卡片渲染
+│   └── learning-tree-canvas.tsx # 卡片树画布与分支操作
 ├── lib/
 │   ├── contracts.ts     # Iris 与教学网关的类型和运行时 Schema
 │   ├── gateway.ts       # 网关配置选择
+│   ├── learning-tree.ts # 浏览器端卡片树状态与持久化契约
 │   └── gateways/        # HTTP 网关适配器
 └── public/branding/     # 从旧 Iris 前端复用的品牌素材
 ```
@@ -71,6 +76,7 @@ apps/iris/
 ## 边界
 
 - 前端不直接访问 PgSQL 或 SQLite。
+- 卡片树的浏览器持久化只保存 UI 工作区，不声明掌握度、复习结果或数据库写回成功。
 - 前端不自行推断知识点、方法、掌握度或复习时间。
 - 正式状态写回必须由 API 规则层校验证据后完成。
 - 数据库字段变化应由网关契约吸收，不能直接传播到组件。

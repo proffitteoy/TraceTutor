@@ -1,0 +1,83 @@
+@base = http://127.0.0.1:8000
+@serviceToken =
+
+### Liveness
+GET {{base}}/health/live
+
+### Readiness
+GET {{base}}/health/ready
+
+### Query user snapshot through the internal ToolExecutionPort contract
+POST {{base}}/internal/tool-execution
+Content-Type: application/json
+Authorization: Bearer {{serviceToken}}
+
+{
+  "tool": "state.query_user_snapshot",
+  "input": {
+    "user_id": "U1",
+    "session_id": "S1"
+  },
+  "context": {
+    "request_id": "REQ-SNAPSHOT-1",
+    "user_id": "U1",
+    "session_id": "S1"
+  }
+}
+
+### Record an attempt idempotently
+POST {{base}}/internal/tool-execution
+Content-Type: application/json
+Authorization: Bearer {{serviceToken}}
+
+{
+  "tool": "state.write_attempt_result",
+  "input": {
+    "user_id": "U1",
+    "session_id": "S1",
+    "question_id": "Q1",
+    "answer_text": "42",
+    "judgement": "incorrect",
+    "knowledge_point_ids": ["KP1"],
+    "method_ids": ["M1"],
+    "client_event_id": "ATTEMPT-1"
+  },
+  "context": {
+    "request_id": "REQ-ATTEMPT-1",
+    "user_id": "U1",
+    "session_id": "S1"
+  }
+}
+
+### The returned pending_state_delta_id and state_delta must be copied exactly.
+POST {{base}}/internal/tool-execution
+Content-Type: application/json
+Authorization: Bearer {{serviceToken}}
+
+{
+  "tool": "state.apply_state_delta",
+  "input": {
+    "user_id": "U1",
+    "session_id": "S1",
+    "pending_state_delta_id": "<returned-id>",
+    "state_delta": {
+      "target_type": "knowledge_mastery",
+      "target_id": "KP1",
+      "proposed_change": -0.1,
+      "reason": "SQLite 规则层根据已判定作答和标签快照生成",
+      "evidence": {
+        "question_id": "Q1",
+        "attempt_id": "<returned-attempt-id>",
+        "judgement": "incorrect",
+        "knowledge_point_ids": ["KP1"],
+        "method_ids": ["M1"]
+      }
+    },
+    "client_event_id": "ATTEMPT-1:0"
+  },
+  "context": {
+    "request_id": "REQ-APPLY-1",
+    "user_id": "U1",
+    "session_id": "S1"
+  }
+}

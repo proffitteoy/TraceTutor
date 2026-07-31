@@ -1,0 +1,126 @@
+{
+  "user_snapshot": {
+    "user_id": "user-demo-001",
+    "display_name": "演示学生",
+    "current_subject": "高等数学",
+    "current_stage": "大学一年级",
+    "preferences": {
+      "explanation_style": "先整体框架，再细节推导",
+      "show_solution_steps": true
+    },
+    "current_session": {
+      "id": "session-001",
+      "session_type": "review",
+      "subject": "高等数学",
+      "topic": "极限",
+      "status": "active"
+    }
+  },
+  "session_summary": {
+    "summary_scope": "session",
+    "summary_text": "用户最近在复习数列极限，夹逼结构识别仍不稳定。",
+    "structured_json": {
+      "recent_focus": ["数列极限", "夹逼估计"],
+      "open_loops": ["再做一道题面变化较大的夹逼题"]
+    }
+  },
+  "topic_summary": null,
+  "profile_summary": null,
+  "workflow_summary": null,
+  "recent_active_memories": [
+    {
+      "memory_type": "open_loop",
+      "title": "夹逼法复习未闭合",
+      "content_text": "需要再做一道题面变化较大的夹逼题。",
+      "importance_score": 0.9,
+      "freshness_score": 1.0,
+      "status": "active"
+    }
+  ],
+  "open_loops": [
+    {
+      "memory_type": "open_loop",
+      "title": "夹逼法复习未闭合"
+    }
+  ],
+  "active_context": [
+    {
+      "ref_type": "active_topic",
+      "ref_id": "topic-limit",
+      "ref_name": "极限",
+      "status": "active"
+    }
+  ],
+  "agent_runtime_state": {
+    "main_agent": {
+      "current_workflow": {
+        "name": "REVIEW_AND_VARIANT"
+      },
+      "current_step": {
+        "value": "WAITING_USER_ANSWER"
+      }
+    }
+  },
+  "weak_mastery_items": [
+    {
+      "entity_type": "thinking_pattern",
+      "entity_name": "主动构造上下界",
+      "mastery_score": 0.42,
+      "confidence_score": 0.38,
+      "state_label": "weak",
+      "diversity": {
+        "distinct_questions": 2,
+        "distinct_structures": 1,
+        "distinct_difficulties": 1,
+        "distinct_methods": 1
+      }
+    }
+  ],
+  "due_reviews": [
+    {
+      "target_type": "method",
+      "target_name": "夹逼估计",
+      "priority_score": 0.86,
+      "status": "due"
+    }
+  ],
+  "recent_error_patterns": [
+    {
+      "error_pattern_name": "不会主动构造上下界",
+      "severity_score": 0.72,
+      "resolved_score": 0.1,
+      "status": "active"
+    }
+  ],
+  "active_workflow": {
+    "workflow_name": "review",
+    "status": "waiting_user",
+    "current_step": "WAITING_USER_ANSWER"
+  },
+  "recent_turns": [],
+  "effective_config": {
+    "mastery_alpha": 0.12,
+    "mastery_beta": 0.18,
+    "review_due_limit": 5
+  },
+  "prompt_policy": {
+    "include": [
+      "user_profile",
+      "context_summary",
+      "recent active memory",
+      "weak mastery",
+      "due reviews",
+      "recent error patterns",
+      "agent runtime state",
+      "active context refs",
+      "active workflow",
+      "recent 3-5 turns"
+    ],
+    "exclude": [
+      "complete conversation history",
+      "complete question bank",
+      "complete solutions",
+      "complete tool logs"
+    ]
+  }
+}

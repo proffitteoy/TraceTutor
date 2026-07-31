@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "source_root": "E:\\考研真题",
+  "estimated_unique_exam_sets": 33,
+  "estimated_atomic_questions": 330,
+  "policy": {
+    "external_model_api": false,
+    "solve_each_question": true,
+    "cross_check_with_source_solution": true,
+    "output_status": "imported",
+    "human_review_required": true
+  },
+  "completed_collections": [
+    {
+      "school": "北京师范大学",
+      "year": 2026,
+      "subject_code": "advanced_algebra",
+      "question_count": 6,
+      "file": "beijing-normal-university-2026-advanced-algebra.json"
+    },
+    {
+      "school": "北京师范大学",
+      "year": 2026,
+      "subject_code": "analytic_geometry",
+      "question_count": 7,
+      "file": "beijing-normal-university-2026-analytic-geometry.json"
+    },
+    {
+      "school": "复旦大学",
+      "year": 2025,
+      "subject_code": "mathematical_analysis",
+      "question_count": 7,
+      "file": "fudan-university-2025-mathematical-analysis.json"
+    },
+    {
+      "school": "复旦大学",
+      "year": 2025,
+      "subject_code": "advanced_algebra",
+      "question_count": 9,
+      "file": "fudan-university-2025-advanced-algebra.json"
+    },
+    {
+      "school": "复旦大学",
+      "year": 2026,
+      "subject_code": "mathematical_analysis",
+      "question_count": 14,
+      "file": "fudan-university-2026-mathematical-analysis.json"
+    },
+    {
+      "school": "哈尔滨工业大学",
+      "year": 2026,
+      "subject_code": "advanced_algebra",
+      "question_count": 10,
+      "file": "harbin-institute-of-technology-2026-advanced-algebra.json"
+    },
+    {
+      "school": "哈尔滨工业大学",
+      "year": 2026,
+      "subject_code": "mathematical_analysis",
+      "question_count": 13,
+      "file": "harbin-institute-of-technology-2026-mathematical-analysis.json"
+    }
+  ],
+  "in_progress": null,
+  "checkpoint": {
+    "checkpoint_id": "curated-initial-batch-2026-07-30",
+    "recorded_at": "2026-07-30T19:48:18+08:00",
+    "reason": "用户要求完成哈尔滨工业大学 2026 数学分析后停止，并批准当前批次准备入库",
+    "completed_collection_count": 7,
+    "completed_question_count": 66,
+    "last_completed": {
+      "school": "哈尔滨工业大学",
+      "year": 2026,
+      "subject_code": "mathematical_analysis",
+      "file": "harbin-institute-of-technology-2026-mathematical-analysis.json"
+    },
+    "approval": {
+      "status": "approved_for_import",
+      "scope": "completed_collections",
+      "source": "explicit_user_approval",
+      "database_activation": "pending_pgsql_import_and_review_item_reconciliation",
+      "note": "JSONL 契约要求导入状态保持 imported；PgSQL 生成 question_id 和 review_item_id 后，再通过 applyReview 事务切换为 active。"
+    },
+    "estimated_remaining_collection_count": 26,
+    "estimated_remaining_question_count": 264,
+    "resume_next": {
+      "school": "湖南大学",
+      "year": 2024,
+      "subject_code": "mathematical_analysis",
+      "source_file": "E:\\考研真题\\MinerU_markdown_湖南大学2024_2082766457060495360.md"
+    }
+  }
+}

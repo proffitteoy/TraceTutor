@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "batch_name": "TraceTutor 首批人工精标考研真题",
+  "batch_key": "tracetutor-curated-15ab68105feb44acc3f89caa",
+  "created_at": "2026-07-30T19:48:18+08:00",
+  "jsonl_file": "approved-initial-batch-2026-07-30.jsonl",
+  "jsonl_sha256": "15ab68105feb44acc3f89caa8c2d811cbca65ac3ed625c817c8e8fe086d2aa9e",
+  "tag_dictionary_file": "tag-dictionary.json",
+  "tag_dictionary_sha256": "87db7c8771839cfadf1379eae0e58643a04f06ec1cc86580e572ff26597ffe31",
+  "collection_count": 7,
+  "question_count": 66,
+  "collections": [
+    {
+      "school": "北京师范大学",
+      "year": 2026,
+      "subject_code": "advanced_algebra",
+      "source_file": "beijing-normal-university-2026-advanced-algebra.json",
+      "question_count": 6,
+      "jsonl_lines": {
+        "first": 1,
+        "last": 6
+      }
+    },
+    {
+      "school": "北京师范大学",
+      "year": 2026,
+      "subject_code": "analytic_geometry",
+      "source_file": "beijing-normal-university-2026-analytic-geometry.json",
+      "question_count": 7,
+      "jsonl_lines": {
+        "first": 7,
+        "last": 13
+      }
+    },
+    {
+      "school": "复旦大学",
+      "year": 2025,
+      "subject_code": "mathematical_analysis",
+      "source_file": "fudan-university-2025-mathematical-analysis.json",
+      "question_count": 7,
+      "jsonl_lines": {
+        "first": 14,
+        "last": 20
+      }
+    },
+    {
+      "school": "复旦大学",
+      "year": 2025,
+      "subject_code": "advanced_algebra",
+      "source_file": "fudan-university-2025-advanced-algebra.json",
+      "question_count": 9,
+      "jsonl_lines": {
+        "first": 21,
+        "last": 29
+      }
+    },
+    {
+      "school": "复旦大学",
+      "year": 2026,
+      "subject_code": "mathematical_analysis",
+      "source_file": "fudan-university-2026-mathematical-analysis.json",
+      "question_count": 14,
+      "jsonl_lines": {
+        "first": 30,
+        "last": 43
+      }
+    },
+    {
+      "school": "哈尔滨工业大学",
+      "year": 2026,
+      "subject_code": "advanced_algebra",
+      "source_file": "harbin-institute-of-technology-2026-advanced-algebra.json",
+      "question_count": 10,
+      "jsonl_lines": {
+        "first": 44,
+        "last": 53
+      }
+    },
+    {
+      "school": "哈尔滨工业大学",
+      "year": 2026,
+      "subject_code": "mathematical_analysis",
+      "source_file": "harbin-institute-of-technology-2026-mathematical-analysis.json",
+      "question_count": 13,
+      "jsonl_lines": {
+        "first": 54,
+        "last": 66
+      }
+    }
+  ],
+  "approval": {
+    "status": "approved_for_import",
+    "source": "explicit_user_approval",
+    "scope": "all_questions_in_batch",
+    "approved_question_count": 66,
+    "approved_external_ids": [
+      "bnu-2026-aa-001",
+      "bnu-2026-aa-002",
+      "bnu-2026-aa-003",
+      "bnu-2026-aa-004",
+      "bnu-2026-aa-005",
+      "bnu-2026-aa-006",
+      "bnu-2026-ag-007a",
+      "bnu-2026-ag-007b",
+      "bnu-2026-ag-007c",
+      "bnu-2026-ag-007d",
+      "bnu-2026-ag-008",
+      "bnu-2026-ag-009",
+      "bnu-2026-ag-010",
+      "fudan-2025-ma-001",
+      "fudan-2025-ma-002",
+      "fudan-2025-ma-003",
+      "fudan-2025-ma-004",
+      "fudan-2025-ma-005",
+      "fudan-2025-ma-006",
+      "fudan-2025-ma-007",
+      "fudan-2025-aa-001",
+      "fudan-2025-aa-002",
+      "fudan-2025-aa-003",
+      "fudan-2025-aa-004",
+      "fudan-2025-aa-005",
+      "fudan-2025-aa-006",
+      "fudan-2025-aa-007",
+      "fudan-2025-aa-008",
+      "fudan-2025-aa-009",
+      "fudan-2026-ma-001",
+      "fudan-2026-ma-002",
+      "fudan-2026-ma-003",
+      "fudan-2026-ma-004",
+      "fudan-2026-ma-005",
+      "fudan-2026-ma-006",
+      "fudan-2026-ma-007",
+      "fudan-2026-ma-008",
+      "fudan-2026-ma-009",
+      "fudan-2026-ma-010",
+      "fudan-2026-ma-011",
+      "fudan-2026-ma-012",
+      "fudan-2026-ma-013",
+      "fudan-2026-ma-014",
+      "hit-2026-aa-001",
+      "hit-2026-aa-002",
+      "hit-2026-aa-003",
+      "hit-2026-aa-004",
+      "hit-2026-aa-005",
+      "hit-2026-aa-006",
+      "hit-2026-aa-007",
+      "hit-2026-aa-008",
+      "hit-2026-aa-009",
+      "hit-2026-aa-010",
+      "hit-2026-ma-001",
+      "hit-2026-ma-002",
+      "hit-2026-ma-003",
+      "hit-2026-ma-004",
+      "hit-2026-ma-005",
+      "hit-2026-ma-006",
+      "hit-2026-ma-007",
+      "hit-2026-ma-008",
+      "hit-2026-ma-009",
+      "hit-2026-ma-010",
+      "hit-2026-ma-011",
+      "hit-2026-ma-012",
+      "hit-2026-ma-013"
+    ],
+    "database_activation": "activate_after_verified_import",
+    "replay_instruction": "导入生成真实 question_id 与 review_item_id 后，按 external_id 对账并自动记录 approved 审核，再由数据库约束切换为 active。"
+  },
+  "risk_summary": {
+    "ambiguous_or_unusable_count": 4,
+    "items": [
+      {
+        "external_id": "fudan-2025-ma-005",
+        "ocr_quality": "ambiguous",
+        "note": "OCR 原文为“包含原点的光滑曲线”，若理解为曲线经过原点则被积式无定义；依据标准题型重建为不经过原点且逆时针包围原点一周的简单闭曲线。"
+      },
+      {
+        "external_id": "fudan-2025-aa-004",
+        "ocr_quality": "ambiguous",
+        "note": "原题 OCR 将映射公式识别为“J×J”，与给出的 A 和求若尔当形不相容；按最可能的原题恢复为 φ(X)=AXA。需对照原卷图像人工确认后才能 active。"
+      },
+      {
+        "external_id": "fudan-2025-aa-009",
+        "ocr_quality": "ambiguous",
+        "note": "OCR 题面末尾仅有“为实对称矩阵”，这会使结论对任意 P 都平凡成立，也不需要 A 可逆或 H 正定。结合全部条件和考研题难度，原题极可能为“实对称正定矩阵”。原附解析把它按平凡版本处理，不能采信；本条按“正定”重建并独立给出非平凡证明，必须对照原卷图像复核。"
+      },
+      {
+        "external_id": "fudan-2026-ma-014",
+        "ocr_quality": "ambiguous",
+        "note": "原题仅写 f、g 为 Lebesgue 可积时命题一般不成立，且积分可能无定义。无法从 Markdown 判断原卷是否漏掉“g 有界”等条件；按最小修正版保存，必须核对原卷图像后才能 active。"
+      }
+    ]
+  }
+}

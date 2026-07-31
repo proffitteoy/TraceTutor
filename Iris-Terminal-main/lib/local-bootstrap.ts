@@ -19,6 +19,8 @@ import { UNIFIED_SYSTEM_PROMPT } from "@/lib/unified-system-prompt"
 export const ensureLocalBootstrap = async () => {
   const preferDeepseek =
     Boolean(process.env.DEEPSEEK_API_KEY) && !process.env.OPENAI_API_KEY
+  const deepseekDefaultModel =
+    process.env.DEEPSEEK_DEFAULT_MODEL?.trim() || "deepseek-chat"
 
   const user = await prisma.user.upsert({
     where: { id: LOCAL_USER_ID },
@@ -97,7 +99,7 @@ export const ensureLocalBootstrap = async () => {
       description: LOCAL_WORKSPACE_CONFIG.description,
       is_home: true,
       default_context_length: DEFAULT_CHAT_CONTEXT_LENGTH,
-      default_model: preferDeepseek ? "deepseek-chat" : "gpt-4o",
+      default_model: preferDeepseek ? deepseekDefaultModel : "gpt-4o",
       default_prompt: UNIFIED_SYSTEM_PROMPT,
       default_temperature: DEFAULT_CHAT_TEMPERATURE,
       embeddings_provider: "openai",
@@ -109,10 +111,19 @@ export const ensureLocalBootstrap = async () => {
     }
   })
 
-  if (preferDeepseek && workspace.default_model.startsWith("gpt-")) {
+  if (
+    preferDeepseek &&
+    process.env.DEEPSEEK_DEFAULT_MODEL &&
+    workspace.default_model !== deepseekDefaultModel
+  ) {
     await prisma.workspace.update({
       where: { id: workspace.id },
-      data: { default_model: "deepseek-chat" }
+      data: { default_model: deepseekDefaultModel }
+    })
+  } else if (preferDeepseek && workspace.default_model.startsWith("gpt-")) {
+    await prisma.workspace.update({
+      where: { id: workspace.id },
+      data: { default_model: deepseekDefaultModel }
     })
   }
 

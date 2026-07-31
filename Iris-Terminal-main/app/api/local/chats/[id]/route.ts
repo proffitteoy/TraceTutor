@@ -36,6 +36,17 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   await ensureLocalBootstrap()
-  await prisma.chat.delete({ where: { id: params.id } })
+  const chat = await prisma.chat.findUnique({ where: { id: params.id } })
+
+  if (!chat) {
+    return new NextResponse("Not found", { status: 404 })
+  }
+
+  if (chat.card_relation === "root") {
+    await prisma.chatTree.delete({ where: { id: chat.tree_id } })
+  } else {
+    await prisma.chat.delete({ where: { id: params.id } })
+  }
+
   return NextResponse.json({ ok: true })
 }

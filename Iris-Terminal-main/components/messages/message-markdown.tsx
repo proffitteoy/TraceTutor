@@ -4,11 +4,14 @@ import rehypeKatex from "rehype-katex"
 import remarkBreaks from "remark-breaks"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
+import { cn } from "@/lib/utils"
 import { MessageCodeBlock } from "./message-codeblock"
 import { MessageMarkdownMemoized } from "./message-markdown-memoized"
+import { rehypeMathSource } from "./rehype-math-source"
 
 interface MessageMarkdownProps {
   content: string
+  className?: string
 }
 
 const normalizeMathDelimiters = (raw: string) => {
@@ -99,14 +102,20 @@ const normalizeMathDelimiters = (raw: string) => {
   return output
 }
 
-export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
+export const MessageMarkdown: FC<MessageMarkdownProps> = ({
+  content,
+  className
+}) => {
   const normalizedContent = normalizeMathDelimiters(content)
 
   return (
     <MessageMarkdownMemoized
-      className="prose prose-neutral dark:prose-invert prose-p:leading-7 prose-headings:scroll-mt-24 prose-headings:font-semibold prose-a:break-all prose-pre:p-0 prose-code:before:content-none prose-code:after:content-none min-w-full space-y-6 break-words"
+      className={cn(
+        "prose prose-neutral dark:prose-invert prose-p:leading-7 prose-headings:scroll-mt-24 prose-headings:font-semibold prose-a:break-all prose-pre:p-0 prose-code:before:content-none prose-code:after:content-none min-w-full space-y-6 break-words",
+        className
+      )}
       remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-      rehypePlugins={[rehypeKatex]}
+      rehypePlugins={[rehypeMathSource, rehypeKatex]}
       components={{
         p({ children }) {
           return <p className="mb-2 last:mb-0">{children}</p>

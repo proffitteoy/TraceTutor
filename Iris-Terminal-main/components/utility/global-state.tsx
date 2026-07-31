@@ -3,6 +3,7 @@
 "use client"
 
 import { ChatbotUIContext } from "@/context/context"
+import { getFileWorkspacesByWorkspaceId } from "@/db/files"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import {
@@ -19,19 +20,38 @@ import {
   ChatFile,
   ChatMessage,
   ChatSettings,
+  FilesStatus,
   LLM,
   MessageImage,
   OpenRouterLLM,
+  StartupErrorPayload,
+  StartupPayload,
+  StartupStatus,
   WorkspaceImage
 } from "@/types"
 import { AssistantImage } from "@/types/images/assistant-image"
-import { FC, useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { FC, useCallback, useEffect, useRef, useState } from "react"
 
 interface GlobalStateProps {
   children: React.ReactNode
 }
 
 export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
+  const params = useParams()
+  const requestedWorkspaceId =
+    typeof params.workspaceid === "string" ? params.workspaceid : ""
+  const [startupStatus, setStartupStatus] =
+    useState<StartupStatus>("idle")
+  const [startupError, setStartupError] =
+    useState<StartupErrorPayload | null>(null)
+  const [filesStatus, setFilesStatus] = useState<FilesStatus>("idle")
+  const filesLoadRef = useRef<{
+    workspaceId: string
+    promise: Promise<void>
+  } | null>(null)
+  const deferredModelsWorkspaceRef = useRef<string | null>(null)
+
   // PROFILE STORE
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null)
 
@@ -120,75 +140,173 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [toolInUse, setToolInUse] = useState<string>("none")
 
   useEffect(() => {
-    ;(async () => {
-      const profile = await fetchStartingData()
+    let cancelled = false
 
-      if (profile) {
-        const hostedModelRes = await fetchHostedModels(profile)
-        if (!hostedModelRes) return
+    const loadStartupData = async () => {
+      setStartupStatus("loading")
+      setStartupError(null)
+      setFiles([])
+      setFilesStatus("idle")
+      filesLoadRef.current = null
+      deferredModelsWorkspaceRef.current = null
 
-        setEnvKeyMap(hostedModelRes.envKeyMap)
-        setAvailableHostedModels(hostedModelRes.hostedModels)
+      try {
+        const query = requestedWorkspaceId
+          ? `?workspace_id=${encodeURIComponent(requestedWorkspaceId)}`
+          : ""
+        const response = await fetch(`/api/local/startup${query}`)
 
-        if (
-          profile["openrouter_api_key"] ||
-          hostedModelRes.envKeyMap["openrouter"]
-        ) {
-          const openRouterModels = await fetchOpenRouterModels()
-          if (!openRouterModels) return
+        if (!response.ok) {
+          const error = (await response.json()) as StartupErrorPayload
+          if (!cancelled) {
+            setStartupError(error)
+            setStartupStatus("error")
+          }
+          return
+        }
+
+        const payload = (await response.json()) as StartupPayload
+        const hostedModelResult = await fetchHostedModels(
+          payload.profile,
+          payload.envKeyMap,
+          { loadRemoteModels: false }
+        )
+
+        if (cancelled) return
+
+        setProfile(payload.profile)
+        setWorkspaces(payload.workspaces)
+        setSelectedWorkspace(payload.workspace)
+        setChats(payload.chats)
+        setEnvKeyMap(payload.envKeyMap)
+        setAvailableHostedModels(hostedModelResult?.hostedModels || [])
+        setAvailableOpenRouterModels([])
+        setStartupStatus("ready")
+
+        if (payload.workspace.image_path) {
+          void (async () => {
+            const url =
+              (await getWorkspaceImageFromStorage(
+                payload.workspace.image_path
+              )) || ""
+            if (!url || cancelled) return
+
+            const imageResponse = await fetch(url)
+            const blob = await imageResponse.blob()
+            const base64 = await convertBlobToBase64(blob)
+            if (cancelled) return
+
+            setWorkspaceImages([
+              {
+                workspaceId: payload.workspace.id,
+                path: payload.workspace.image_path,
+                base64,
+                url
+              }
+            ])
+          })()
+        } else {
+          setWorkspaceImages([])
+        }
+      } catch (error) {
+        if (cancelled) return
+        setStartupError({
+          code: "STARTUP_FAILED",
+          message: (error as Error)?.message || "本地启动数据加载失败。"
+        })
+        setStartupStatus("error")
+      }
+    }
+
+    void loadStartupData()
+    return () => {
+      cancelled = true
+    }
+  }, [requestedWorkspaceId])
+
+  const ensureFilesLoaded = useCallback(async () => {
+    const workspaceId = selectedWorkspace?.id
+    if (!workspaceId || filesStatus === "ready") return
+
+    if (filesLoadRef.current?.workspaceId === workspaceId) {
+      return filesLoadRef.current.promise
+    }
+
+    const promise = (async () => {
+      setFilesStatus("loading")
+      try {
+        const result = await getFileWorkspacesByWorkspaceId(workspaceId)
+        setFiles(result.files || [])
+        setFilesStatus("ready")
+      } catch (error) {
+        filesLoadRef.current = null
+        setFilesStatus("error")
+        throw error
+      }
+    })()
+
+    filesLoadRef.current = { workspaceId, promise }
+    return promise
+  }, [filesStatus, selectedWorkspace?.id])
+
+  useEffect(() => {
+    if (
+      startupStatus !== "ready" ||
+      !profile ||
+      !selectedWorkspace ||
+      typeof window === "undefined"
+    ) {
+      return
+    }
+
+    const workspaceId = selectedWorkspace.id
+    const loadDeferredData = async () => {
+      void ensureFilesLoaded().catch(() => {})
+
+      if (deferredModelsWorkspaceRef.current === workspaceId) return
+      deferredModelsWorkspaceRef.current = workspaceId
+
+      const hostedModelResult = await fetchHostedModels(profile, envKeyMap, {
+        loadRemoteModels: true
+      })
+      if (hostedModelResult) {
+        setAvailableHostedModels(hostedModelResult.hostedModels)
+      }
+
+      if (profile.openrouter_api_key || envKeyMap.openrouter) {
+        const openRouterModels = await fetchOpenRouterModels()
+        if (openRouterModels) {
           setAvailableOpenRouterModels(openRouterModels)
         }
       }
-    })()
-  }, [])
-
-  const fetchStartingData = async () => {
-    const bootstrapResponse = await fetch("/api/local/bootstrap")
-    if (!bootstrapResponse.ok) return
-
-    const { profile, workspace } = await bootstrapResponse.json()
-
-    setProfile(profile)
-
-    const workspacesResponse = await fetch("/api/local/workspaces")
-    if (workspacesResponse.ok) {
-      const allWorkspaces = await workspacesResponse.json()
-      if (Array.isArray(allWorkspaces) && allWorkspaces.length > 0) {
-        setWorkspaces(allWorkspaces)
-      } else {
-        setWorkspaces([workspace])
-      }
-    } else {
-      setWorkspaces([workspace])
     }
 
-    if (workspace.image_path) {
-      const workspaceImageUrl =
-        (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
-
-      if (workspaceImageUrl) {
-        const response = await fetch(workspaceImageUrl)
-        const blob = await response.blob()
-        const base64 = await convertBlobToBase64(blob)
-
-        setWorkspaceImages(prev => [
-          ...prev,
-          {
-            workspaceId: workspace.id,
-            path: workspace.image_path,
-            base64: base64,
-            url: workspaceImageUrl
-          }
-        ])
-      }
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(
+        () => void loadDeferredData(),
+        { timeout: 1500 }
+      )
+      return () => window.cancelIdleCallback(idleId)
     }
 
-    return profile
-  }
+    const timeoutId = setTimeout(() => void loadDeferredData(), 500)
+    return () => clearTimeout(timeoutId)
+  }, [
+    ensureFilesLoaded,
+    envKeyMap,
+    profile,
+    selectedWorkspace,
+    startupStatus
+  ])
 
   return (
     <ChatbotUIContext.Provider
       value={{
+        startupStatus,
+        startupError,
+        filesStatus,
+        ensureFilesLoaded,
+
         // PROFILE STORE
         profile,
         setProfile,

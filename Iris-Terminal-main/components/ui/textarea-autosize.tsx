@@ -15,6 +15,7 @@ interface TextareaAutosizeProps {
   maxLength?: number
   disabled?: boolean
   onKeyDown?: (event: React.KeyboardEvent) => void
+  onFocus?: (event: React.FocusEvent<HTMLTextAreaElement>) => void
   onPaste?: (event: React.ClipboardEvent) => void
   onCompositionStart?: (event: React.CompositionEvent) => void
   onCompositionEnd?: (event: React.CompositionEvent) => void
@@ -31,6 +32,7 @@ export const TextareaAutosize: FC<TextareaAutosizeProps> = ({
   maxLength,
   disabled = false,
   onKeyDown = () => {},
+  onFocus = () => {},
   onPaste = () => {},
   onCompositionStart = () => {},
   onCompositionEnd = () => {}
@@ -50,6 +52,7 @@ export const TextareaAutosize: FC<TextareaAutosizeProps> = ({
       disabled={disabled}
       onChange={event => onValueChange(event.target.value)}
       onKeyDown={onKeyDown}
+      onFocus={onFocus}
       onPaste={onPaste}
       onCompositionStart={onCompositionStart}
       onCompositionEnd={onCompositionEnd}

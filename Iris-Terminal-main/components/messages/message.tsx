@@ -34,6 +34,7 @@ interface MessageProps {
   onStartEdit: (message: Tables<"messages">) => void
   onCancelEdit: () => void
   onSubmitEdit: (value: string, sequenceNumber: number) => void
+  onBranch?: () => void
 }
 
 export const Message: FC<MessageProps> = ({
@@ -43,7 +44,8 @@ export const Message: FC<MessageProps> = ({
   isLast,
   onStartEdit,
   onCancelEdit,
-  onSubmitEdit
+  onSubmitEdit,
+  onBranch
 }) => {
   const {
     assistants,
@@ -195,10 +197,10 @@ export const Message: FC<MessageProps> = ({
 
   return (
     <div
-      className={cn(
-        "flex w-full justify-center",
-        message.role === "user" ? "" : "bg-secondary"
-      )}
+      data-message-id={message.id}
+      data-message-role={message.role}
+      data-message-sequence={message.sequence_number}
+      className="flex w-full justify-center bg-transparent"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onKeyDown={handleKeyDown}
@@ -213,9 +215,10 @@ export const Message: FC<MessageProps> = ({
             isEditing={isEditing}
             isHovering={isHovering}
             onRegenerate={handleRegenerate}
+            onBranch={message.role === "system" ? undefined : onBranch}
           />
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3" data-message-content>
           {message.role === "system" ? (
             <div className="flex items-center space-x-4">
               <IconPencil
@@ -282,44 +285,50 @@ export const Message: FC<MessageProps> = ({
               </div>
             </div>
           )}
-          {shouldShowGeneratingState ? (
-            <>
-              {(() => {
-                switch (toolInUse) {
-                  case "none":
-                    return (
-                      <IconCircleFilled className="animate-pulse" size={20} />
-                    )
-                  case "retrieval":
-                    return (
-                      <div className="flex animate-pulse items-center space-x-2">
-                        <IconFileText size={20} />
+          <div
+            data-message-body
+            className="cursor-text select-text"
+            style={{ userSelect: "text", WebkitUserSelect: "text" }}
+          >
+            {shouldShowGeneratingState ? (
+              <>
+                {(() => {
+                  switch (toolInUse) {
+                    case "none":
+                      return (
+                        <IconCircleFilled className="animate-pulse" size={20} />
+                      )
+                    case "retrieval":
+                      return (
+                        <div className="flex animate-pulse items-center space-x-2">
+                          <IconFileText size={20} />
 
-                        <div>正在检索文件...</div>
-                      </div>
-                    )
-                  default:
-                    return (
-                      <div className="flex animate-pulse items-center space-x-2">
-                        <IconBolt size={20} />
+                          <div>正在检索文件...</div>
+                        </div>
+                      )
+                    default:
+                      return (
+                        <div className="flex animate-pulse items-center space-x-2">
+                          <IconBolt size={20} />
 
-                        <div>正在使用 {toolInUse}...</div>
-                      </div>
-                    )
-                }
-              })()}
-            </>
-          ) : isEditing ? (
-            <TextareaAutosize
-              textareaRef={editInputRef}
-              className="text-md"
-              value={editedMessage}
-              onValueChange={setEditedMessage}
-              maxRows={20}
-            />
-          ) : (
-            <MessageMarkdown content={message.content} />
-          )}
+                          <div>正在使用 {toolInUse}...</div>
+                        </div>
+                      )
+                  }
+                })()}
+              </>
+            ) : isEditing ? (
+              <TextareaAutosize
+                textareaRef={editInputRef}
+                className="text-md"
+                value={editedMessage}
+                onValueChange={setEditedMessage}
+                maxRows={20}
+              />
+            ) : (
+              <MessageMarkdown content={message.content} />
+            )}
+          </div>
         </div>
 
         {fileItems.length > 0 && (

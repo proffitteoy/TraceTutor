@@ -1,0 +1,864 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "哈尔滨工业大学",
+    "year": 2026,
+    "subject_code": "advanced_algebra",
+    "subject_name": "高等代数",
+    "source_file": "E:\\考研真题\\MinerU_markdown_哈尔滨工业大学2026_2082766071947890688.md",
+    "source_scope": "共 10 题；目录中未发现本卷配套解析，全部答案为独立推导",
+    "curation_method": "逐题独立求解与复核，不调用外部模型 API",
+    "question_count": 10,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-001",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第1题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "polynomials"
+      },
+      "title": "满足两个四重同余条件的七次多项式",
+      "stem": "求七次多项式 $f(x)$，使 $f(x)+1$ 能被 $(x-1)^4$ 整除，且 $f(x)-1$ 能被 $(x+1)^4$ 整除。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$f(x)=\\frac{5x^7-21x^5+35x^3-35x}{16}.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "利用对称性化为奇多项式插值",
+          "solution_type": "teaching",
+          "text": "模 $(x-1)^4$ 与模 $(x+1)^4$ 的条件在次数小于 $8$ 的多项式中给出唯一解。若 $f$ 是解，则 $-f(-x)$ 也是解，故唯一性推出 $f$ 为奇函数。写 $f=ax+bx^3+cx^5+dx^7$。由 $f(1)=-1$ 及 $f'(1)=f''(1)=f'''(1)=0$ 解得 $(a,b,c,d)=(-35,35,-21,5)/16$。奇性自动保证 $x=-1$ 处的另一组四重条件。",
+          "main_method_code": "odd_hermite_interpolation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "将两个整除条件改写为在 $\\pm1$ 处的函数值和前三阶导数条件。",
+              "knowledge_point_code": "hermite_interpolation"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "由解的唯一性和关于原点的对称性推出 $f$ 为奇多项式。",
+              "method_code": "odd_hermite_interpolation"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "代入 $f=ax+bx^3+cx^5+dx^7$ 并解四个线性方程。"
+            },
+            {
+              "order": 4,
+              "role": "check",
+              "text": "检查在 $x=1$ 与 $x=-1$ 处均满足四重同余。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "hermite_interpolation",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "polynomial_divisibility",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "odd_hermite_interpolation",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "two_coprime_moduli",
+          "multiplicity_four",
+          "odd_symmetry"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-002",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第2题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "determinants"
+      },
+      "title": "两个秩一扰动的行列式",
+      "stem": "计算 $n$ 阶行列式，其第 $(i,j)$ 个元素为 $2\\delta_{ij}+a_i+b_j$。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "令 $A_0=\\sum_i a_i$、$B_0=\\sum_i b_i$、$C_0=\\sum_i a_ib_i$，则\n$$\\det=2^{n-2}\\big((2+A_0)(2+B_0)-nC_0\\big).$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "矩阵行列式引理降为二阶行列式",
+          "solution_type": "teaching",
+          "text": "令 $e=(1,\\ldots,1)^T$，原矩阵为 $M=2I+ae^T+eb^T=2I+UV^T$，其中 $U=(a,e)$、$V=(e,b)$。由矩阵行列式引理，$\\det M=2^n\\det(I_2+\\frac12V^TU)$。右侧二阶矩阵为 $\\begin{pmatrix}1+A_0/2&n/2\\\\C_0/2&1+B_0/2\\end{pmatrix}$，展开即得答案。",
+          "main_method_code": "matrix_determinant_lemma",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把矩阵写成 $2I$ 加两个秩一矩阵。",
+              "knowledge_point_code": "low_rank_matrix_update"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "使用矩阵行列式引理把 $n$ 阶行列式降为二阶。",
+              "method_code": "matrix_determinant_lemma"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "计算四个内积并展开二阶行列式。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "low_rank_matrix_update",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "matrix_determinant_lemma",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "diagonal_plus_rank_two",
+          "parameterized_determinant"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-003",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第3题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "matrix_rank"
+      },
+      "title": "满行秩与右逆存在性",
+      "stem": "设 $A$ 是实数域上的 $m\\times n$ 矩阵，$m\\le n$。证明矩阵方程 $AX=I_m$ 对 $n\\times m$ 未知矩阵 $X$ 有解，当且仅当 $\\operatorname{rank}A=m$。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$AX=I_m$ 有解的充要条件是 $A$ 满行秩。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "必要性用秩，充分性逐列选原像",
+          "solution_type": "teaching",
+          "text": "若 $AX=I_m$，则 $m=\\operatorname{rank}(AX)\\le\\operatorname{rank}A\\le m$，故 $\\operatorname{rank}A=m$。反之，满行秩意味着线性映射 $x\\mapsto Ax$ 从 $\\mathbb R^n$ 到 $\\mathbb R^m$ 满射。对每个标准基向量 $e_j$ 选取 $x_j$ 使 $Ax_j=e_j$，令 $X=(x_1,\\ldots,x_m)$，则 $AX=I_m$。",
+          "main_method_code": "choose_preimages_as_columns",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "由乘积秩不超过因子秩证明必要性。"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "把满行秩解释为 $A:\\mathbb R^n\\to\\mathbb R^m$ 满射。",
+              "knowledge_point_code": "right_inverse"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "为每个标准基选择原像并作为 $X$ 的列。",
+              "method_code": "choose_preimages_as_columns"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "right_inverse",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "image_and_rank",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "choose_preimages_as_columns",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "rectangular_matrix",
+          "right_inverse",
+          "if_and_only_if"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-004",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第4题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "nilpotent_matrices"
+      },
+      "title": "全部三阶平方零实矩阵",
+      "stem": "求所有满足 $A^2=0$ 的三阶实方阵 $A$。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "全部解为\n$$A=uv^T,\\qquad u,v\\in\\mathbb R^3,\\quad v^Tu=0,$$\n其中允许 $u=0$ 或 $v=0$，从而包含零矩阵。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "先限秩再作秩一分解",
+          "solution_type": "teaching",
+          "text": "由 $A^2=0$ 得 $\\operatorname{Im}A\\subseteq\\ker A$，故 $r=\\operatorname{rank}A\\le3-r$，所以 $r\\le1$。非零解均为秩一矩阵，可写成 $A=uv^T$。此时 $A^2=u(v^Tu)v^T=(v^Tu)A$，故平方为零当且仅当 $v^Tu=0$。反向代入也立即成立。",
+          "main_method_code": "rank_one_nilpotent_factorization",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "conclude",
+              "text": "由像包含于核并用秩—零度定理得到秩至多为 $1$。",
+              "knowledge_point_code": "square_zero_matrix"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "把非零秩一矩阵写为 $uv^T$。",
+              "method_code": "rank_one_nilpotent_factorization"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "计算 $A^2=(v^Tu)A$，得到正交约束。"
+            },
+            {
+              "order": 4,
+              "role": "check",
+              "text": "验证所有满足该约束的 $uv^T$ 均为解。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "square_zero_matrix",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "nilpotent_operator",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "rank_one_nilpotent_factorization",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "nilpotency_index_two",
+          "rank_at_most_one",
+          "outer_product_parameterization"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-005",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第5题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "quadratic_forms"
+      },
+      "title": "由顺序主子式写出二次型标准形",
+      "stem": "设数域 $P$ 上的 $n$ 元二次型 $f$ 的对称矩阵为 $S$，其各阶顺序主子式 $d_1,\\ldots,d_n$ 均非零。求 $f$ 的标准形。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "令 $d_0=1$，则 $f$ 合同于\n$$d_1y_1^2+\\frac{d_2}{d_1}y_2^2+\\cdots+\\frac{d_n}{d_{n-1}}y_n^2.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "LDL^T 分解",
+          "solution_type": "teaching",
+          "text": "顺序主子式均非零保证无需换行即可进行对称消元，得到 $S=LDL^T$，其中 $L$ 可逆下三角，$D$ 对角。比较前 $k$ 阶行列式，有 $d_k=D_{11}\\cdots D_{kk}$，所以 $D_{kk}=d_k/d_{k-1}$。作可逆线性替换即可得到所写标准形。",
+          "main_method_code": "ldl_diagonalization",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "由非零顺序主子式进行 $LDL^T$ 分解。",
+              "method_code": "ldl_diagonalization"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "比较各阶顺序主子式，得到对角元 $d_k/d_{k-1}$。",
+              "knowledge_point_code": "leading_principal_minors"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "由合同变换写出二次型的对角标准形。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "ldl_congruence_decomposition",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "leading_principal_minors",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "ldl_diagonalization",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "all_leading_principal_minors_nonzero",
+          "quadratic_form_diagonalization"
+        ],
+        "curation_confidence": 0.95,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "默认数域特征不为 2，符合二次型对称矩阵与合同标准形的通常语境。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-006",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第6题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "eigenvalues"
+      },
+      "title": "由矩阵方程求未知矩阵的特征值",
+      "stem": "矩阵 $A,B$ 满足 $AB=2A+3B$，其中\n$$A=\\begin{pmatrix}1&1&1\\\\1&0&-1\\\\1&-1&-3\\end{pmatrix}.$$\n求 $B$ 的特征值。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$0,\\qquad \\frac{2(\\sqrt7-1)}3,\\qquad -\\frac{2(1+\\sqrt7)}3.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "因式分解矩阵方程并作谱映射",
+          "solution_type": "teaching",
+          "text": "原式等价于 $(A-3I)(B-2I)=6I$。计算 $A$ 的特征多项式为 $\\lambda(\\lambda^2+2\\lambda-6)$，特征值为 $0,-1\\pm\\sqrt7$，均不等于 $3$，故 $B=2I+6(A-3I)^{-1}$。于是对应特征值为 $2+6/(\\lambda-3)$，分别化简为答案中的三个数。",
+          "main_method_code": "factor_matrix_equation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把方程改写为 $(A-3I)(B-2I)=6I$。",
+              "method_code": "factor_matrix_equation"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "求 $A$ 的特征值 $0,-1\\pm\\sqrt7$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "由 $B=2I+6(A-3I)^{-1}$ 使用谱映射。",
+              "knowledge_point_code": "spectral_mapping_for_matrices"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "逐个代入并化简。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "spectral_mapping_for_matrices",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "factor_matrix_equation",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "linear_fractional_matrix_relation",
+          "spectral_mapping"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-007",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第7题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "polynomials"
+      },
+      "title": "偶次幂组合被三次多项式整除",
+      "stem": "判断并说明理由：是否存在不全为零的有理数 $a,b,c,d$，使\n$$x^3+6x+1\\mid a+bx^2+cx^4+dx^6？$$",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "存在，例如 $(a,b,c,d)=(-1,36,12,1)$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "在商空间中化简偶次幂",
+          "solution_type": "teaching",
+          "text": "模 $p=x^3+6x+1$ 有 $x^3\\equiv-6x-1$，从而 $x^4\\equiv-6x^2-x$、$x^6\\equiv36x^2+12x+1$。令余式各系数为零，得到 $a=-d,c=12d,b=36d$。取 $d=1$ 即可。也可直接验证 $x^6+12x^4+36x^2-1=(x^3+6x-1)(x^3+6x+1)$。",
+          "main_method_code": "quotient_space_linear_dependence",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "在 $\\mathbb Q[x]/(x^3+6x+1)$ 中化简 $x^4,x^6$。",
+              "knowledge_point_code": "polynomial_quotient_space"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "令余式的常数、一次和二次项系数均为零。"
+            },
+            {
+              "order": 3,
+              "role": "check",
+              "text": "给出显式因式分解验证。",
+              "method_code": "quotient_space_linear_dependence"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "polynomial_quotient_space",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "polynomial_divisibility",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "quotient_space_linear_dependence",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "existence_question",
+          "even_polynomial",
+          "explicit_factorization"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-008",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第8题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "quadratic_optimization"
+      },
+      "title": "线性约束下三变量平方和的范围",
+      "stem": "实数 $a,b,c$ 满足 $a+2b+2c=1$，求 $a^2+b^2+c^2$ 的取值范围。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$[1/9,+\\infty)$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Cauchy–Schwarz 求最小值并沿正交方向取遍",
+          "solution_type": "teaching",
+          "text": "由 Cauchy–Schwarz，$1=(a+2b+2c)^2\\le(1^2+2^2+2^2)(a^2+b^2+c^2)=9Q$，故 $Q\\ge1/9$。等号在 $(a,b,c)=(1,2,2)/9$ 处取得。在线性约束平面内从该最小范数点沿任意非零方向移动，平方范数连续地取遍 $[1/9,+\\infty)$。",
+          "main_method_code": "cauchy_schwarz_minimum",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "对向量 $(a,b,c)$ 与 $(1,2,2)$ 使用 Cauchy–Schwarz。",
+              "method_code": "cauchy_schwarz_minimum"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "由等号条件得到最小点和最小值 $1/9$。"
+            },
+            {
+              "order": 3,
+              "role": "check",
+              "text": "沿约束平面内的非零方向说明无上界且中间值均可取得。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "quadratic_norm_under_linear_constraint",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "cauchy_schwarz_minimum",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "affine_plane",
+          "minimum_norm",
+          "unbounded_range"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-009",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第9题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "determinants"
+      },
+      "title": "元素绝对值受限的八阶行列式最大值",
+      "stem": "设实矩阵 $A=(a_{ij})_{8\\times8}$ 满足 $|a_{ij}|\\le1$。求 $|\\det A|$ 的最大值。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "numeric",
+          "answer_text": "$4096$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Hadamard 不等式及八阶 Hadamard 矩阵",
+          "solution_type": "teaching",
+          "text": "每行欧氏范数至多 $\\sqrt8$，Hadamard 不等式给出 $|\\det A|\\le(\\sqrt8)^8=8^4=4096$。八阶 Sylvester Hadamard 矩阵的元素均为 $\\pm1$，且八行两两正交、每行范数为 $\\sqrt8$，故其行列式绝对值等于该上界。因此最大值为 $4096$。",
+          "main_method_code": "hadamard_bound_and_attainment",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "用元素界控制每行范数，并应用 Hadamard 行列式不等式。",
+              "method_code": "hadamard_bound_and_attainment"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "上界为 $(\\sqrt8)^8=4096$。"
+            },
+            {
+              "order": 3,
+              "role": "check",
+              "text": "以八阶 Sylvester Hadamard 矩阵说明上界可达。",
+              "knowledge_point_code": "hadamard_determinant_bound"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "hadamard_determinant_bound",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "hadamard_bound_and_attainment",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "entrywise_bound",
+          "determinant_maximization",
+          "hadamard_matrix_order_eight"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-aa-010",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年高等代数试卷",
+        "reference": "第10题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "inner_product_spaces"
+      },
+      "title": "行向量两两正交是否推出列向量两两正交",
+      "stem": "判断并说明理由：若实方阵 $A$ 的行向量两两正交，则其列向量也两两正交。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "命题不成立。例如\n$$A=\\begin{pmatrix}1&1\\\\2&-2\\end{pmatrix}$$\n的两行正交，但两列内积为 $-3$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "构造不等长正交行反例",
+          "solution_type": "teaching",
+          "text": "行向量两两正交只说明 $AA^T$ 为对角矩阵，并不保证 $A^TA$ 为对角矩阵。取 $A=\\begin{pmatrix}1&1\\\\2&-2\\end{pmatrix}$，两行内积为零；两列分别为 $(1,2)^T$、$(1,-2)^T$，内积为 $1-4=-3$，故命题为假。",
+          "main_method_code": "explicit_counterexample",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "区分 $AA^T$ 对角与 $A^TA$ 对角两个条件。",
+              "knowledge_point_code": "row_column_orthogonality"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "选择两条正交但长度不同的行向量。",
+              "method_code": "explicit_counterexample"
+            },
+            {
+              "order": 3,
+              "role": "check",
+              "text": "直接计算两列内积不为零。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "row_column_orthogonality",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "explicit_counterexample",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 6,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "row_vs_column_gram_matrix",
+          "two_by_two_counterexample"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    }
+  ]
+}

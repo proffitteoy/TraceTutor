@@ -1,8 +1,9 @@
 # 鸢尾花终端
 
-本项目是一个面向本地部署的多模型对话终端，当前聚焦三条主链路：
+本项目是一个面向本地部署的多模型对话与知识探索终端，当前聚焦四条主链路：
 
 - 本地工作区与聊天管理
+- 卡片树画布与引用式知识分支
 - 文件上传、切片、向量化与检索
 - 对话总结与记忆检索
 
@@ -15,6 +16,9 @@
 - 本地引导：固定本地用户、Profile、默认工作区自动初始化
 - 工作区管理：读取、创建、更新、删除
 - 对话管理：读取、创建、更新、删除
+- 卡片化探索：所有聊天作为根卡片进入画布，支持深入子卡、同级发散卡和历史分支卡
+- 选区 Ask：在单条助手消息内选择文本后右键创建引用子卡片
+- 卡片持久化：树结构、来源快照、历史分支、活动卡 URL 和画布位置可恢复
 - 消息管理：读取、创建、删除区间、单条删除
 - 文件管理：上传、存储、本地/远程向量化、文件项写入、文件更新/删除
 - 总结管理：列表、详情删除、总结侧边栏展示
@@ -60,8 +64,8 @@ worker/       预留工作线程目录
 
 ### 1. 环境要求
 
-- Node.js 18+
-- PostgreSQL 14+
+- Node.js 18+（推荐使用 `.nvmrc` 中的 Node.js 20.11）
+- PostgreSQL 14+，并安装 `pgvector` 扩展
 - 可选模型 Key：OpenAI、Azure OpenAI、Anthropic、Gemini、DeepSeek 等
 
 ### 2. 初始化
@@ -73,6 +77,16 @@ npm run db-generate
 npm run db-migrate
 npm run dev
 ```
+
+迁移会为每个历史聊天创建一棵独立卡片树，保留原聊天、消息、附件、ID 和模型配置。迁移不会批量改写历史消息。
+
+Windows 下可直接运行 `start-manor.bat`。启动器会缓存数据库地址、Prisma schema 与迁移文件的指纹；内容未变化时跳过重复迁移检查。迁移目录变化、切换数据库或重建数据库后，运行：
+
+```bat
+start-manor.bat --migrate
+```
+
+可同时使用 `--regen` 强制重新生成 Prisma Client，使用 `--check` 只执行启动前检查。开发模式不构建 PWA Service Worker；`npm run build` 仍会生成生产 PWA。
 
 ### 3. 核心环境变量
 
@@ -98,6 +112,8 @@ npm run lint
 npm run type-check
 npm run db-generate
 npm run db-migrate
+start-manor.bat
+start-manor.bat --migrate
 ```
 
 ## 开发约束

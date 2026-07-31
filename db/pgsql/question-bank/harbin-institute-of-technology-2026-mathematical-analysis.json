@@ -1,0 +1,1138 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "哈尔滨工业大学",
+    "year": 2026,
+    "subject_code": "mathematical_analysis",
+    "subject_name": "数学分析",
+    "source_file": "E:\\考研真题\\MinerU_markdown_哈尔滨工业大学2026解析_2082764303461552128.md",
+    "source_scope": "与题面文件 MinerU_markdown_哈尔滨工业大学2026_(1)_2082766504011534336.md 配对；共 13 题",
+    "curation_method": "逐题独立求解并与原解析交叉核对",
+    "question_count": 13,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-001",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第1题；解析文件第5—40行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "uniform_continuity"
+      },
+      "title": "两个相邻开区间上的一致连续性",
+      "stem": "判断：若 $f$ 在 $(a,b)$ 与 $(b,c)$ 上分别一致连续，则 $f$ 在 $(a,b)\\cup(b,c)$ 上一致连续。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "错误。可令 $f=0$ 于 $(a,b)$、$f=1$ 于 $(b,c)$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "在缺失点两侧构造跳跃",
+          "solution_type": "teaching",
+          "text": "令 $f(x)=0$（$a<x<b$），$f(x)=1$（$b<x<c$）。它在两个分支上都是常函数，故分别一致连续。但取 $x_n=b-1/n$、$y_n=b+1/n$，有 $|x_n-y_n|\\to0$ 而 $|f(x_n)-f(y_n)|=1$，所以并集上不一致连续。",
+          "main_method_code": "jump_across_missing_point",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "在被删去的点 $b$ 两侧定义不同常值。",
+              "method_code": "jump_across_missing_point"
+            },
+            {
+              "order": 2,
+              "role": "check",
+              "text": "验证两个分支上分别一致连续。"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "用跨越 $b$ 且距离趋零的点列否定整体一致连续。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "uniform_continuity",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "jump_across_missing_point",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 5,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "disconnected_domain",
+          "jump_counterexample"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-002",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第2题；解析文件第41—82行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "differentiation"
+      },
+      "title": "一点导数为正能否推出邻域单调",
+      "stem": "判断：若 $f$ 在 $[a,b]$ 上可导，且某个 $c\\in(a,b)$ 满足 $f'(c)>0$，则存在 $c$ 的邻域使 $f$ 在该邻域单调递增。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "错误；导数可在任意靠近 $c$ 的位置取负值。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "构造导数剧烈振荡的反例",
+          "solution_type": "teaching",
+          "text": "在 $c$ 附近定义 $f(c)=0$，$f(x)=(x-c)+(x-c)^2\\sin(1/(x-c)^2)$（$x\\ne c$），并在区间其余部分平滑延拓。则 $f'(c)=1$。但对 $x\\ne c$，$f'(x)=1+2(x-c)\\sin(1/(x-c)^2)-2\\cos(1/(x-c)^2)/(x-c)$。取 $x_k=c+(2k\\pi)^{-1/2}$，充分大时 $f'(x_k)<0$。若某邻域上单调递增，则该邻域所有可导点的导数均非负，矛盾。",
+          "main_method_code": "oscillatory_derivative_counterexample",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "加入幅度为 $(x-c)^2$、频率趋于无穷的振荡项。",
+              "method_code": "oscillatory_derivative_counterexample"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "验证 $f'(c)=1$，但导数在趋近 $c$ 的点列上为负。"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "由单调递增可导函数导数非负，得到反例。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "derivative_and_local_monotonicity",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "oscillatory_derivative_counterexample",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "pointwise_derivative_information",
+          "oscillatory_counterexample"
+        ],
+        "curation_confidence": 0.97,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-003",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第3题；解析文件第83—116行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "riemann_integration"
+      },
+      "title": "仅可导是否足以使用 Newton–Leibniz 公式",
+      "stem": "按 Riemann 积分理解，判断：若 $F$ 在 $[a,b]$ 上可导且 $F'=f$，则必有 $\\int_a^bf(x)dx=F(b)-F(a)$。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "错误；导函数未必 Riemann 可积，题中积分甚至可能不存在。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "构造无界导函数",
+          "solution_type": "teaching",
+          "text": "在含 $0$ 的区间取 $F(0)=0$、$F(x)=x^2\\sin(1/x^2)$（$x\\ne0$）。则 $F'(0)=0$，而 $F'(x)=2x\\sin(1/x^2)-2\\cos(1/x^2)/x$ 在零点任意邻域无界，因而不 Riemann 可积。故仅可导不足以保证公式可用。",
+          "main_method_code": "unbounded_derivative_counterexample",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "识别缺少的条件是导函数的 Riemann 可积性。",
+              "knowledge_point_code": "newton_leibniz_conditions"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "构造可导但导函数在一点附近无界的函数。",
+              "method_code": "unbounded_derivative_counterexample"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "导函数不 Riemann 可积，因此原命题无条件时为假。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "newton_leibniz_conditions",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "unbounded_derivative_counterexample",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "missing_integrability_hypothesis",
+          "unbounded_derivative"
+        ],
+        "curation_confidence": 0.93,
+        "ocr_quality": "good",
+        "ocr_note": "答案依赖课程语境中的 Riemann 积分；若换用其他积分理论，仍需相应的绝对连续等条件。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-004",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第4题；解析文件第117—158行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "numerical_series"
+      },
+      "title": "收敛正项级数的平方根加权级数",
+      "stem": "判断：若正项级数 $\\sum a_n$ 收敛，则 $\\sum \\sqrt{a_n}/\\sqrt n$ 收敛。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "错误。取 $a_n=1/[n(\\ln n)^2]$（$n\\ge2$）。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "对数临界级数反例",
+          "solution_type": "teaching",
+          "text": "取 $a_n=1/[n(\\ln n)^2]$。原正项级数收敛，但 $\\sqrt{a_n}/\\sqrt n=1/(n\\ln n)$，所得级数发散。因此命题错误。",
+          "main_method_code": "logarithmic_series_counterexample",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "选取处于积分判别临界附近的对数修正项。",
+              "method_code": "logarithmic_series_counterexample"
+            },
+            {
+              "order": 2,
+              "role": "check",
+              "text": "原级数收敛，而变换后恰为发散的 $\\sum1/(n\\ln n)$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "positive_series",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "logarithmic_series_counterexample",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 6,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "weighted_square_root",
+          "borderline_log_series"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-005",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第5题；解析文件第159—188行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "multiple_limits"
+      },
+      "title": "所有方向极限相同能否推出二重极限",
+      "stem": "判断：若 $f(x,y)$ 在 $(0,0)$ 处沿所有直线方向的极限都存在且相等，则二重极限 $\\lim_{(x,y)\\to(0,0)}f(x,y)$ 存在。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "错误。可取 $f(x,y)=x^2y/(x^4+y^2)$，并令 $f(0,0)=0$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "直线极限相同但抛物线路径不同",
+          "solution_type": "teaching",
+          "text": "对 $f=x^2y/(x^4+y^2)$，沿任意直线 $y=kx$ 均趋于 $0$，坐标轴方向也相同。但沿 $y=x^2$ 恒有 $f(x,x^2)=1/2$，故二重极限不存在。",
+          "main_method_code": "curved_path_counterexample",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "逐一验证所有直线方向极限为零。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "选择与分母两项同阶的曲线路径 $y=x^2$。",
+              "method_code": "curved_path_counterexample"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "曲线极限为 $1/2$，否定二重极限。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "directional_and_multiple_limits",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "curved_path_counterexample",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "true_false",
+          "all_line_limits",
+          "parabolic_path"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "将“所有方向极限”按该类考题通常含义解释为沿所有过原点直线的方向极限。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-006",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第6题；解析文件第189—280行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "function_limits"
+      },
+      "title": "由指数型极限恢复函数的二阶数据",
+      "stem": "设 $f$ 在 $0$ 的邻域二阶可微，且\n$$\\lim_{x\\to0}\\left(1+x+\\frac{f(x)}x\\right)^{1/x}=e^3.$$\n求 $f(0),f'(0),f''(0)$，并求 $\\lim_{x\\to0}(1+f(x)/x)^{1/x}$。",
+      "question_type": "calculation",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$f(0)=0$，$f'(0)=0$，$f''(0)=4$；最后一个极限为 $e^2$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "对数化并识别 Taylor 系数",
+          "solution_type": "teaching",
+          "text": "令 $u=x+f(x)/x$。题设等价于 $\\ln(1+u)/x\\to3$，因而 $u\\to0$ 且 $u/x\\to3$，即 $f(x)/x^2\\to2$。与二阶展开 $f(x)=f(0)+f'(0)x+f''(0)x^2/2+o(x^2)$ 比较，得前三个答案。又 $f(x)/x=2x+o(x)$，所以 $x^{-1}\\ln(1+f(x)/x)\\to2$，末极限为 $e^2$。",
+          "main_method_code": "identify_taylor_coefficients_from_limit",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "对原幂指式取对数，并用 $\\ln(1+u)\\sim u$。",
+              "method_code": "logarithmic_transform"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "推出 $f(x)/x^2\\to2$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "与 $f$ 的二阶 Taylor 展开比较，识别三个系数。",
+              "method_code": "identify_taylor_coefficients_from_limit"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "再次对数化计算最后一个极限。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "exponential_limit",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "taylor_expansion",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "identify_taylor_coefficients_from_limit",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "logarithmic_transform",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "two_sided_exponential_limit",
+          "recover_derivatives",
+          "nested_limit"
+        ],
+        "curation_confidence": 0.96,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "默认原式在去心邻域内有实数意义，即底数为正；这是两侧实指数极限的隐含条件。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-007",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第7题；解析文件第281—348行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "riemann_sums"
+      },
+      "title": "右端点 Riemann 和的一阶误差",
+      "stem": "设 $f\\in C^1[0,1]$，\n$$\\varepsilon_n=\\int_0^1f(x)dx-\\frac1n\\sum_{k=1}^nf(k/n).$$\n求 $\\lim_{n\\to\\infty}n\\varepsilon_n$。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\dfrac{f(0)-f(1)}2$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "逐小区间展开误差",
+          "solution_type": "teaching",
+          "text": "在 $I_k=[(k-1)/n,k/n]$ 上，$f(x)-f(k/n)=-\\int_x^{k/n}f'(t)dt$。由 $f'$ 一致连续，双重积分一致等于 $-f'(k/n)/(2n^2)+o(n^{-2})$。求和并乘 $n$，得 $n\\varepsilon_n=-\\frac1{2n}\\sum_{k=1}^nf'(k/n)+o(1)$，其 Riemann 和趋于 $-[f(1)-f(0)]/2$。",
+          "main_method_code": "cellwise_riemann_sum_expansion",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把总误差拆成每个小区间的右端点误差。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "用 $f'$ 的一致连续性给出每格一致的一阶展开。",
+              "method_code": "cellwise_riemann_sum_expansion"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "误差主项化为 $f'$ 的 Riemann 和。"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "由 $\\int_0^1f'=f(1)-f(0)$ 得答案。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "riemann_sum_error",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "cellwise_riemann_sum_expansion",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "right_endpoint_sum",
+          "first_order_error",
+          "uniform_cell_remainder"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-008",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第8题；解析文件第349—450行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "differential_inequalities"
+      },
+      "title": "满足 |f'|≤|f| 的零初值函数",
+      "stem": "设 $f$ 在 $\\mathbb R$ 上可微，$f(a)=0$，且对所有 $x$ 有 $|f'(x)|\\le|f(x)|$。证明 $f\\equiv0$。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$f(x)=0$ 对所有 $x\\in\\mathbb R$ 成立。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "局部 Lipschitz 化与 Gronwall 估计",
+          "solution_type": "teaching",
+          "text": "在任意紧区间上 $f$ 连续有界，故 $|f'|\\le|f|$ 使 $f'$ 有界；由中值定理 $f$ 在该区间 Lipschitz，从而可使用积分形式。对 $x\\ge a$，$|f(x)|\\le\\int_a^x|f(t)|dt=:G(x)$，且 $G(a)=0$、$G'\\le G$。于是 $(e^{-x}G)'\\le0$，结合 $G\\ge0$ 得 $G=0$。对 $x\\le a$ 对函数 $s\\mapsto f(a-s)$ 应用同一论证，故全轴为零。",
+          "main_method_code": "gronwall_zero_solution",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "由紧区间上 $f$ 有界推出 $f'$ 有界，进而 $f$ 局部 Lipschitz，保证积分论证合法。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "构造 $G(x)=\\int_a^x|f(t)|dt$，得到 $G'\\le G$。",
+              "method_code": "gronwall_zero_solution"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "对 $e^{-x}G$ 求导，推出右半轴为零。"
+            },
+            {
+              "order": 4,
+              "role": "transform",
+              "text": "时间反向后重复论证左半轴。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "gronwall_inequality",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "gronwall_zero_solution",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "differential_inequality",
+          "zero_initial_value",
+          "two_half_lines"
+        ],
+        "curation_confidence": 0.97,
+        "ocr_quality": "good",
+        "ocr_note": "原解析直接使用 Newton–Leibniz；已补上由导数局部有界推出 Lipschitz/绝对连续的合法性说明。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-009",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第9题；解析文件第451—502行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "numerical_series"
+      },
+      "title": "奇偶项具有不同指数的级数",
+      "stem": "对实数 $p,q$，讨论级数\n$$1-\\frac1{2^q}+\\frac1{3^p}-\\frac1{4^q}+\\cdots$$\n的绝对收敛、条件收敛与发散。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "绝对收敛当且仅当 $p>1,q>1$；条件收敛当且仅当 $p=q\\in(0,1]$；其余情形发散。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "拆分奇偶子级数并比较发散阶",
+          "solution_type": "teaching",
+          "text": "绝对值级数是奇数项 $p$ 级数与偶数项 $q$ 级数之和，故绝对收敛恰为 $p,q>1$。当 $p=q=s>0$ 时，原级数是交错 $p$ 级数，$0<s\\le1$ 时条件收敛。若 $p\\ne q$ 且至少一个指数不大于 $1$，拆成正、负两个子级数后，收敛的一侧不能抵消发散的一侧；若两侧都发散，则较小指数对应的发散阶严格占优。因此不收敛。若任一指数不大于 $0$，相应通项还不趋零。",
+          "main_method_code": "split_odd_even_subseries",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "拆为奇数正项子级数与偶数负项子级数。",
+              "method_code": "split_odd_even_subseries"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "由两个 $p$ 级数判定绝对收敛区域。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "在 $p=q$ 时使用交错级数判别。"
+            },
+            {
+              "order": 4,
+              "role": "check",
+              "text": "在 $p\\ne q$ 时比较两个子级数的发散阶，排除条件收敛。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "mixed_power_series_convergence",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "numerical_series_convergence",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "split_odd_even_subseries",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "alternating_sign_by_parity",
+          "two_exponents",
+          "absolute_vs_conditional"
+        ],
+        "curation_confidence": 0.94,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "原解析先假设 p,q>0；本条补齐到任意实数 p,q，非正指数由通项不趋零排除。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-010",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第10题；解析文件第503—586行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "function_series"
+      },
+      "title": "ζ 函数的连续、可微与一致连续性",
+      "stem": "设 $\\zeta(x)=\\sum_{n=1}^{\\infty}n^{-x}$，$x\\in(1,+\\infty)$。\n\n(1) 证明 $\\zeta$ 连续；(2) 证明 $\\zeta$ 可微；(3) 判断其是否一致连续。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$\\zeta$ 在 $(1,+\\infty)$ 上连续且可微，$\\zeta'(x)=-\\sum_{n=2}^{\\infty}(\\ln n)n^{-x}$；但不一致连续。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "局部一致收敛与端点反例",
+          "solution_type": "teaching",
+          "text": "在任意紧子区间 $[1+\\delta,M]$ 上，原项由 $n^{-1-\\delta}$ 控制，导数项由 $(\\ln n)n^{-1-\\delta}$ 控制，两级数均收敛，故和函数连续且可逐项求导。为否定一致连续，取 $x_n=1+1/n$、$y_n=1+2/n$。积分比较给出 $\\zeta(x_n)\\ge n$、$\\zeta(y_n)\\le1+n/2$，故两点距离趋零但函数值之差至少为 $n/2-1$。",
+          "main_method_code": "zeta_endpoint_countersequence",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "在任意紧子区间使用 Weierstrass 判别法证明局部一致收敛。",
+              "method_code": "weierstrass_m_test"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "一致控制导数项，应用逐项求导定理。",
+              "method_code": "local_uniform_derivative_series"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "在 $x=1$ 的奇异端点选取距离趋零的两列点。",
+              "method_code": "zeta_endpoint_countersequence"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "用积分比较证明函数值差不趋零，故不一致连续。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "riemann_zeta_function",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "termwise_differentiation",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "uniform_continuity",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "zeta_endpoint_countersequence",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "weierstrass_m_test",
+          "role": "secondary",
+          "confidence": 0.99
+        },
+        {
+          "code": "local_uniform_derivative_series",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 22,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "dirichlet_series",
+          "local_regularities",
+          "singular_endpoint_uniform_continuity"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-011",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第11题；解析文件第587—623行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "multiple_integrals"
+      },
+      "title": "扩张正方形上的二维 Gaussian 矩",
+      "stem": "求\n$$\\lim_{R\\to+\\infty}\\iint_{|x|\\le R,\\,|y|\\le R}(x^2+y^2)e^{-(x^2+y^2)}dxdy.$$",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\pi$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "单调区域耗尽与极坐标",
+          "solution_type": "teaching",
+          "text": "被积函数非负，正方形区域递增耗尽 $\\mathbb R^2$，故由单调收敛定理极限等于全平面积分。极坐标下为 $2\\pi\\int_0^\\infty r^3e^{-r^2}dr$。令 $u=r^2$，得到 $\\pi\\int_0^\\infty ue^{-u}du=\\pi$。",
+          "main_method_code": "monotone_domain_exhaustion_polar",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "由非负性与区域单调耗尽，将极限化为全平面积分。",
+              "knowledge_point_code": "monotone_convergence_theorem"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "使用极坐标并令 $u=r^2$。",
+              "method_code": "monotone_domain_exhaustion_polar"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "计算 Gamma 型积分得到 $\\pi$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "monotone_convergence_theorem",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "multivariate_gaussian_integral",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "monotone_domain_exhaustion_polar",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "expanding_square",
+          "nonnegative_integrand",
+          "radial_gaussian"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-012",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第12题；解析文件第624—683行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "multivariable_continuity"
+      },
+      "title": "含对数差商的分片二元函数连续性",
+      "stem": "设\n$$f(x,y)=\\begin{cases}\\dfrac{\\ln(1+xy)}x,&x\\ne0,\\\\y,&x=0.\\end{cases}$$\n证明 $f$ 在定义域上连续。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$f$ 在定义域 $D=\\{(x,y):1+xy>0\\}$ 上连续。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "提取可连续延拓的对数商",
+          "solution_type": "teaching",
+          "text": "当 $x\\ne0$ 时由初等函数复合可知连续。对任意 $(0,y_0)$，令 $u=xy$，则在 $u\\ne0$ 时 $f(x,y)=y\\,\\ln(1+u)/u$，而 $\\ln(1+u)/u$ 在 $u=0$ 可连续延拓为 $1$。当 $(x,y)\\to(0,y_0)$ 时 $u\\to0$、$y\\to y_0$，故 $f(x,y)\\to y_0=f(0,y_0)$。",
+          "main_method_code": "logarithm_quotient_continuation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "在 $x\\ne0$ 的定义域内由复合函数连续性处理。"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "写成 $y[\\ln(1+xy)/(xy)]$。",
+              "method_code": "logarithm_quotient_continuation"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "使用 $\\ln(1+u)/u\\to1$ 验证整条 $x=0$ 上的连续性。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "multivariable_continuity",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "logarithm_quotient_continuation",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "piecewise_definition",
+          "removable_singularity",
+          "line_of_special_points"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "hit-2026-ma-013",
+      "source": {
+        "type": "exam",
+        "title": "哈尔滨工业大学 2026 年数学分析试卷",
+        "reference": "第13题；解析文件第684—748行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "surface_integrals"
+      },
+      "title": "椭球二次型权重下的球面通量积分",
+      "stem": "计算\n$$I=\\iint_S\\frac{x\\,dydz+y\\,dzdx+z\\,dxdy}{(2024x^2+2025y^2+2026z^2)^{3/2}},$$\n其中 $S:x^2+y^2+z^2=1$ 取外侧。",
+      "question_type": "calculation",
+      "difficulty_level": 5,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$I=\\frac{4\\pi}{\\sqrt{2024\\cdot2025\\cdot2026}}.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "比较三维 Gaussian 积分的两种坐标表示",
+          "solution_type": "teaching",
+          "text": "单位球面外法向为 $(x,y,z)$，故分子恰为 $dS$。记 $Q(\\omega)=2024\\omega_1^2+2025\\omega_2^2+2026\\omega_3^2$。直角坐标分离变量给出 $\\int_{\\mathbb R^3}e^{-Q(X)}dX=\\pi^{3/2}/\\sqrt{2024\\cdot2025\\cdot2026}$。球坐标给出同一积分为 $\\int_{S^2}\\int_0^\\infty e^{-r^2Q(\\omega)}r^2drdS=\\frac{\\sqrt\\pi}{4}I$。比较两式即得答案。",
+          "main_method_code": "gaussian_spherical_identity",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "利用单位球面的外法向，把通量分子化为面积元。",
+              "knowledge_point_code": "flux_surface_integral"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "按三个坐标分离计算各向异性 Gaussian 积分。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "再用球坐标计算同一 Gaussian 积分，径向积分产生 $Q^{-3/2}$。",
+              "method_code": "gaussian_spherical_identity"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "比较两种表示解出所求球面积分。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "flux_surface_integral",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "multivariate_gaussian_integral",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "gaussian_spherical_identity",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 25,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "unit_sphere_flux",
+          "anisotropic_quadratic_form",
+          "gaussian_integral_comparison"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    }
+  ]
+}

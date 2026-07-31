@@ -23,7 +23,8 @@ const buildBasePrompt = (
   profileContext: string,
   workspaceInstructions: string,
   assistant: Tables<"assistants"> | null,
-  memorySummaries: { summary: string }[] = []
+  memorySummaries: { summary: string }[] = [],
+  branchContext = ""
 ) => {
   let fullPrompt = ""
 
@@ -58,6 +59,13 @@ const buildBasePrompt = (
       "\n\nUse this memory only if it is relevant. If it conflicts with the current user request, ask for clarification.\n\n"
   }
 
+  if (branchContext.trim()) {
+    fullPrompt +=
+      "Knowledge Branch Context:\n" +
+      branchContext.trim() +
+      "\n\nTreat this as provenance for the current card. Use it only when it helps answer the current question; do not claim that quoted text is necessarily correct.\n\n"
+  }
+
   // Keep chat-level prompt as an optional extra layer; unified prompt is always enforced above.
   if (
     prompt.trim().length > 0 &&
@@ -82,7 +90,8 @@ export async function buildFinalMessages(
     assistant,
     messageFileItems,
     chatFileItems,
-    memorySummaries = []
+    memorySummaries = [],
+    branchContext = ""
   } = payload
 
   const shouldIncludeWorkspaceInstructions =
@@ -95,7 +104,8 @@ export async function buildFinalMessages(
     chatSettings.includeProfileContext ? profile.profile_context || "" : "",
     shouldIncludeWorkspaceInstructions ? workspaceInstructions : "",
     assistant,
-    memorySummaries
+    memorySummaries,
+    branchContext
   )
 
   const CHUNK_SIZE = chatSettings.contextLength

@@ -13,6 +13,8 @@ import OpenAI from "openai"
 const DEFAULT_SUMMARY_MODEL = "deepseek-chat"
 const FALLBACK_SUMMARY_MODELS = ["deepseek-chat", "deepseek-reasoner"]
 const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
+const isDeepSeekModel = (model: string) =>
+  model.toLowerCase().startsWith("deepseek")
 const DEFAULT_SUMMARY_TEMPERATURE = 0.2
 const MAX_SUMMARY_INPUT_TOKENS = 6000
 const SUMMARY_MIN_MESSAGES = Number(process.env.SUMMARY_MIN_MESSAGES || 8)
@@ -125,7 +127,7 @@ const buildSummaryModelCandidates = (summaryModel: string) => {
     new Set(
       candidates
         .map(item => item.trim())
-        .filter(item => item.toLowerCase().startsWith("deepseek"))
+        .filter(isDeepSeekModel)
     )
   )
 }
@@ -195,8 +197,7 @@ export async function POST(request: Request) {
 
     const configuredSummaryModel = (process.env.SUMMARY_MODEL || "").trim()
     const summaryModel =
-      configuredSummaryModel &&
-      configuredSummaryModel.toLowerCase().startsWith("deepseek")
+      configuredSummaryModel && isDeepSeekModel(configuredSummaryModel)
         ? configuredSummaryModel
         : DEFAULT_SUMMARY_MODEL
 

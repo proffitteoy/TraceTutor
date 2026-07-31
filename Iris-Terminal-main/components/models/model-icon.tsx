@@ -1,7 +1,4 @@
 import { cn } from "@/lib/utils"
-import mistral from "@/public/providers/mistral.png"
-import groq from "@/public/providers/groq.png"
-import perplexity from "@/public/providers/perplexity.png"
 import { ModelProvider } from "@/types"
 import { IconSparkles } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
@@ -81,7 +78,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             "rounded-sm p-1",
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
-          src={mistral.src}
+          src="/providers/mistral.png"
           alt="Mistral"
           width={width}
           height={height}
@@ -120,7 +117,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             "rounded-sm p-0",
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
-          src={groq.src}
+          src="/providers/groq.png"
           alt="Groq"
           width={width}
           height={height}
@@ -168,7 +165,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             "rounded-sm p-1",
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
-          src={perplexity.src}
+          src="/providers/perplexity.png"
           alt="Mistral"
           width={width}
           height={height}

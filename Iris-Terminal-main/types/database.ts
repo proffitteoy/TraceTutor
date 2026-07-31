@@ -21,6 +21,7 @@ export type LocalTableName =
   | "profiles"
   | "workspaces"
   | "chats"
+  | "chat_trees"
   | "messages"
   | "files"
   | "file_items"
@@ -88,6 +89,9 @@ type LocalTableRowMap = {
     id: string
     user_id: string
     workspace_id: string
+    tree_id: string
+    source_chat_id: string | null
+    source_message_id: string | null
     assistant_id: string | null
     folder_id: string | null
     name: string
@@ -100,6 +104,22 @@ type LocalTableRowMap = {
     include_workspace_instructions: boolean
     sharing: string
     status: string
+    card_relation: string
+    source_quote: string | null
+    selection_start: number | null
+    selection_end: number | null
+    fork_sequence_number: number | null
+    branch_context: string
+    card_x: number
+    card_y: number
+    [key: string]: any
+  }
+  chat_trees: {
+    id: string
+    user_id: string
+    workspace_id: string
+    created_at: any
+    updated_at: any
     [key: string]: any
   }
   messages: {

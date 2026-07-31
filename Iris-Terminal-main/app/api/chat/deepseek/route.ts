@@ -28,6 +28,7 @@ export async function POST(request: Request) {
 
     const response = await openai.chat.completions.create({
       model: (chatSettings.model ||
+        process.env.DEEPSEEK_DEFAULT_MODEL ||
         "deepseek-chat") as ChatCompletionCreateParamsBase["model"],
       messages: messages as ChatCompletionCreateParamsBase["messages"],
       temperature: chatSettings.temperature,

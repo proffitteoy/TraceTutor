@@ -1,0 +1,633 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "复旦大学",
+    "year": 2025,
+    "subject_code": "mathematical_analysis",
+    "subject_name": "数学分析",
+    "source_files": [
+      "E:\\考研真题\\MinerU_markdown_复旦大学2025_2082765587434479616.md",
+      "E:\\考研真题\\MinerU_markdown_复旦大学2025解析_(1)_2082764073278152704.md"
+    ],
+    "curation_method": "逐题重算，以题面版与解析版交叉校对",
+    "question_count": 7,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-001",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第1题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "sequence_limits"
+      },
+      "title": "含 n 次根的幂指型数列极限",
+      "stem": "求极限\n$$\\lim_{n\\to\\infty}\\left(\\frac{1+\\sqrt[n]{2025}}{2}\\right)^n.$$",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "numeric",
+          "answer_text": "$45$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "指数展开后取对数",
+          "solution_type": "teaching",
+          "text": "由 $2025^{1/n}=e^{(\\ln2025)/n}=1+(\\ln2025)/n+O(n^{-2})$，底数为 $1+(\\ln2025)/(2n)+O(n^{-2})$。取对数并乘以 $n$，极限为 $\\frac12\\ln2025$，故原式为 $e^{\\frac12\\ln2025}=\\sqrt{2025}=45$。",
+          "main_method_code": "logarithmic_transform",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "把 $n$ 次根写成指数形式并展开。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "对整个幂指表达式取对数。",
+              "method_code": "logarithmic_transform"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "对数极限为 $\\frac12\\ln2025$，还原得到 $45$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "sequence_limit",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "exponential_indeterminate_form",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "taylor_expansion",
+          "role": "secondary",
+          "confidence": 0.97
+        }
+      ],
+      "methods": [
+        {
+          "code": "logarithmic_transform",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "taylor_expansion_method",
+          "role": "secondary",
+          "confidence": 0.97
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "power_exponential_limit",
+          "nth_root_parameter"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-002",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第2题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "indefinite_integrals"
+      },
+      "title": "识别整体导数计算指数三角积分",
+      "stem": "求不定积分\n$$\\int \\frac{1+\\sin x}{1+\\cos x}e^x\\,dx.$$",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\displaystyle e^x\\frac{\\sin x}{1+\\cos x}+C$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "构造乘积的导数",
+          "solution_type": "teaching",
+          "text": "计算得 $(\\sin x/(1+\\cos x))'=1/(1+\\cos x)$。因此\n$$\\frac d{dx}\\left(e^x\\frac{\\sin x}{1+\\cos x}\\right)=e^x\\frac{\\sin x+1}{1+\\cos x},$$\n所以积分即为该表达式加常数。",
+          "main_method_code": "recognize_exact_derivative",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "compute",
+              "text": "求 $\\sin x/(1+\\cos x)$ 的导数。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "与 $e^x$ 使用乘积求导，识别出原被积函数。",
+              "method_code": "recognize_exact_derivative"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "写出原函数并加积分常数。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "indefinite_integral",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "recognize_exact_derivative",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 6,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "exponential_times_trigonometric_rational"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-003",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第3题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "function_limits"
+      },
+      "title": "由二分增量条件推出一阶小量",
+      "stem": "设 $f:(0,1)\\to\\mathbb R$，满足\n$$\\lim_{x\\to0^+}f(x)=0,\\qquad \\lim_{x\\to0^+}\\frac{f(x)-f(x/2)}x=0.$$\n求\n$$\\lim_{x\\to0^+}\\frac{f(x)}x.$$",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "numeric",
+          "answer_text": "$0$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "二分望远镜展开",
+          "solution_type": "teaching",
+          "text": "令 $h(x)=[f(x)-f(x/2)]/x$，则 $h(x)\\to0$。对固定 $x$ 作望远镜展开并令项数趋于无穷，利用 $f(x/2^m)\\to0$ 得\n$$\\frac{f(x)}x=\\sum_{k=0}^\\infty 2^{-k}h(x/2^k).$$\n于是\n$$\\left|\\frac{f(x)}x\\right|\\le2\\sup_{0<t\\le x}|h(t)|\\to0.$$",
+          "main_method_code": "dyadic_telescoping",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "定义归一化二分增量 $h(x)$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "把 $f(x)$ 写成沿 $x,x/2,x/4,\\ldots$ 的无穷望远镜和。",
+              "method_code": "dyadic_telescoping"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "用几何级数权重估计为 $2\\sup_{0<t\\le x}|h(t)|$。"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "由 $h(t)\\to0$ 得所求极限为 $0$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "function_limit",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "telescoping_identity",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "dyadic_telescoping",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "functional_increment_limit",
+          "dyadic_scale"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-004",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第4题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "multiple_integrals"
+      },
+      "title": "平面截椭球所得椭圆的面积",
+      "stem": "平面 $x+y+z=0$ 与椭球面 $x^2+y^2+4z^2=1$ 相交得到椭圆，求该椭圆面积 $S$。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\displaystyle S=\\frac{\\pi}{\\sqrt3}$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "先求投影椭圆再换算实际面积",
+          "solution_type": "teaching",
+          "text": "由 $z=-x-y$，投影区域满足 $5x^2+8xy+5y^2\\le1$。其二次型矩阵行列式为 $9$，故在 $xy$ 平面的面积为 $\\pi/3$。平面图形面积元满足 $dS=\\sqrt{1+z_x^2+z_y^2}\\,dxdy=\\sqrt3\\,dxdy$，因此实际面积为 $\\sqrt3\\cdot\\pi/3=\\pi/\\sqrt3$。",
+          "main_method_code": "projection_area_scaling",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "消去 $z$，得到截线在 $xy$ 平面上的投影椭圆。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "由二次型行列式计算投影面积为 $\\pi/3$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "乘以平面面积元伸缩因子 $\\sqrt3$。",
+              "method_code": "projection_area_scaling"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "得到 $S=\\pi/\\sqrt3$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "plane_section_of_quadric",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "surface_area_element",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "projection_area_scaling",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "plane_ellipsoid_section",
+          "projected_area"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-005",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第5题；题面 OCR 语义修正",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "line_integrals"
+      },
+      "title": "绕原点闭曲线上的极角微分积分",
+      "stem": "设 $L$ 为一条不经过原点、逆时针包围原点一周的光滑简单闭曲线，求\n$$\\oint_L\\frac{x\\,dy-y\\,dx}{x^2+y^2}.$$",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$2\\pi$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "识别为极角的全微分",
+          "solution_type": "teaching",
+          "text": "在极坐标 $x=r\\cos\\theta,y=r\\sin\\theta$ 下，有 $x\\,dy-y\\,dx=r^2d\\theta$、$x^2+y^2=r^2$，故被积式为 $d\\theta$。曲线逆时针绕原点一周时极角总增量为 $2\\pi$。",
+          "main_method_code": "polar_angle_differential",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "改用极坐标表示 $x,y$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "识别被积微分为 $d\\theta$。",
+              "method_code": "polar_angle_differential"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "利用逆时针环绕数为 $1$ 得积分 $2\\pi$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "line_integral",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "winding_number",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "polar_angle_differential",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 7,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "closed_curve_around_singularity"
+        ],
+        "curation_confidence": 0.95,
+        "ocr_quality": "ambiguous",
+        "ocr_note": "OCR 原文为“包含原点的光滑曲线”，若理解为曲线经过原点则被积式无定义；依据标准题型重建为不经过原点且逆时针包围原点一周的简单闭曲线。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-006",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第6题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "improper_integrals"
+      },
+      "title": "含周期零点因子的反常积分敛散性",
+      "stem": "设 $\\alpha>\\beta>1$，讨论反常积分\n$$\\int_0^{+\\infty}\\frac{dx}{1+x^\\alpha|\\sin x|^\\beta}$$\n的敛散性。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "在 $\\alpha>\\beta>1$ 条件下该反常积分收敛。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "在正弦零点附近分区并缩放",
+          "solution_type": "teaching",
+          "text": "只需考察无穷远。把正半轴按 $k\\pi$ 的邻域分段，令 $u=x-k\\pi$。在 $|u|\\le\\pi/2$ 上有 $|\\sin x|\\ge(2/\\pi)|u|$，且 $x\\asymp k$，故第 $k$ 段积分不超过 $C\\int du/(1+k^\\alpha|u|^\\beta)$。作 $v=k^{\\alpha/\\beta}u$，该段为 $O(k^{-\\alpha/\\beta})$。因 $\\beta>1$ 保证缩放后的积分有限，且 $\\alpha/\\beta>1$，对 $k$ 求和收敛。",
+          "main_method_code": "periodic_zero_localization",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "危险区域集中在无穷多个 $\\sin x$ 零点附近。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "按 $k\\pi$ 邻域分段，并用 $|\\sin u|\\ge2|u|/\\pi$。",
+              "method_code": "periodic_zero_localization"
+            },
+            {
+              "order": 3,
+              "role": "transform",
+              "text": "作尺度换元 $v=k^{\\alpha/\\beta}u$。",
+              "method_code": "scaling_substitution"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "各段为 $O(k^{-\\alpha/\\beta})$，因 $\\alpha/\\beta>1$ 而可求和。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "improper_integral_convergence",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "periodic_zero_localization",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "scaling_substitution",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 25,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "periodic_singular_windows",
+          "summable_local_mass"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2025-ma-007",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2025 年数学分析试卷",
+        "reference": "第7题",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "numerical_series"
+      },
+      "title": "Taylor 等价量判定参数级数收敛",
+      "stem": "求使级数\n$$\\sum_{n=1}^{\\infty}\\left(\\frac1n\\csc\\frac1n-1\\right)^{2025p}$$\n收敛的实数 $p$ 的取值范围。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\displaystyle p>\\frac1{4050}$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Taylor 展开后与 p 级数比较",
+          "solution_type": "teaching",
+          "text": "令 $t=1/n$。由 $t/\\sin t=1+t^2/6+O(t^4)$，得 $n^{-1}\\csc(n^{-1})-1\\sim1/(6n^2)$。所以通项渐近等价于 $6^{-2025p}n^{-4050p}$。底数为正，原级数收敛当且仅当 $4050p>1$。",
+          "main_method_code": "asymptotic_equivalence_comparison",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "compute",
+              "text": "展开 $t/\\sin t-1\\sim t^2/6$。",
+              "method_code": "taylor_expansion_method"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "得到级数通项与常数乘 $n^{-4050p}$ 渐近等价。",
+              "method_code": "asymptotic_equivalence_comparison"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "由 p 级数判别得到 $p>1/4050$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "numerical_series_convergence",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "taylor_expansion",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "asymptotic_equivalence_comparison",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "taylor_expansion_method",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "parameter_power_series",
+          "small_angle_expansion"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    }
+  ]
+}

@@ -2,6 +2,8 @@ import { ensureLocalBootstrap } from "@/lib/local-bootstrap"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 interface NoteRow {
   id: string
   vault_id: string

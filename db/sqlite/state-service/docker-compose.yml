@@ -1,0 +1,14 @@
+services:
+  tracetutor-state:
+    build: .
+    container_name: tracetutor-sqlite-state
+    ports:
+      - "8000:8000"
+    environment:
+      TRACE_TUTOR_SQLITE_PATH: /app/data/tracetutor_state.db
+      TRACE_TUTOR_STATE_ENV: development
+      TRACE_TUTOR_STATE_CORS_ORIGINS: ""
+      TRACE_TUTOR_SQLITE_SERVICE_TOKEN: ${TRACE_TUTOR_SQLITE_SERVICE_TOKEN:-}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

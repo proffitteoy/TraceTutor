@@ -5,8 +5,17 @@ cd /d "%~dp0"
 
 set "CHECK_ONLY="
 set "FORCE_GENERATE="
+set "FORCE_MIGRATE="
+
+:parse_args
+if "%~1"=="" goto :args_done
 if /I "%~1"=="--check" set "CHECK_ONLY=1"
 if /I "%~1"=="--regen" set "FORCE_GENERATE=1"
+if /I "%~1"=="--migrate" set "FORCE_MIGRATE=1"
+shift
+goto :parse_args
+
+:args_done
 
 echo.
 echo ==================================
@@ -68,13 +77,25 @@ if defined FORCE_GENERATE (
   )
 )
 
-echo [3/4] Running database migrations...
-call npx.cmd prisma migrate deploy
-if errorlevel 1 (
-  echo [INFO] migrate deploy failed. Trying development migration mode...
-  call npm.cmd run db-migrate
-  if errorlevel 1 goto :fail
+echo [3/4] Checking database migration fingerprint...
+if defined FORCE_MIGRATE (
+  call node scripts\startup-preflight.cjs check --force
+) else (
+  call node scripts\startup-preflight.cjs check
 )
+
+if errorlevel 11 goto :fail
+if errorlevel 10 goto :run_migrations
+goto :migrations_done
+
+:run_migrations
+echo [3/4] Applying database migrations...
+call npx.cmd prisma migrate deploy
+if errorlevel 1 goto :fail
+call node scripts\startup-preflight.cjs mark
+if errorlevel 1 goto :fail
+
+:migrations_done
 
 if defined CHECK_ONLY (
   echo [4/4] Check mode complete. Startup skipped.

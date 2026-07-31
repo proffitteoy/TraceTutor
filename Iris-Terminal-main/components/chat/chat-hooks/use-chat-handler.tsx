@@ -21,7 +21,7 @@ import {
   ModelProvider
 } from "@/types"
 import { useParams, useRouter } from "next/navigation"
-import { useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { LLM_LIST } from "../../../lib/models/llm/llm-list"
 import {
   createTempMessages,
@@ -192,9 +192,9 @@ export const useChatHandler = () => {
     return router.push(`/${locale}/${selectedWorkspace.id}/chat`)
   }
 
-  const handleFocusChatInput = () => {
+  const handleFocusChatInput = useCallback(() => {
     chatInputRef.current?.focus()
-  }
+  }, [])
 
   const handleStopMessage = () => {
     if (abortController) {
@@ -242,6 +242,7 @@ export const useChatHandler = () => {
       )
 
       let currentChat = selectedChat ? { ...selectedChat } : null
+      let createdNewRootChat = false
 
       const b64Images = newMessageImages.map(image => image.base64)
 
@@ -309,7 +310,8 @@ export const useChatHandler = () => {
         assistant: selectedChat?.assistant_id ? selectedAssistant : null,
         messageFileItems: retrievedFileItems,
         chatFileItems: chatFileItems,
-        memorySummaries
+        memorySummaries,
+        branchContext: selectedChat?.branch_context || ""
       }
 
       let generatedText = ""
@@ -377,6 +379,7 @@ export const useChatHandler = () => {
           setChats,
           setChatFiles
         )
+        createdNewRootChat = true
       } else {
         const updatedChat = await updateChat(currentChat.id, {
           updated_at: new Date().toISOString(),
@@ -421,6 +424,12 @@ export const useChatHandler = () => {
 
       setIsGenerating(false)
       setFirstTokenReceived(false)
+
+      if (createdNewRootChat) {
+        router.push(
+          `/${locale}/${selectedWorkspace!.id}/chat/${currentChat.id}?card=${currentChat.id}`
+        )
+      }
     } catch (error) {
       setIsGenerating(false)
       setFirstTokenReceived(false)

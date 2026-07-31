@@ -1,9 +1,17 @@
 import { ChatbotUIContext } from "@/context/context"
-import { IconCheck, IconCopy, IconEdit, IconRepeat } from "@tabler/icons-react"
+import {
+  IconCheck,
+  IconCopy,
+  IconEdit,
+  IconGitBranch,
+  IconRepeat
+} from "@tabler/icons-react"
 import { FC, useContext, useEffect, useState } from "react"
 import { WithTooltip } from "../ui/with-tooltip"
 
 export const MESSAGE_ICON_SIZE = 18
+const actionClassName =
+  "hover:bg-accent hover:text-accent-foreground flex size-8 items-center justify-center rounded-md"
 
 interface MessageActionsProps {
   isAssistant: boolean
@@ -13,6 +21,7 @@ interface MessageActionsProps {
   onCopy: () => void
   onEdit: () => void
   onRegenerate: () => void
+  onBranch?: () => void
 }
 
 export const MessageActions: FC<MessageActionsProps> = ({
@@ -22,7 +31,8 @@ export const MessageActions: FC<MessageActionsProps> = ({
   isHovering,
   onCopy,
   onEdit,
-  onRegenerate
+  onRegenerate,
+  onBranch
 }) => {
   const { isGenerating } = useContext(ChatbotUIContext)
 
@@ -32,8 +42,6 @@ export const MessageActions: FC<MessageActionsProps> = ({
     onCopy()
     setShowCheckmark(true)
   }
-
-  const handleForkChat = async () => {}
 
   useEffect(() => {
     if (showCheckmark) {
@@ -47,20 +55,23 @@ export const MessageActions: FC<MessageActionsProps> = ({
 
   return (isLast && isGenerating) || isEditing ? null : (
     <div className="text-muted-foreground flex items-center space-x-2">
-      {/* {((isAssistant && isHovering) || isLast) && (
+      {onBranch && (isHovering || isLast) && (
         <WithTooltip
           delayDuration={1000}
           side="bottom"
-          display={<div>Fork Chat</div>}
+          display={<div>从此处创建分支卡片</div>}
           trigger={
-            <IconGitFork
-              className="cursor-pointer hover:opacity-50"
-              size={MESSAGE_ICON_SIZE}
-              onClick={handleForkChat}
-            />
+            <button
+              type="button"
+              aria-label="从此处创建分支卡片"
+              className={actionClassName}
+              onClick={onBranch}
+            >
+              <IconGitBranch size={MESSAGE_ICON_SIZE} />
+            </button>
           }
         />
-      )} */}
+      )}
 
       {!isAssistant && isHovering && (
         <WithTooltip
@@ -68,11 +79,14 @@ export const MessageActions: FC<MessageActionsProps> = ({
           side="bottom"
           display={<div>编辑</div>}
           trigger={
-            <IconEdit
-              className="cursor-pointer hover:opacity-50"
-              size={MESSAGE_ICON_SIZE}
+            <button
+              type="button"
+              aria-label="编辑消息"
+              className={actionClassName}
               onClick={onEdit}
-            />
+            >
+              <IconEdit size={MESSAGE_ICON_SIZE} />
+            </button>
           }
         />
       )}
@@ -84,13 +98,22 @@ export const MessageActions: FC<MessageActionsProps> = ({
           display={<div>复制</div>}
           trigger={
             showCheckmark ? (
-              <IconCheck size={MESSAGE_ICON_SIZE} />
+              <span
+                className={actionClassName}
+                aria-label="已复制"
+                role="status"
+              >
+                <IconCheck size={MESSAGE_ICON_SIZE} />
+              </span>
             ) : (
-              <IconCopy
-                className="cursor-pointer hover:opacity-50"
-                size={MESSAGE_ICON_SIZE}
+              <button
+                type="button"
+                aria-label="复制消息"
+                className={actionClassName}
                 onClick={handleCopy}
-              />
+              >
+                <IconCopy size={MESSAGE_ICON_SIZE} />
+              </button>
             )
           }
         />
@@ -102,11 +125,14 @@ export const MessageActions: FC<MessageActionsProps> = ({
           side="bottom"
           display={<div>重新生成</div>}
           trigger={
-            <IconRepeat
-              className="cursor-pointer hover:opacity-50"
-              size={MESSAGE_ICON_SIZE}
+            <button
+              type="button"
+              aria-label="重新生成"
+              className={actionClassName}
               onClick={onRegenerate}
-            />
+            >
+              <IconRepeat size={MESSAGE_ICON_SIZE} />
+            </button>
           }
         />
       )}

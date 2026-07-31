@@ -6,12 +6,20 @@ import {
   LLM,
   MessageImage,
   OpenRouterLLM,
+  FilesStatus,
+  StartupErrorPayload,
+  StartupStatus,
   WorkspaceImage
 } from "@/types"
 import { AssistantImage } from "@/types/images/assistant-image"
 import { Dispatch, SetStateAction, createContext } from "react"
 
 interface ChatbotUIContext {
+  startupStatus: StartupStatus
+  startupError: StartupErrorPayload | null
+  filesStatus: FilesStatus
+  ensureFilesLoaded: () => Promise<void>
+
   // PROFILE STORE
   profile: Tables<"profiles"> | null
   setProfile: Dispatch<SetStateAction<Tables<"profiles"> | null>>
@@ -136,6 +144,11 @@ interface ChatbotUIContext {
 }
 
 export const ChatbotUIContext = createContext<ChatbotUIContext>({
+  startupStatus: "idle",
+  startupError: null,
+  filesStatus: "idle",
+  ensureFilesLoaded: async () => {},
+
   // PROFILE STORE
   profile: null,
   setProfile: () => {},

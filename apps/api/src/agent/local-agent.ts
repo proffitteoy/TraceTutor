@@ -20,6 +20,7 @@ import type {
   RequestContext,
   ToolExecutionPort
 } from "../ports.js"
+import type { QuestionIngestionService } from "../ingestion/question-ingestion.js"
 import { toolInputSchemas } from "../tool-schemas.js"
 import type { LocalModel, ModelHealth } from "./local-model.js"
 import {
@@ -334,7 +335,8 @@ function compactObservations(observations: ToolObservation[]): string {
 export class LocalAgentRuntime {
   constructor(
     private readonly model: LocalModel,
-    private readonly toolExecution?: ToolExecutionPort
+    private readonly toolExecution?: ToolExecutionPort,
+    private readonly questionIngestion?: QuestionIngestionService
   ) {}
 
   modelHealth(): Promise<ModelHealth> {
@@ -786,6 +788,48 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
     ensureKnownQuestionReferences(output, request, observations)
     ensureStateClaims(output, observations)
 
+    let questionDeposit:
+      | {
+          status: "draft_created" | "duplicate" | "failed"
+          reason: string
+          question_id?: string
+          review_item_id?: string
+        }
+      | undefined
+    if (
+      this.questionIngestion &&
+      request.input_mode === "new_question" &&
+      request.active_question_id === null &&
+      request.action === undefined
+    ) {
+      try {
+        const report = await this.questionIngestion.depositUserQuestion({
+          userId: request.user_id,
+          sessionId: request.session_id,
+          requestId: context.requestId,
+          workflowRunId,
+          userText: request.user_text,
+          teachingOutput: output
+        })
+        questionDeposit = {
+          status: report.status,
+          reason: report.reason,
+          ...(report.questionId ? { question_id: report.questionId } : {}),
+          ...(report.reviewItemId
+            ? { review_item_id: report.reviewItemId }
+            : {})
+        }
+      } catch (error) {
+        questionDeposit = {
+          status: "failed",
+          reason:
+            error instanceof Error
+              ? `题目沉淀失败：${error.message}`
+              : "题目沉淀失败"
+        }
+      }
+    }
+
     const writeObservation = observations.find(
       item => item.tool === "state.write_attempt_result"
     )
@@ -813,7 +857,8 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
       meta: {
         source: "local_agent",
         request_id: context.requestId,
-        workflow_run_id: workflowRunId
+        workflow_run_id: workflowRunId,
+        ...(questionDeposit ? { question_deposit: questionDeposit } : {})
       }
     }
 

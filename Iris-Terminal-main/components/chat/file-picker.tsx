@@ -25,8 +25,13 @@ export const FilePicker: FC<FilePickerProps> = ({
   onSelectCollection,
   isFocused
 }) => {
-  const { files, collections, setIsFilePickerOpen } =
-    useContext(ChatbotUIContext)
+  const {
+    files,
+    collections,
+    filesStatus,
+    ensureFilesLoaded,
+    setIsFilePickerOpen
+  } = useContext(ChatbotUIContext)
 
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
 
@@ -35,6 +40,12 @@ export const FilePicker: FC<FilePickerProps> = ({
       itemsRef.current[0].focus()
     }
   }, [isFocused])
+
+  useEffect(() => {
+    if (isOpen) {
+      void ensureFilesLoaded().catch(() => {})
+    }
+  }, [ensureFilesLoaded, isOpen])
 
   const filteredFiles = files.filter(
     file =>
@@ -105,7 +116,19 @@ export const FilePicker: FC<FilePickerProps> = ({
     <>
       {isOpen && (
         <div className="bg-background flex flex-col space-y-1 rounded-xl border-2 p-2 text-sm">
-          {filteredFiles.length === 0 && filteredCollections.length === 0 ? (
+          {filesStatus === "loading" ? (
+            <div className="text-muted-foreground flex h-14 items-center justify-center">
+              正在加载文件...
+            </div>
+          ) : filesStatus === "error" ? (
+            <button
+              className="text-destructive flex h-14 items-center justify-center"
+              onClick={() => void ensureFilesLoaded().catch(() => {})}
+            >
+              文件加载失败，点击重试
+            </button>
+          ) : filteredFiles.length === 0 &&
+            filteredCollections.length === 0 ? (
             <div className="text-md flex h-14 cursor-pointer items-center justify-center italic hover:opacity-50">
               No matching files.
             </div>

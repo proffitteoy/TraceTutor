@@ -1,9 +1,23 @@
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard"
 import { IconCheck, IconCopy, IconDownload } from "@tabler/icons-react"
+import dynamic from "next/dynamic"
 import { FC, memo } from "react"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism"
+
+const MessageCodeBlockHighlighter = dynamic(
+  () =>
+    import("./message-codeblock-highlighter").then(
+      module => module.MessageCodeBlockHighlighter
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <pre className="m-0 w-full overflow-x-auto bg-transparent p-4">
+        <code className="text-sm">{/* Highlighter loads on demand. */}</code>
+      </pre>
+    )
+  }
+)
 
 interface MessageCodeBlockProps {
   language: string
@@ -109,24 +123,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
             </Button>
           </div>
         </div>
-        <SyntaxHighlighter
-          language={language}
-          style={oneDark}
-          // showLineNumbers
-          customStyle={{
-            margin: 0,
-            width: "100%",
-            background: "transparent"
-          }}
-          codeTagProps={{
-            style: {
-              fontSize: "14px",
-              fontFamily: "var(--font-mono)"
-            }
-          }}
-        >
-          {value}
-        </SyntaxHighlighter>
+        <MessageCodeBlockHighlighter language={language} value={value} />
       </div>
     )
   }

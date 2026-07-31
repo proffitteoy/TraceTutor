@@ -1,0 +1,664 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "北京师范大学",
+    "year": 2026,
+    "subject_code": "advanced_algebra",
+    "subject_name": "高等代数",
+    "source_file": "E:\\考研真题\\MinerU_markdown_北京师范大学2026解析_2082765471906570240.md",
+    "source_scope": "原文件第 1—6 题；第 7 题以后为解析几何，另行建集",
+    "curation_method": "逐题重算并与原解析交叉核对",
+    "question_count": 6,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-001",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第1题；MinerU Markdown 第5—68行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "matrix_operations"
+      },
+      "title": "由增广矩阵行变换求逆矩阵",
+      "stem": "设\n$$P=\\begin{pmatrix}0&1&0\\\\1&0&0\\\\0&0&1\\end{pmatrix},$$\n考虑增广矩阵 $B=(A,P)$，其中 $A$ 是三阶方阵。若 $B$ 经过若干次初等行变换化为\n$$\\begin{pmatrix}1&0&0&2&-3&-3\\\\0&1&0&-1&2&2\\\\0&0&1&0&0&-1\\end{pmatrix},$$\n证明 $A$ 可逆，并求 $A^{-1}$。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$A^{-1}=\\begin{pmatrix}-3&2&-3\\\\2&-1&2\\\\0&0&-1\\end{pmatrix}.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "追踪初等行变换对应的左乘矩阵",
+          "solution_type": "teaching",
+          "text": "设所有初等行变换对应的初等矩阵乘积为 $E$。由 $E(A,P)=(I,C)$ 得 $EA=I$ 和 $EP=C$，其中 $C=\\begin{pmatrix}2&-3&-3\\\\-1&2&2\\\\0&0&-1\\end{pmatrix}$。方阵 $A$ 有左逆 $E$，故 $A$ 可逆且 $E=A^{-1}$。于是 $A^{-1}P=C$，再利用 $P^{-1}=P$ 得 $A^{-1}=CP$。右乘 $P$ 交换 $C$ 的前两列，得到所求矩阵。",
+          "main_method_code": "track_elementary_matrix_product",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "把整串初等行变换记为左乘同一个可逆矩阵 $E$。"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "由变换后的左右分块分别得到 $EA=I_3$ 与 $EP=C$。",
+              "method_code": "track_elementary_matrix_product"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "方阵存在左逆即为可逆，所以 $E=A^{-1}$。",
+              "knowledge_point_code": "left_inverse_and_invertibility",
+              "method_code": "use_left_inverse_criterion"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "由 $A^{-1}P=C$ 及 $P^{-1}=P$，计算 $A^{-1}=CP$，即交换 $C$ 的前两列。"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "得到 $A^{-1}=\\begin{pmatrix}-3&2&-3\\\\2&-1&2\\\\0&0&-1\\end{pmatrix}$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "elementary_row_operations",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "inverse_matrix",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "left_inverse_and_invertibility",
+          "role": "secondary",
+          "confidence": 0.98
+        },
+        {
+          "code": "permutation_matrix",
+          "role": "secondary",
+          "confidence": 0.96
+        }
+      ],
+      "methods": [
+        {
+          "code": "track_elementary_matrix_product",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "use_left_inverse_criterion",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "augmented_matrix",
+          "inverse_from_row_operations"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-002",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第2题；MinerU Markdown 第69—164行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "vector_spaces"
+      },
+      "title": "真子空间表示为超平面的交",
+      "stem": "证明：$n$ 维向量空间 $\\mathbb F^n$ 的任意一个不等于 $\\mathbb F^n$ 的子空间，都是若干个 $n-1$ 维子空间的交。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "结论成立。若 $\\dim W=k<n$，把 $W$ 的基扩充为全空间的一组基，并对每个新增基向量构造删去该向量所得的超平面 $H_i$，则 $W=\\bigcap_{i=k+1}^n H_i$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "扩充基并删去新增基向量",
+          "solution_type": "teaching",
+          "text": "设 $\\dim W=k<n$，取 $W$ 的基 $\\alpha_1,\\ldots,\\alpha_k$ 并扩充为 $\\mathbb F^n$ 的基 $\\alpha_1,\\ldots,\\alpha_n$。对 $i=k+1,\\ldots,n$，令 $H_i$ 为除去 $\\alpha_i$ 后其余 $n-1$ 个基向量张成的子空间。显然 $W\\subseteq H_i$。若 $v\\in\\bigcap H_i$，将 $v$ 在完整基下展开；由 $v\\in H_i$ 及基坐标唯一性，$\\alpha_i$ 的系数对每个 $i>k$ 均为零，故 $v\\in W$。",
+          "main_method_code": "basis_extension_construction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "把真子空间记为 $W$，设 $\\dim W=k<n$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "将 $W$ 的一组基扩充为全空间的一组基。",
+              "knowledge_point_code": "basis_extension_theorem",
+              "method_code": "basis_extension_construction"
+            },
+            {
+              "order": 3,
+              "role": "transform",
+              "text": "对每个新增基向量 $\\alpha_i$，删去它并用其余基向量张成 $n-1$ 维子空间 $H_i$。"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "利用基坐标唯一性证明同时属于所有 $H_i$ 的向量，其新增坐标全部为零。",
+              "method_code": "coordinate_uniqueness_argument"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "因此 $W=\\bigcap_{i=k+1}^n H_i$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "vector_subspace",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "basis_extension_theorem",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "hyperplane",
+          "role": "secondary",
+          "confidence": 0.97
+        }
+      ],
+      "methods": [
+        {
+          "code": "basis_extension_construction",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "coordinate_uniqueness_argument",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "existence_construction",
+          "two_set_inclusions"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-003",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第3题；MinerU Markdown 第165—264行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "linear_transformations"
+      },
+      "title": "左乘矩阵诱导线性变换的像空间维数",
+      "stem": "设 $M$ 是秩为 $r$ 的 $m$ 阶方阵，$V$ 是全体 $m\\times n$ 矩阵构成的线性空间。定义 $V$ 上的变换 $\\varphi(N)=MN$。证明 $\\varphi$ 是线性变换，并求 $\\operatorname{Im}\\varphi$ 的维数。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\varphi$ 是线性变换，且 $\\dim\\operatorname{Im}\\varphi=nr$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "按列识别像空间",
+          "solution_type": "teaching",
+          "text": "加法与数乘的相容性由矩阵乘法分配律立即得到。把 $N$ 写成列分块 $N=(\\beta_1,\\ldots,\\beta_n)$，则 $MN=(M\\beta_1,\\ldots,M\\beta_n)$。所以像空间恰由每一列独立取自 $\\operatorname{Im}M$ 的矩阵组成。由于 $\\dim\\operatorname{Im}M=r$，共有 $n$ 个独立列位置，故像空间维数为 $nr$。",
+          "main_method_code": "columnwise_matrix_decomposition",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "用矩阵乘法的分配律和齐次性验证 $\\varphi$ 线性。"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "将任意 $N\\in V$ 写成 $N=(\\beta_1,\\ldots,\\beta_n)$。",
+              "method_code": "columnwise_matrix_decomposition"
+            },
+            {
+              "order": 3,
+              "role": "understand_problem",
+              "text": "识别 $MN$ 的每一列都在 $\\operatorname{Im}M$ 中，且反过来这些列可独立实现。"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "每列可选空间维数为 $r$，$n$ 列直和的维数为 $nr$。",
+              "method_code": "dimension_counting"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "$\\dim\\operatorname{Im}\\varphi=nr$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "linear_transformation",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "image_and_rank",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "matrix_space",
+          "role": "secondary",
+          "confidence": 0.97
+        }
+      ],
+      "methods": [
+        {
+          "code": "columnwise_matrix_decomposition",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "dimension_counting",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "linear_map_on_matrix_space",
+          "independent_columns"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-004",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第4题；MinerU Markdown 第265—368行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "symmetric_matrices"
+      },
+      "title": "半正定矩阵及其半正定平方根",
+      "stem": "设\n$$A=\\begin{pmatrix}2&-1&0&1\\\\-1&2&1&0\\\\0&1&2&-1\\\\1&0&-1&2\\end{pmatrix}.$$\n证明 $A$ 为半正定矩阵，并求半正定矩阵 $B$，使得 $B^2=A$。",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$A$ 的特征值为 $0,2,2,4$，故 $A\\succeq0$。其唯一半正定平方根为\n$$B=\\frac12\\begin{pmatrix}1+\\sqrt2&-1&\\sqrt2-1&1\\\\-1&1+\\sqrt2&1&\\sqrt2-1\\\\\\sqrt2-1&1&1+\\sqrt2&-1\\\\1&\\sqrt2-1&-1&1+\\sqrt2\\end{pmatrix}.$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "谱分解构造半正定平方根",
+          "solution_type": "teaching",
+          "text": "可取两两正交的特征向量 $v_0=(-1,-1,1,1)^T$、$u_1=(1,0,1,0)^T$、$u_2=(0,1,0,1)^T$、$v_4=(1,-1,-1,1)^T$，对应特征值分别为 $0,2,2,4$。所有特征值非负，故 $A$ 半正定。令 $P_w=ww^T/(w^Tw)$，则半正定平方根为 $B=\\sqrt2(P_{u_1}+P_{u_2})+2P_{v_4}$。展开投影矩阵即可得到显式答案；其谱为 $0,\\sqrt2,\\sqrt2,2$，所以 $B\\succeq0$ 且 $B^2=A$。",
+          "main_method_code": "spectral_function_construction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "compute",
+              "text": "求得 $A$ 的特征值 $0,2,2,4$ 及一组正交特征向量。",
+              "method_code": "orthogonal_diagonalization"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "实对称矩阵的特征值均非负，因此 $A$ 半正定。",
+              "knowledge_point_code": "positive_semidefinite_matrix"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "在各特征子空间上把特征值 $\\lambda$ 替换为 $\\sqrt\\lambda$，构造 $B$。",
+              "method_code": "spectral_function_construction"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "展开三个正交投影，得到 $B$ 的显式矩阵。"
+            },
+            {
+              "order": 5,
+              "role": "check",
+              "text": "$B$ 的特征值非负，且平方后的谱与 $A$ 相同，故 $B\\succeq0$ 且 $B^2=A$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "real_symmetric_matrix",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "positive_semidefinite_matrix",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "spectral_theorem",
+          "role": "secondary",
+          "confidence": 0.99
+        },
+        {
+          "code": "positive_semidefinite_square_root",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "spectral_function_construction",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "orthogonal_diagonalization",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "symmetric_matrix",
+          "repeated_eigenvalue",
+          "matrix_square_root"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-005",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第5题；MinerU Markdown 第369—482行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "matrix_equivalence"
+      },
+      "title": "矩阵全部广义逆的分块表示",
+      "stem": "设 $A$ 是 $m\\times n$ 矩阵。若存在 $n\\times m$ 矩阵 $G$ 满足 $AGA=A$，则称 $G$ 为 $A$ 的一个广义逆。已知\n$$A=P\\begin{pmatrix}I_r&O\\\\O&O\\end{pmatrix}Q,$$\n其中 $P,Q$ 分别是 $m$ 阶和 $n$ 阶可逆矩阵。证明：$A$ 的全部广义逆为\n$$G=Q^{-1}\\begin{pmatrix}I_r&C\\\\D&F\\end{pmatrix}P^{-1},$$\n其中 $C,D,F$ 分别是任意的 $r\\times(m-r)$、$(n-r)\\times r$、$(n-r)\\times(m-r)$ 矩阵。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "令 $J=\\begin{pmatrix}I_r&O\\\\O&O\\end{pmatrix}$、$H=QGP$，则 $AGA=A$ 等价于 $JHJ=J$。分块乘法表明该条件等价于 $H_{11}=I_r$，其余分块任意，因此得到题设中的全部广义逆。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "化为秩标准形后分块计算",
+          "solution_type": "teaching",
+          "text": "记 $J=\\begin{pmatrix}I_r&O\\\\O&O\\end{pmatrix}$，则 $A=PJQ$。对任意 $n\\times m$ 矩阵 $G$，令 $H=QGP$。利用 $P,Q$ 可逆，$AGA=A$ 当且仅当 $JHJ=J$。按 $r+(n-r)$ 行和 $r+(m-r)$ 列分块写 $H$，直接计算 $JHJ=\\begin{pmatrix}H_{11}&O\\\\O&O\\end{pmatrix}$，故唯一限制是 $H_{11}=I_r$。将其余三块分别记为任意矩阵 $C,D,F$，再还原 $G=Q^{-1}HP^{-1}$。",
+          "main_method_code": "rank_normal_form_reduction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "写成 $A=PJQ$ 并令 $H=QGP$。",
+              "knowledge_point_code": "rank_normal_form",
+              "method_code": "rank_normal_form_reduction"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "利用 $P,Q$ 可逆，把 $AGA=A$ 等价改写为 $JHJ=J$。"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "按秩分块计算 $JHJ$，得到只有左上块 $H_{11}$ 被保留。",
+              "method_code": "block_matrix_multiplication"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "$H_{11}=I_r$，其余三块任意；还原即得全部 $G$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "generalized_inverse",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "rank_normal_form",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "block_matrix",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "rank_normal_form_reduction",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "block_matrix_multiplication",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 18,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "matrix_equivalence",
+          "free_block_parameters"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "bnu-2026-aa-006",
+      "source": {
+        "type": "exam",
+        "title": "北京师范大学 2026 年高等代数试卷",
+        "reference": "第6题；MinerU Markdown 第483—570行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "advanced_algebra",
+        "chapter_code": "polynomials"
+      },
+      "title": "利用五次单位根证明多项式取值为零",
+      "stem": "设 $f_1(x),f_2(x),f_3(x),f_4(x)\\in\\mathbb C[x]$。若\n$$f_1(x^{2025})+xf_2(x^{2025})+x^2f_3(x^{2025})+x^3f_4(x^{2025})$$\n能被 $1+x+x^2+x^3+x^4$ 整除，证明 $f_i(1)=0$（$i=1,2,3,4$）。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "结论成立：$f_1(1)=f_2(1)=f_3(1)=f_4(1)=0$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "代入非平凡五次单位根",
+          "solution_type": "teaching",
+          "text": "设 $\\zeta$ 为本原五次单位根。对 $j=1,2,3,4$，$\\zeta^j$ 都是 $1+x+\\cdots+x^4$ 的根，且 $(\\zeta^j)^{2025}=1$。由整除关系，令 $g(t)=f_1(1)+tf_2(1)+t^2f_3(1)+t^3f_4(1)$，可得 $g(\\zeta^j)=0$（$j=1,2,3,4$）。但 $\\deg g\\le3$，一个不超过三次的多项式有四个不同根，只能恒为零，因此各系数均为零。",
+          "main_method_code": "evaluate_at_roots_of_unity",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "understand_problem",
+              "text": "$1+x+x^2+x^3+x^4$ 的根是四个非平凡五次单位根。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "对每个 $\\zeta^j$ 代入被除式，并利用 $2025=5\\cdot405$ 得 $(\\zeta^j)^{2025}=1$。",
+              "method_code": "evaluate_at_roots_of_unity"
+            },
+            {
+              "order": 3,
+              "role": "transform",
+              "text": "构造 $g(t)=f_1(1)+tf_2(1)+t^2f_3(1)+t^3f_4(1)$。",
+              "method_code": "auxiliary_polynomial"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "$g$ 次数不超过 3 却有四个不同根，故 $g\\equiv0$。",
+              "method_code": "root_count_argument"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "比较系数得到 $f_i(1)=0$，$i=1,2,3,4$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "polynomial_divisibility",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "roots_of_unity",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "polynomial_root_count",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "evaluate_at_roots_of_unity",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "auxiliary_polynomial",
+          "role": "secondary",
+          "confidence": 0.98
+        },
+        {
+          "code": "root_count_argument",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "cyclotomic_factor",
+          "composition_polynomial",
+          "coefficient_vanishing"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    }
+  ]
+}

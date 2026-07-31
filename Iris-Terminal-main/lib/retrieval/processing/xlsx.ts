@@ -2,7 +2,7 @@ import { FileItemChunk } from "@/types"
 import { encode } from "gpt-tokenizer"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import * as XLSX from "xlsx"
-import { CHUNK_OVERLAP, CHUNK_SIZE } from "."
+import { CHUNK_OVERLAP, CHUNK_SIZE } from "./constants"
 
 export const processXLSX = async (
   spreadsheet: Blob

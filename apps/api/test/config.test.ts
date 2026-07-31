@@ -21,4 +21,15 @@ describe("loadConfig", () => {
       })
     ).toThrow()
   })
+
+  it("生产环境接入 SQLite 时要求内部 service token", () => {
+    expect(() =>
+      loadConfig({
+        NODE_ENV: "production",
+        TRACE_TUTOR_TOOL_TOKEN: "tool-token-long-enough",
+        TRACE_TUTOR_SQLITE_SERVICE_URL: "http://127.0.0.1:8000",
+        TRACE_TUTOR_SQLITE_SERVICE_TOKEN: ""
+      })
+    ).toThrow()
+  })
 })

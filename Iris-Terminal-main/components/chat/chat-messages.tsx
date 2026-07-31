@@ -4,9 +4,13 @@ import { Tables } from "@/types/database"
 import { FC, useContext, useState } from "react"
 import { Message } from "../messages/message"
 
-interface ChatMessagesProps {}
+interface ChatMessagesProps {
+  onBranchFromMessage?: (message: Tables<"messages">) => void
+}
 
-export const ChatMessages: FC<ChatMessagesProps> = ({}) => {
+export const ChatMessages: FC<ChatMessagesProps> = ({
+  onBranchFromMessage
+}) => {
   const { chatMessages, chatFileItems } = useContext(ChatbotUIContext)
 
   const { handleSendEdit } = useChatHandler()
@@ -33,6 +37,7 @@ export const ChatMessages: FC<ChatMessagesProps> = ({}) => {
         onStartEdit={setEditingMessage}
         onCancelEdit={() => setEditingMessage(undefined)}
         onSubmitEdit={handleSendEdit}
+        onBranch={() => onBranchFromMessage?.(chatMessage.message)}
       />
     )
   })

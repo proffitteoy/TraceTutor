@@ -1,7 +1,6 @@
 ﻿import { ChatbotUIContext } from "@/context/context"
-import { createDocXFile, createFile } from "@/db/files"
+import { createFile } from "@/db/files"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
-import mammoth from "mammoth"
 import { useContext, useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -240,41 +239,20 @@ export const useSelectFileHandler = () => {
     ])
 
     try {
-      const createdFile =
-        normalizedType === "docx"
-          ? await createDocXFile(
-              (
-                await mammoth.extractRawText({
-                  arrayBuffer: await file.arrayBuffer()
-                })
-              ).value,
-              file,
-              {
-                user_id: profile.user_id,
-                description: "",
-                file_path: "",
-                name: file.name,
-                size: file.size,
-                tokens: 0,
-                type: normalizedType
-              },
-              selectedWorkspace.id,
-              chatSettings.embeddingsProvider
-            )
-          : await createFile(
-              file,
-              {
-                user_id: profile.user_id,
-                description: "",
-                file_path: "",
-                name: file.name,
-                size: file.size,
-                tokens: 0,
-                type: normalizedType
-              },
-              selectedWorkspace.id,
-              chatSettings.embeddingsProvider
-            )
+      const createdFile = await createFile(
+        file,
+        {
+          user_id: profile.user_id,
+          description: "",
+          file_path: "",
+          name: file.name,
+          size: file.size,
+          tokens: 0,
+          type: normalizedType
+        },
+        selectedWorkspace.id,
+        chatSettings.embeddingsProvider
+      )
 
       setFiles(prev => [...prev, createdFile])
       setNewMessageFiles(prev =>

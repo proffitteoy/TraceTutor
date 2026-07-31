@@ -2,7 +2,7 @@ import { FileItemChunk } from "@/types"
 import { encode } from "gpt-tokenizer"
 import { PDFLoader } from "langchain/document_loaders/fs/pdf"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
-import { CHUNK_OVERLAP, CHUNK_SIZE } from "."
+import { CHUNK_OVERLAP, CHUNK_SIZE } from "./constants"
 
 export const processPdf = async (pdf: Blob): Promise<FileItemChunk[]> => {
   const loader = new PDFLoader(pdf)

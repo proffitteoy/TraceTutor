@@ -19,6 +19,7 @@ export interface ChatPayload {
   messageFileItems: Tables<"file_items">[]
   chatFileItems: Tables<"file_items">[]
   memorySummaries?: ChatSummaryMatch[]
+  branchContext?: string
 }
 
 export interface ChatAPIPayload {

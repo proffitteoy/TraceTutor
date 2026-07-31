@@ -19,8 +19,13 @@ const isLikelyChatModel = (modelId: string) =>
 const isLikelyImageModel = (modelId: string) =>
   !NON_CHAT_MODEL_PATTERN.test(modelId) && IMAGE_MODEL_PATTERN.test(modelId)
 
-export const fetchHostedModels = async (profile: Tables<"profiles">) => {
+export const fetchHostedModels = async (
+  profile: Tables<"profiles">,
+  preloadedEnvKeyMap?: Record<string, boolean>,
+  options: { loadRemoteModels?: boolean } = {}
+) => {
   try {
+    const { loadRemoteModels = true } = options
     const providers = [
       "google",
       "anthropic",
@@ -37,13 +42,15 @@ export const fetchHostedModels = async (profile: Tables<"profiles">) => {
       providers.push("openai")
     }
 
-    const response = await fetch("/api/keys")
-
-    if (!response.ok) {
-      throw new Error(`Server is not responding.`)
+    let isUsingEnvKeyMap = preloadedEnvKeyMap
+    if (!isUsingEnvKeyMap) {
+      const response = await fetch("/api/keys")
+      if (!response.ok) {
+        throw new Error(`Server is not responding.`)
+      }
+      const data = await response.json()
+      isUsingEnvKeyMap = data.isUsingEnvKeyMap
     }
-
-    const data = await response.json()
 
     let modelsToAdd: LLM[] = []
 
@@ -63,11 +70,12 @@ export const fetchHostedModels = async (profile: Tables<"profiles">) => {
         hasProfileKey = Boolean(profile?.[providerKey])
       }
 
-      const isProviderEnabled = hasProfileKey || data.isUsingEnvKeyMap[provider]
+      const isProviderEnabled =
+        hasProfileKey || Boolean(isUsingEnvKeyMap?.[provider])
 
       if (provider === "gptsapi") {
         // Keep GPTSAPI models visible in the selector even when dynamic fetch fails.
-        const gptsapiModels = isProviderEnabled
+        const gptsapiModels = isProviderEnabled && loadRemoteModels
           ? await fetchGptsapiModels()
           : []
 
@@ -94,7 +102,7 @@ export const fetchHostedModels = async (profile: Tables<"profiles">) => {
     }
 
     return {
-      envKeyMap: data.isUsingEnvKeyMap,
+      envKeyMap: isUsingEnvKeyMap || {},
       hostedModels: modelsToAdd
     }
   } catch (error) {

@@ -1,0 +1,1289 @@
+{
+  "schema_version": "1.0",
+  "collection": {
+    "school": "复旦大学",
+    "year": 2026,
+    "subject_code": "mathematical_analysis",
+    "subject_name": "数学分析",
+    "source_file": "E:\\考研真题\\MinerU_markdown_复旦大学2026解析_2082765266549248000.md",
+    "source_scope": "与题面文件 MinerU_markdown_复旦大学2026_2082765294357487616.md 配对；共 14 题",
+    "curation_method": "逐题独立重算，原解析仅作交叉核对；原命题或解析存在问题时保留修正与复核说明",
+    "question_count": 14,
+    "status": "imported",
+    "review_required": true
+  },
+  "questions": [
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-001",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第1题；解析文件第5—98行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "function_series"
+      },
+      "title": "含参数余弦级数在开区间上的一致收敛",
+      "stem": "已知函数项级数\n$$\\sum_{n=2}^{\\infty}\\frac{\\cos(n\\pi x)}{n^{ax}}$$\n关于 $x\\in(2,+\\infty)$ 一致收敛，求实数 $a$ 的取值范围。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$a>\\dfrac12$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "优级数充分性与尾和反例必要性",
+          "solution_type": "teaching",
+          "text": "若 $a>1/2$，取 $1<\\sigma<2a$。对所有 $x>2$，$|\\cos(n\\pi x)n^{-ax}|\\le n^{-\\sigma}$，故由 Weierstrass 判别法一致收敛。反之，若 $a\\le0$，取 $x=4$ 时通项 $n^{-4a}$ 不趋于零。若 $0<a<1/2$，令 $x_N=2+1/(6N)$，对 $N\\le n\\le2N$ 有 $\\cos(n\\pi x_N)\\ge1/2$，尾和下界与 $N^{1-2a}$ 同阶，不能趋零。若 $a=1/2$，同一构造使指数为 $1+1/(12N)$，且 $\\sum_{n=N}^{2N}n^{-1-1/(12N)}$ 有与 $N$ 无关的正下界。因此一致 Cauchy 条件均失败。",
+          "main_method_code": "uniform_cauchy_countersequence",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "在 $a>1/2$ 时选取 $1<\\sigma<2a$，用收敛的 $p$ 级数一致控制。",
+              "method_code": "weierstrass_m_test"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "必要性不能只检查逐点收敛，还要检查开端点 $x\\downarrow2$ 附近的尾和。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "取 $x_N=2+1/(6N)$，让 $N$ 到 $2N$ 的余弦项一致为正且远离零。",
+              "method_code": "uniform_cauchy_countersequence"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "当 $a\\le1/2$ 时构造出的尾和不趋零，故充要条件为 $a>1/2$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "uniform_convergence_of_function_series",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "uniform_cauchy_countersequence",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "weierstrass_m_test",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "open_interval_uniform_convergence",
+          "parameter_in_exponent",
+          "endpoint_countersequence"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good",
+        "ocr_note": "原解析必要性使用“M≫N”的表述不够定量；已改为 [N,2N] 上的明确构造。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-002",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第2题；解析文件第99—160行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "improper_integrals"
+      },
+      "title": "有理函数反常积分的 Beta 函数求值",
+      "stem": "计算\n$$\\int_0^{+\\infty}\\left(\\frac{x^2}{1+x^4}\\right)^2\\,dx.$$",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\dfrac{\\pi\\sqrt2}{16}$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "化为 Beta 积分",
+          "solution_type": "teaching",
+          "text": "原积分为 $I=\\int_0^\\infty x^4(1+x^4)^{-2}dx$。由 $\\int_0^\\infty x^{m-1}(1+x^q)^{-s}dx=q^{-1}B(m/q,s-m/q)$，取 $m=5,q=4,s=2$，得 $I=\\frac14B(5/4,3/4)=\\frac1{16}\\Gamma(1/4)\\Gamma(3/4)$。再用反射公式 $\\Gamma(z)\\Gamma(1-z)=\\pi/\\sin\\pi z$，得到 $I=\\pi\\sqrt2/16$。",
+          "main_method_code": "beta_integral_evaluation",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "将被积式写为 $x^4/(1+x^4)^2$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "匹配 Beta 积分参数 $(m,q,s)=(5,4,2)$。",
+              "method_code": "beta_integral_evaluation"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "用 Gamma 递推和反射公式化简为 $\\pi\\sqrt2/16$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "improper_integral_convergence",
+          "role": "secondary",
+          "confidence": 0.99
+        },
+        {
+          "code": "beta_gamma_functions",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "beta_integral_evaluation",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 12,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "improper_integral_zero_infinity",
+          "rational_even_power"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-003",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第3题；解析文件第161—236行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "surface_integrals"
+      },
+      "title": "双曲抛物面在圆柱内的面积",
+      "stem": "求曲面 $z=xy$ 被柱面 $x^2+y^2=1$ 所截部分的面积。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\dfrac{2\\pi}{3}(2\\sqrt2-1)$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "图形曲面面积公式与极坐标",
+          "solution_type": "teaching",
+          "text": "投影区域为单位圆盘。因 $z_x=y,z_y=x$，面积元为 $\\sqrt{1+x^2+y^2}\\,dxdy$。改用极坐标得到 $S=\\int_0^{2\\pi}\\int_0^1r\\sqrt{1+r^2}\\,drd\\theta=2\\pi(2\\sqrt2-1)/3$。",
+          "main_method_code": "polar_surface_area",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "compute",
+              "text": "计算图形曲面的面积元 $\\sqrt{1+x^2+y^2}\\,dxdy$。",
+              "knowledge_point_code": "surface_area_element"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "在单位圆盘上作极坐标变换。",
+              "method_code": "polar_surface_area"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "计算径向积分并乘以 $2\\pi$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "surface_area",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "surface_area_element",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "polar_surface_area",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "graph_surface",
+          "circular_projection",
+          "radial_area_element"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-004",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第4题；解析文件第237—316行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "line_integrals"
+      },
+      "title": "椭圆上的第二类曲线积分",
+      "stem": "设椭圆 $C:x^2+4y^2=16$ 取逆时针方向，计算\n$$\\oint_C\\left(\\frac{xy^2}{x^2+2y^2+1}-y\\right)dx+\\left(x+\\frac{x^2y}{x^2+2y^2+1}\\right)dy.$$",
+      "question_type": "calculation",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$16\\pi$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Green 公式与奇函数消项",
+          "solution_type": "teaching",
+          "text": "记分母 $H=x^2+2y^2+1$。Green 公式中的旋度为 $2+2xy(2y^2-x^2)/H^2$。后一项关于 $x$ 为奇函数，而椭圆内部关于 $y$ 轴对称，故其二重积分为零。椭圆半轴为 $4,2$，面积 $8\\pi$，所以积分为 $2\\cdot8\\pi=16\\pi$。",
+          "main_method_code": "green_formula_symmetry",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "用 Green 公式把闭曲线积分变成区域上的旋度积分。",
+              "knowledge_point_code": "green_formula"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "求得旋度为 $2+2xy(2y^2-x^2)/H^2$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "由对称域上的奇函数积分为零，消去有理项。",
+              "method_code": "green_formula_symmetry"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "剩余常数项积分等于两倍椭圆面积，即 $16\\pi$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "line_integral",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "green_formula",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "green_formula_symmetry",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 15,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "closed_curve_integral",
+          "symmetric_domain",
+          "odd_curl_component"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-005",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第5题；解析文件第317—368行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "taylor_expansion"
+      },
+      "title": "sin(ln x) 的四阶 Peano 展开",
+      "stem": "求 $\\sin(\\ln x)$ 在 $x=1$ 处带 Peano 余项的四阶 Taylor 展开式。",
+      "question_type": "calculation",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$\\sin(\\ln x)=(x-1)-\\frac12(x-1)^2+\\frac16(x-1)^3+o((x-1)^4).$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "复合 Taylor 展开",
+          "solution_type": "teaching",
+          "text": "令 $h=x-1$，则 $u=\\ln(1+h)=h-h^2/2+h^3/3-h^4/4+o(h^4)$，且 $\\sin u=u-u^3/6+o(u^4)$。计算 $u^3=h^3-3h^4/2+o(h^4)$ 后合并，四次项 $-h^4/4+h^4/4$ 抵消，得到答案。",
+          "main_method_code": "compose_taylor_expansions",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "令 $h=x-1$，分别写出 $\\ln(1+h)$ 与 $\\sin u$ 的展开。"
+            },
+            {
+              "order": 2,
+              "role": "compute",
+              "text": "保留 $u^3$ 到四阶：$u^3=h^3-3h^4/2+o(h^4)$。",
+              "method_code": "compose_taylor_expansions"
+            },
+            {
+              "order": 3,
+              "role": "conclude",
+              "text": "合并同阶项，四阶系数为零。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "taylor_expansion",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "compose_taylor_expansions",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "taylor_expansion_method",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "composite_function",
+          "vanishing_fourth_order_coefficient",
+          "peano_remainder"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-006",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第6题；解析文件第369—460行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "mean_value_theorems"
+      },
+      "title": "由三个函数值确定二阶导数值",
+      "stem": "设 $f\\in C[0,1]$，在 $(0,1)$ 上二阶可导，且\n$$f(0)=f(1)=0,\\qquad f(1/2)=1/4.$$\n证明存在 $\\xi\\in(0,1)$ 使 $f''(\\xi)=-2$。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "结论成立；对 $g(x)=f(x)-x(1-x)$ 重复使用 Rolle 定理即可。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "匹配插值多项式并重复 Rolle 定理",
+          "solution_type": "teaching",
+          "text": "令 $g(x)=f(x)-x(1-x)$，则 $g(0)=g(1/2)=g(1)=0$。分别在 $[0,1/2]$、$[1/2,1]$ 上用 Rolle 定理，得 $g'(\\eta_1)=g'(\\eta_2)=0$。再在 $[\\eta_1,\\eta_2]$ 上用 Rolle 定理，得到 $g''(\\xi)=0$。因 $g''=f''+2$，故 $f''(\\xi)=-2$。",
+          "main_method_code": "auxiliary_function_repeated_rolle",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "构造与三个给定值匹配的二次函数 $x(1-x)$。",
+              "method_code": "auxiliary_function_repeated_rolle"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "对差函数在两个小区间各用一次 Rolle 定理。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "对两个一阶导数零点之间再用一次 Rolle 定理。",
+              "knowledge_point_code": "rolle_theorem"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "由 $g''=f''+2$ 得结论。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "rolle_theorem",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "auxiliary_function_repeated_rolle",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "three_interpolation_nodes",
+          "second_derivative_existence"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-007",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第7题；解析文件第461—544行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "function_series"
+      },
+      "title": "Riemann ζ 函数的光滑性与积分敛散性",
+      "stem": "已知\n$$\\zeta(x)=\\sum_{n=1}^{\\infty}\\frac1{n^x}.$$\n证明 $\\zeta$ 在 $(1,+\\infty)$ 上任意阶可导，并判断\n$$\\int_1^{+\\infty}(\\zeta(x)-1)\\,dx$$\n的敛散性。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "对 $k\\ge1$，$\\zeta^{(k)}(x)=\\sum_{n=2}^{\\infty}(-\\ln n)^kn^{-x}$；所给反常积分发散。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "紧子区间一致控制并用 Tonelli 交换",
+          "solution_type": "teaching",
+          "text": "在任意紧子区间 $[1+\\delta,M]$ 上，第 $k$ 阶形式导数的绝对值由 $(\\ln n)^k/n^{1+\\delta}$ 控制，而该数项级数收敛。因此可逐阶逐项求导，得到任意阶可导。又 $\\zeta(x)-1=\\sum_{n=2}^\\infty n^{-x}\\ge0$，Tonelli 定理给出积分等于 $\\sum_{n=2}^\\infty\\int_1^\\infty n^{-x}dx=\\sum_{n=2}^\\infty1/(n\\ln n)$，该级数发散。",
+          "main_method_code": "local_uniform_derivative_series",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "在每个 $[1+\\delta,M]$ 上用可求和的 $(\\ln n)^k/n^{1+\\delta}$ 控制导数项。",
+              "method_code": "local_uniform_derivative_series"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "逐阶应用函数项级数求导定理，得到 $C^\\infty$ 性。",
+              "knowledge_point_code": "termwise_differentiation"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "利用非负性，以 Tonelli 定理交换求和和积分。",
+              "method_code": "tonelli_exchange_sum_integral"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "化为发散级数 $\\sum1/(n\\ln n)$。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "riemann_zeta_function",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "termwise_differentiation",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "tonelli_fubini_theorem",
+          "role": "secondary",
+          "confidence": 0.99
+        },
+        {
+          "code": "improper_integral_convergence",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "local_uniform_derivative_series",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "tonelli_exchange_sum_integral",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 20,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "dirichlet_series",
+          "local_uniform_convergence",
+          "nonnegative_sum_integral_exchange"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-008",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第8题；解析文件第545—590行及其前置 OCR 表格",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "multiple_improper_integrals"
+      },
+      "title": "椭圆截断下的二维振荡反常积分",
+      "stem": "计算\n$$\\lim_{\\varepsilon\\to0+}\\iint_{x^2+xy+y^2\\ge\\varepsilon^2}\\frac1{x^2+y^2}\\sin\\frac1{x^2+y^2}\\,dxdy,$$\n并说明计算过程的合理性。",
+      "question_type": "calculation",
+      "difficulty_level": 5,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$\\dfrac{\\pi^2}{2}$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "极坐标化为一致的 Dirichlet 积分",
+          "solution_type": "teaching",
+          "text": "极坐标下 $x^2+xy+y^2=r^2c(\\theta)$，其中 $c(\\theta)=1+\\frac12\\sin2\\theta\\in[1/2,3/2]$，区域为 $r\\ge\\varepsilon/\\sqrt{c(\\theta)}$。故积分为 $\\int_0^{2\\pi}\\int_{\\varepsilon/\\sqrt c}^{\\infty}\\sin(1/r^2)dr/r\\,d\\theta$。令 $u=1/r^2$，内层变成 $\\frac12\\operatorname{Si}(c(\\theta)/\\varepsilon^2)$。因下限 $c\\ge1/2$，其自变量关于 $\\theta$ 一致趋于无穷，而 $\\operatorname{Si}$ 有界并趋于 $\\pi/2$，故极限为 $\\frac12\\cdot2\\pi\\cdot\\pi/2=\\pi^2/2$。无穷远处被积函数连同面积元绝对可积；原点附近虽不绝对可积，但上述统一 Dirichlet 极限证明了截断极限存在。",
+          "main_method_code": "polar_dirichlet_reduction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "在极坐标下把二次型写成 $r^2c(\\theta)$ 并确定径向下限。",
+              "method_code": "polar_dirichlet_reduction"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "令 $u=1/r^2$，化为正弦积分 $\\operatorname{Si}$。"
+            },
+            {
+              "order": 3,
+              "role": "check",
+              "text": "用 $c(\\theta)$ 的一致正下界和 $\\operatorname{Si}$ 的有界性说明可交换极限与角积分。",
+              "knowledge_point_code": "dirichlet_integral"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "得到极限 $\\pi^2/2$，并区分无穷远绝对收敛与原点条件收敛。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "oscillatory_improper_integral",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "dirichlet_integral",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "polar_dirichlet_reduction",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 25,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "anisotropic_cutoff",
+          "conditionally_convergent_origin",
+          "uniform_angular_limit"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed",
+        "ocr_note": "原解析的主要推导被 MinerU 放入第7题末尾的 HTML 表格；已按数学内容归回第8题并复算。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-009",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第9题；解析文件第591—664行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "power_series"
+      },
+      "title": "每三项抽取的指数级数及其微分方程",
+      "stem": "证明幂级数\n$$\\sum_{n=0}^{\\infty}\\frac{x^{3n}}{(3n)!}$$\n的和函数是微分方程 $y''+y'+y=e^x$ 的一个解，并求和函数的具体表达式。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "symbolic",
+          "answer_text": "$$y(x)=\\frac13\\left(e^x+2e^{-x/2}\\cos\\frac{\\sqrt3x}{2}\\right).$$",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "逐项求导与三次单位根筛选",
+          "solution_type": "teaching",
+          "text": "幂级数收敛半径为无穷，可逐项求导。$y,y',y''$ 分别补齐指数模 $3$ 为 $0,2,1$ 的项，因此三者之和为 $e^x$。设 $\\omega=e^{2\\pi i/3}$，单位根筛选给出 $y=(e^x+e^{\\omega x}+e^{\\omega^2x})/3$。合并共轭两项即得实表达式。",
+          "main_method_code": "roots_of_unity_filter",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "确认收敛半径为无穷并逐项求两次导数。"
+            },
+            {
+              "order": 2,
+              "role": "conclude",
+              "text": "按指数模 $3$ 的三类合并，验证 $y''+y'+y=e^x$。",
+              "knowledge_point_code": "power_series_and_differential_equations"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "使用三次单位根筛选保留 $3$ 的倍数次项。",
+              "method_code": "roots_of_unity_filter"
+            },
+            {
+              "order": 4,
+              "role": "compute",
+              "text": "将两个共轭指数项合并成余弦。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "power_series_and_differential_equations",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "roots_of_unity",
+          "role": "secondary",
+          "confidence": 0.99
+        },
+        {
+          "code": "termwise_differentiation",
+          "role": "secondary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "roots_of_unity_filter",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 16,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "every_third_power",
+          "linear_ode",
+          "complex_to_real_expression"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-010",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第10题；解析文件第665—770行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "dynamical_systems"
+      },
+      "title": "Liénard 型系统原点的渐近稳定性",
+      "stem": "证明 $(0,0)$ 是自治系统\n$$\\dot x=y-f(x),\\qquad \\dot y=-g(x)$$\n的奇点，并判断其 Lyapunov 稳定性。这里 $f,g$ 为实值连续可微函数，且对 $x\\ne0$ 有 $xf(x)>0$、$xg(x)>0$。",
+      "question_type": "proof",
+      "difficulty_level": 4,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "原点是奇点，并且局部渐近稳定。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "能量型 Lyapunov 函数与 LaSalle 原理",
+          "solution_type": "teaching",
+          "text": "由连续性及符号条件得 $f(0)=g(0)=0$，故原点是奇点。令 $V(x,y)=\\int_0^xg(s)ds+y^2/2$。符号条件说明 $V$ 正定。沿轨线 $\\dot V=g(x)(y-f(x))-yg(x)=-g(x)f(x)\\le0$，故原点 Lyapunov 稳定。$\\dot V=0$ 只可能有 $x=0$；若轨线始终留在 $x=0$，还须 $\\dot x=y=0$，所以其中最大不变集仅为原点。由 LaSalle 不变性原理，原点局部渐近稳定。",
+          "main_method_code": "lyapunov_function_construction",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "conclude",
+              "text": "由符号和连续性推出 $f(0)=g(0)=0$。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "构造 $V=\\int_0^xg(s)ds+y^2/2$ 并验证正定。",
+              "method_code": "lyapunov_function_construction"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "沿解计算 $\\dot V=-gf\\le0$，得到稳定性。"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "检查 $\\dot V=0$ 中最大不变集只有原点。",
+              "method_code": "lasalle_invariant_set_check"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "由 LaSalle 原理得到局部渐近稳定。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "lyapunov_stability",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "lasalle_invariance_principle",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "lyapunov_function_construction",
+          "role": "primary",
+          "confidence": 0.98
+        },
+        {
+          "code": "lasalle_invariant_set_check",
+          "role": "secondary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 22,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "autonomous_planar_system",
+          "sign_conditions",
+          "semidefinite_lyapunov_derivative"
+        ],
+        "curation_confidence": 0.98,
+        "ocr_quality": "reconstructed"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-011",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第11题；解析文件第771—806行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "complex_analysis"
+      },
+      "title": "满足 sin f=f 的全纯函数",
+      "stem": "设 $f$ 在区域 $\\Omega$ 上全纯，且 $\\sin(f(z))=f(z)$。证明 $f$ 是常值函数。",
+      "question_type": "proof",
+      "difficulty_level": 3,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$f$ 必为常值，且其常值是方程 $\\sin w=w$ 的一个复根。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "离散零点集与开映射定理",
+          "solution_type": "teaching",
+          "text": "令 $H(w)=\\sin w-w$。$H$ 是非零整函数，故其零点集离散。题设给出 $f(\\Omega)\\subset H^{-1}(0)$。若 $f$ 非常值，开映射定理要求 $f(\\Omega)$ 为开集，但非空开集不可能包含在离散集合中，矛盾。因此 $f$ 为常值。",
+          "main_method_code": "discrete_image_open_mapping",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "transform",
+              "text": "将方程写成非零整函数 $H(w)=\\sin w-w$ 的零点条件。"
+            },
+            {
+              "order": 2,
+              "role": "understand_problem",
+              "text": "非零全纯函数的零点孤立，所以 $H^{-1}(0)$ 离散。",
+              "knowledge_point_code": "zeros_of_holomorphic_function"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "以非常值全纯映射的像为开集反证。",
+              "method_code": "discrete_image_open_mapping"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "holomorphic_open_mapping",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "zeros_of_holomorphic_function",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "discrete_image_open_mapping",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 10,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "holomorphic_functional_equation",
+          "discrete_target_set"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-012",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第12题；解析文件第807—850行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "complex_analysis"
+      },
+      "title": "由实部方向衰减证明整函数恒为零",
+      "stem": "设 $f$ 在复平面上全纯，且对任意 $\\operatorname{Re}z\\ne0$ 都有\n$$|f(z)|<\\frac1{|\\operatorname{Re}z|}.$$\n证明 $f\\equiv0$。",
+      "question_type": "proof",
+      "difficulty_level": 5,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$f(z)=0$ 对所有 $z\\in\\mathbb C$ 成立。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "对 log|f| 使用圆周平均",
+          "solution_type": "teaching",
+          "text": "固定 $z_0=a+ib$。对任意 $R>|a|$，次调和函数 $\\log|f|$ 的平均不等式给出\n$$\\log|f(z_0)|\\le\\frac1{2\\pi}\\int_0^{2\\pi}\\log|f(z_0+Re^{i\\theta})|d\\theta.$$\n除至多两个测度为零的角度外，题设可用，故右端不超过\n$$-\\frac1{2\\pi}\\int_0^{2\\pi}\\log|a+R\\cos\\theta|d\\theta.$$\n当 $|a|<R$ 时，经典恒等式给出该对数平均为 $\\log(R/2)$，于是 $|f(z_0)|\\le2/R$。令 $R\\to\\infty$ 得 $f(z_0)=0$。由于 $z_0$ 任意，$f\\equiv0$。",
+          "main_method_code": "log_modulus_circle_mean",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "apply_method",
+              "text": "在以任意 $z_0$ 为圆心、半径 $R>|\\operatorname{Re}z_0|$ 的圆上应用 $\\log|f|$ 的平均不等式。",
+              "method_code": "log_modulus_circle_mean"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "使用题设将圆周值控制为 $-\\log|a+R\\cos\\theta|$；实部为零的两个点不影响积分。"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "使用 $\\frac1{2\\pi}\\int_0^{2\\pi}\\log|a+R\\cos\\theta|d\\theta=\\log(R/2)$。"
+            },
+            {
+              "order": 4,
+              "role": "conclude",
+              "text": "得到 $|f(z_0)|\\le2/R$，令 $R\\to\\infty$ 即得零。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "subharmonic_mean_inequality",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "methods": [
+        {
+          "code": "log_modulus_circle_mean",
+          "role": "primary",
+          "confidence": 0.98
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 25,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "entire_function_decay",
+          "vertical_line_bound",
+          "logarithmic_circle_mean"
+        ],
+        "curation_confidence": 0.97,
+        "ocr_quality": "good",
+        "ocr_note": "原解析仅援引未陈述增长条件的 Phragmén–Lindelöf 型结论，论证不足；已替换为可直接核验的次调和平均证明。"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-013",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第13题；解析文件第851—886行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "lebesgue_integration"
+      },
+      "title": "平移乘积在平面上的 Lebesgue 可积性",
+      "stem": "设 $f,g\\in L^1(\\mathbb R)$。证明 $F(x,y)=f(x)g(y+x)$ 属于 $L^1(\\mathbb R^2)$。",
+      "question_type": "proof",
+      "difficulty_level": 2,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "$F\\in L^1(\\mathbb R^2)$，且 $\\|F\\|_{L^1(\\mathbb R^2)}=\\|f\\|_1\\|g\\|_1$。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "Tonelli 定理与平移不变性",
+          "solution_type": "teaching",
+          "text": "$F$ 可测。由 Tonelli 定理，$\\iint|F|=\\int|f(x)|\\left(\\int|g(y+x)|dy\\right)dx$。内层令 $u=y+x$，等于 $\\|g\\|_1$，故总积分为 $\\|f\\|_1\\|g\\|_1<\\infty$。",
+          "main_method_code": "tonelli_translation_norm",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "确认 $f(x)g(y+x)$ 可测。"
+            },
+            {
+              "order": 2,
+              "role": "apply_method",
+              "text": "对绝对值使用 Tonelli 定理作迭代积分。",
+              "knowledge_point_code": "tonelli_fubini_theorem"
+            },
+            {
+              "order": 3,
+              "role": "compute",
+              "text": "内层作平移换元，得到范数乘积。",
+              "method_code": "tonelli_translation_norm"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "lebesgue_integrability",
+          "role": "primary",
+          "confidence": 0.99
+        },
+        {
+          "code": "tonelli_fubini_theorem",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "methods": [
+        {
+          "code": "tonelli_translation_norm",
+          "role": "primary",
+          "confidence": 0.99
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 8,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "product_after_linear_change",
+          "l1_norm_factorization"
+        ],
+        "curation_confidence": 0.99,
+        "ocr_quality": "good"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "external_id": "fudan-2026-ma-014",
+      "source": {
+        "type": "exam",
+        "title": "复旦大学 2026 年数学分析试卷",
+        "reference": "第14题；解析文件第887—978行",
+        "license_note": "原始材料未提供授权说明，正式使用前需人工确认"
+      },
+      "subject": {
+        "code": "mathematical_analysis",
+        "chapter_code": "lebesgue_integration"
+      },
+      "title": "周期函数快速振荡的平均极限（修正版）",
+      "stem": "原 OCR 题面声称：对 $f\\in L^1[a,b]$ 和以 $1$ 为周期的 $g\\in L^1[0,1]$，有\n$$\\lim_{n\\to\\infty}\\int_a^bf(x)g(nx)dx=\\left(\\int_0^1g\\right)\\left(\\int_a^bf\\right).$$\n该表述缺少保证乘积可积的条件。按最小修正，另设 $g\\in L^\\infty[0,1]$，证明上述结论。",
+      "question_type": "proof",
+      "difficulty_level": 5,
+      "answers": [
+        {
+          "answer_type": "standard",
+          "answer_text": "在补充 $g\\in L^\\infty$ 后结论成立。原字面命题不成立：在 $[0,1]$ 取 $f(x)=g(x)=x^{-1/2}$ 并周期延拓 $g$，则两者均为 $L^1$，但 $f(x)g(nx)$ 在 $0$ 附近不可积。",
+          "is_primary": true
+        }
+      ],
+      "solutions": [
+        {
+          "title": "阶梯函数上的周期抵消与 L1 稠密逼近",
+          "solution_type": "teaching",
+          "text": "先指出原命题缺陷：上述反例使每个 $n$ 的乘积在零点附近形如常数乘 $1/x$。在修正条件下，令 $\\bar g=\\int_0^1g$、$h=g-\\bar g$，则 $h$ 周期为 $1$ 且均值为零。对区间示性函数，$\\int_\\alpha^\\beta h(nx)dx=n^{-1}\\int_{n\\alpha}^{n\\beta}h(u)du$，完整周期全部抵消，故绝对值至多 $2\\|h\\|_1/n$。于是结论对阶梯函数成立。对一般 $f\\in L^1$，取阶梯函数 $s$ 使 $\\|f-s\\|_1<\\varepsilon$，再用 $|\\int(f-s)h(nx)|\\le\\|h\\|_\\infty\\varepsilon$，先令 $n\\to\\infty$ 再令 $\\varepsilon\\to0$，即得平均极限。",
+          "main_method_code": "step_function_density_averaging",
+          "is_primary": true,
+          "steps": [
+            {
+              "order": 1,
+              "role": "check",
+              "text": "用 $x^{-1/2}$ 反例说明仅有两个 $L^1$ 假设不足。"
+            },
+            {
+              "order": 2,
+              "role": "transform",
+              "text": "减去周期均值，归结为均值为零的 $h$。"
+            },
+            {
+              "order": 3,
+              "role": "apply_method",
+              "text": "先对区间示性函数利用完整周期抵消，得到 $O(1/n)$。",
+              "method_code": "step_function_density_averaging"
+            },
+            {
+              "order": 4,
+              "role": "apply_method",
+              "text": "由阶梯函数在 $L^1$ 中稠密及 $h\\in L^\\infty$ 推广到一般 $f$。"
+            },
+            {
+              "order": 5,
+              "role": "conclude",
+              "text": "恢复均值项，得到题设乘积极限。"
+            }
+          ]
+        }
+      ],
+      "knowledge_points": [
+        {
+          "code": "periodic_averaging",
+          "role": "primary",
+          "confidence": 0.9
+        },
+        {
+          "code": "lebesgue_integrability",
+          "role": "secondary",
+          "confidence": 0.9
+        }
+      ],
+      "methods": [
+        {
+          "code": "step_function_density_averaging",
+          "role": "primary",
+          "confidence": 0.9
+        }
+      ],
+      "status": "imported",
+      "metadata": {
+        "language": "zh",
+        "estimated_time_minutes": 30,
+        "has_image": false,
+        "attachment_refs": [],
+        "structure_codes": [
+          "false_as_stated",
+          "minimal_hypothesis_repair",
+          "periodic_cancellation",
+          "density_argument"
+        ],
+        "curation_confidence": 0.72,
+        "ocr_quality": "ambiguous",
+        "ocr_note": "原题仅写 f、g 为 Lebesgue 可积时命题一般不成立，且积分可能无定义。无法从 Markdown 判断原卷是否漏掉“g 有界”等条件；按最小修正版保存，必须核对原卷图像后才能 active。"
+      }
+    }
+  ]
+}

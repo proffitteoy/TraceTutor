@@ -1,5 +1,6 @@
 "use client"
 
+import { LearningTreeCanvas } from "@/components/learning-tree-canvas"
 import type {
   InputMode,
   LearningAction,
@@ -8,14 +9,49 @@ import type {
   LearningResponse
 } from "@/lib/contracts"
 import { createGateway } from "@/lib/gateway"
+import {
+  type CardRelation,
+  type ConversationEntry,
+  type LearningTreeBranch,
+  isPersistedLearningTree
+} from "@/lib/learning-tree"
 import Image from "next/image"
-import { FormEvent, useMemo, useRef, useState } from "react"
+import {
+  type FormEvent,
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react"
 
-interface ConversationEntry {
-  id: string
-  role: "user" | "assistant"
-  text: string
-  response?: LearningResponse
+type WorkspaceView = "chat" | "canvas"
+
+interface PendingAsk {
+  x: number
+  y: number
+  sourceBranchId: string
+  sourceMessageId: string
+  quote: string
+  selectionStart: number
+  selectionEnd: number
+}
+
+const TREE_STORAGE_KEY = "tracetutor.iris.learning-tree.v1"
+
+function createRootBranch(sessionId = ""): LearningTreeBranch {
+  return {
+    id: "root",
+    name: "主学习会话",
+    relation: "root",
+    parentId: null,
+    x: 0,
+    y: 0,
+    sessionId,
+    activeQuestionId: null,
+    entries: []
+  }
 }
 
 type QuestionCard = Extract<
@@ -148,14 +184,23 @@ export function TutorShell() {
   const requestController = useRef<AbortController | null>(null)
   const [mode, setMode] = useState<InputMode>("new_question")
   const [input, setInput] = useState("")
-  const [entries, setEntries] = useState<ConversationEntry[]>([])
+  const [branches, setBranches] = useState<LearningTreeBranch[]>([
+    createRootBranch()
+  ])
+  const [activeBranchId, setActiveBranchId] = useState("root")
+  const [workspaceView, setWorkspaceView] = useState<WorkspaceView>("chat")
+  const [pendingAsk, setPendingAsk] = useState<PendingAsk | null>(null)
+  const [treeReady, setTreeReady] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null)
   const [pendingAction, setPendingAction] = useState<
     LearningRequest["action"] | null
   >(null)
 
+  const activeBranch =
+    branches.find(branch => branch.id === activeBranchId) ?? branches[0]
+  const entries = activeBranch?.entries ?? []
+  const activeQuestionId = activeBranch?.activeQuestionId ?? null
   const latestResponse = [...entries]
     .reverse()
     .find(entry => entry.response)?.response
@@ -165,20 +210,229 @@ export function TutorShell() {
     latestResponse?.cards.filter(isQuestionCard) ?? []
   const gatewayEnabled = gateway !== null
 
-  const resetSession = () => {
-    sessionStorage.setItem(
-      "tracetutor.session_id",
-      crypto.randomUUID()
+  useEffect(() => {
+    const stored = localStorage.getItem(TREE_STORAGE_KEY)
+    if (stored) {
+      try {
+        const parsed: unknown = JSON.parse(stored)
+        if (isPersistedLearningTree(parsed)) {
+          setBranches(parsed.branches)
+          setActiveBranchId(
+            parsed.branches.some(branch => branch.id === parsed.activeBranchId)
+              ? parsed.activeBranchId
+              : parsed.branches[0].id
+          )
+        }
+      } catch {
+        localStorage.removeItem(TREE_STORAGE_KEY)
+      }
+    }
+    setTreeReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (!treeReady) return
+    localStorage.setItem(
+      TREE_STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        activeBranchId,
+        branches
+      })
     )
-    setEntries([])
-    setActiveQuestionId(null)
+  }, [activeBranchId, branches, treeReady])
+
+  useEffect(() => {
+    if (!pendingAsk) return
+    const close = () => setPendingAsk(null)
+    window.addEventListener("blur", close)
+    window.addEventListener("mousedown", close)
+    return () => {
+      window.removeEventListener("blur", close)
+      window.removeEventListener("mousedown", close)
+    }
+  }, [pendingAsk])
+
+  const updateBranch = useCallback(
+    (
+      branchId: string,
+      updater: (branch: LearningTreeBranch) => LearningTreeBranch
+    ) => {
+      setBranches(current =>
+        current.map(branch => (branch.id === branchId ? updater(branch) : branch))
+      )
+    },
+    []
+  )
+
+  const resetSession = () => {
+    const sessionId = crypto.randomUUID()
+    sessionStorage.setItem("tracetutor.session_id", sessionId)
+    setBranches([createRootBranch(sessionId)])
+    setActiveBranchId("root")
+    setWorkspaceView("chat")
+    setPendingAsk(null)
     setPendingAction(null)
     setError(null)
   }
 
+  const activateBranch = useCallback((branchId: string) => {
+    setActiveBranchId(branchId)
+    setWorkspaceView("chat")
+    setPendingAction(null)
+    setPendingAsk(null)
+    setError(null)
+  }, [])
+
+  const createBranch = useCallback(
+    (
+      source: LearningTreeBranch,
+      relation: Exclude<CardRelation, "root">,
+      selection?: PendingAsk
+    ) => {
+      const childIndex = branches.filter(
+        branch => branch.parentId === source.id
+      ).length
+      const branchId = crypto.randomUUID()
+      const relationName =
+        relation === "child"
+          ? "深入"
+          : relation === "divergent"
+            ? "发散"
+            : "历史分支"
+      const next: LearningTreeBranch = {
+        id: branchId,
+        name: selection?.quote
+          ? `${relationName} · ${selection.quote.slice(0, 18)}`
+          : `${relationName} ${childIndex + 1}`,
+        relation,
+        parentId: source.id,
+        sourceMessageId: selection?.sourceMessageId,
+        sourceQuote: selection?.quote,
+        selectionStart: selection?.selectionStart,
+        selectionEnd: selection?.selectionEnd,
+        x: source.x + 440,
+        y: source.y + childIndex * 220,
+        sessionId: crypto.randomUUID(),
+        activeQuestionId: source.activeQuestionId,
+        entries: relation === "branch" ? [...source.entries] : []
+      }
+
+      setBranches(current => [...current, next])
+      setActiveBranchId(branchId)
+      setWorkspaceView("chat")
+      setPendingAsk(null)
+      setPendingAction(null)
+      window.getSelection()?.removeAllRanges()
+      setInput(
+        selection?.quote
+          ? `请围绕这段内容继续深入解释：“${selection.quote}”`
+          : relation === "child"
+            ? "沿着当前结论继续深入一步。"
+            : relation === "divergent"
+              ? "换一个角度或方法分析当前问题。"
+              : ""
+      )
+    },
+    [branches]
+  )
+
+  const deleteBranch = useCallback(
+    (branch: LearningTreeBranch) => {
+      if (branch.relation === "root") return
+      const descendants = new Set([branch.id])
+      let changed = true
+      while (changed) {
+        changed = false
+        for (const candidate of branches) {
+          if (
+            candidate.parentId &&
+            descendants.has(candidate.parentId) &&
+            !descendants.has(candidate.id)
+          ) {
+            descendants.add(candidate.id)
+            changed = true
+          }
+        }
+      }
+      const hasChildren = descendants.size > 1
+      const confirmed = window.confirm(
+        hasChildren
+          ? `“${branch.name}”还有后续分支。确认删除整个子树吗？`
+          : `确认删除卡片“${branch.name}”吗？`
+      )
+      if (!confirmed) return
+
+      setBranches(current =>
+        current.filter(candidate => !descendants.has(candidate.id))
+      )
+      if (descendants.has(activeBranchId)) {
+        setActiveBranchId(branch.parentId ?? "root")
+      }
+    },
+    [activeBranchId, branches]
+  )
+
+  const moveBranch = useCallback(
+    (branchId: string, x: number, y: number) =>
+      updateBranch(branchId, branch => ({ ...branch, x, y })),
+    [updateBranch]
+  )
+
+  const handleAssistantContextMenu = useCallback(
+    (
+      event: ReactMouseEvent<HTMLElement>,
+      branch: LearningTreeBranch,
+      messageId: string
+    ) => {
+      const selection = window.getSelection()
+      if (!selection || selection.isCollapsed || selection.rangeCount !== 1) {
+        return
+      }
+
+      const range = selection.getRangeAt(0)
+      const contentRoot =
+        event.currentTarget.querySelector<HTMLElement>("[data-message-body]")
+      if (
+        !contentRoot ||
+        !contentRoot.contains(range.startContainer) ||
+        !contentRoot.contains(range.endContainer)
+      ) {
+        return
+      }
+      const boundaryElement =
+        range.startContainer.nodeType === window.Node.ELEMENT_NODE
+          ? (range.startContainer as Element)
+          : range.startContainer.parentElement
+      if (boundaryElement?.closest("pre, code, img, button")) return
+
+      const quote = selection.toString().trim()
+      if (!quote) return
+      const before = document.createRange()
+      before.selectNodeContents(contentRoot)
+      before.setEnd(range.startContainer, range.startOffset)
+      const leadingWhitespace =
+        selection.toString().length - selection.toString().trimStart().length
+      const selectionStart = before.toString().length + leadingWhitespace
+
+      event.preventDefault()
+      event.stopPropagation()
+      setPendingAsk({
+        x: event.clientX,
+        y: event.clientY,
+        sourceBranchId: branch.id,
+        sourceMessageId: messageId,
+        quote,
+        selectionStart,
+        selectionEnd: selectionStart + quote.length
+      })
+    },
+    []
+  )
+
   const submit = async (text: string, requestedMode: InputMode = mode) => {
     const normalized = text.trim()
-    if (!normalized || isSending) return
+    if (!normalized || isSending || !activeBranch) return
 
     if (!gateway) {
       setError(
@@ -189,11 +443,11 @@ export function TutorShell() {
 
     const identity = {
       userId: getBrowserIdentity(localStorage, "tracetutor.user_id"),
-      sessionId: getBrowserIdentity(
-        sessionStorage,
-        "tracetutor.session_id"
-      )
+      sessionId:
+        activeBranch.sessionId ||
+        getBrowserIdentity(sessionStorage, "tracetutor.session_id")
     }
+    const submissionBranchId = activeBranch.id
 
     const userEntry: ConversationEntry = {
       id: `user-${crypto.randomUUID()}`,
@@ -201,7 +455,15 @@ export function TutorShell() {
       text: normalized
     }
 
-    setEntries(current => [...current, userEntry])
+    updateBranch(submissionBranchId, branch => ({
+      ...branch,
+      name:
+        branch.entries.length === 0
+          ? normalized.slice(0, 26)
+          : branch.name,
+      sessionId: identity.sessionId,
+      entries: [...branch.entries, userEntry]
+    }))
     setInput("")
     setError(null)
     setIsSending(true)
@@ -225,18 +487,24 @@ export function TutorShell() {
         card => card.type === "new_question"
       )
       if (nextQuestion && "question_id" in nextQuestion) {
-        setActiveQuestionId(nextQuestion.question_id)
+        updateBranch(submissionBranchId, branch => ({
+          ...branch,
+          activeQuestionId: nextQuestion.question_id
+        }))
       }
       setPendingAction(null)
-      setEntries(current => [
-        ...current,
-        {
+      updateBranch(submissionBranchId, branch => ({
+        ...branch,
+        entries: [
+          ...branch.entries,
+          {
           id: `assistant-${response.meta.request_id}`,
           role: "assistant",
           text: response.summary,
           response
-        }
-      ])
+          }
+        ]
+      }))
     } catch (requestError) {
       if (requestError instanceof DOMException && requestError.name === "AbortError") {
         setError("已停止本次生成。")
@@ -266,7 +534,10 @@ export function TutorShell() {
     }
 
     if (action.question_id) {
-      setActiveQuestionId(action.question_id)
+      updateBranch(activeBranchId, branch => ({
+        ...branch,
+        activeQuestionId: action.question_id ?? branch.activeQuestionId
+      }))
     }
     setPendingAction({
       type: action.type,
@@ -276,6 +547,10 @@ export function TutorShell() {
     })
     setInput(prompts[action.type])
   }
+
+  const askSource = branches.find(
+    branch => branch.id === pendingAsk?.sourceBranchId
+  )
 
   return (
     <main className="app-shell">
@@ -300,14 +575,21 @@ export function TutorShell() {
 
         <nav className="primary-nav" aria-label="主要功能">
           <p>学习台</p>
-          <button className="active">
+          <button
+            className={workspaceView === "chat" ? "active" : ""}
+            onClick={() => setWorkspaceView("chat")}
+          >
             <Icon name="compass" size={18} />
-            当前推演
+            当前对话
             <span>LIVE</span>
           </button>
-          <button>
+          <button
+            className={workspaceView === "canvas" ? "active" : ""}
+            onClick={() => setWorkspaceView("canvas")}
+          >
             <Icon name="history" size={18} />
-            学习轨迹
+            卡片树画布
+            <span>{branches.length}</span>
           </button>
         </nav>
 
@@ -320,7 +602,12 @@ export function TutorShell() {
             latestQuestionCards.map(card => (
               <button
                 key={card.question_id}
-                onClick={() => setActiveQuestionId(card.question_id)}
+                onClick={() =>
+                  updateBranch(activeBranchId, branch => ({
+                    ...branch,
+                    activeQuestionId: card.question_id
+                  }))
+                }
               >
                 <i className="status-dot violet" />
                 <span>
@@ -347,16 +634,47 @@ export function TutorShell() {
         <header className="workspace-header">
           <div>
             <span className="signal"><i /> 教学工作流</span>
-            <h1>{entries.length ? MODE_LABELS[mode] : "新的学习会话"}</h1>
+            <h1>{activeBranch?.name ?? "新的学习会话"}</h1>
           </div>
-          <div className="header-status">
-            <span>{gatewayEnabled ? "网关已配置" : "等待网关配置"}</span>
-            <i className={gatewayEnabled ? "online" : "demo"} />
+          <div className="workspace-tools">
+            <div className="view-switch" role="tablist" aria-label="对话与画布视图">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={workspaceView === "chat"}
+                className={workspaceView === "chat" ? "active" : ""}
+                onClick={() => setWorkspaceView("chat")}
+              >
+                对话
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={workspaceView === "canvas"}
+                className={workspaceView === "canvas" ? "active" : ""}
+                onClick={() => setWorkspaceView("canvas")}
+              >
+                画布
+              </button>
+            </div>
+            <div className="header-status">
+              <span>{gatewayEnabled ? "网关已配置" : "等待网关配置"}</span>
+              <i className={gatewayEnabled ? "online" : "demo"} />
+            </div>
           </div>
         </header>
 
         <div className="conversation" aria-live="polite">
-          {entries.length === 0 ? (
+          {workspaceView === "canvas" ? (
+            <LearningTreeCanvas
+              branches={branches}
+              activeBranchId={activeBranchId}
+              onActivate={activateBranch}
+              onCreate={createBranch}
+              onDelete={deleteBranch}
+              onMove={moveBranch}
+            />
+          ) : entries.length === 0 ? (
             <section className="welcome-panel">
               <div className="welcome-orbit" aria-hidden="true">
                 <Image src="/branding/logo.jpg" alt="" width={84} height={84} />
@@ -391,6 +709,20 @@ export function TutorShell() {
             </section>
           ) : (
             <div className="message-stream">
+              {activeBranch?.sourceQuote ? (
+                <section className="branch-source">
+                  <span>引用来源</span>
+                  <q>{activeBranch.sourceQuote}</q>
+                  {activeBranch.parentId ? (
+                    <button
+                      type="button"
+                      onClick={() => activateBranch(activeBranch.parentId!)}
+                    >
+                      返回原卡片
+                    </button>
+                  ) : null}
+                </section>
+              ) : null}
               {entries.map(entry =>
                 entry.role === "user" ? (
                   <article className="user-message" key={entry.id}>
@@ -398,37 +730,53 @@ export function TutorShell() {
                     <p>{entry.text}</p>
                   </article>
                 ) : (
-                  <article className="assistant-message" key={entry.id}>
-                    <div className="assistant-heading">
-                      <div className="mini-mark">
-                        <Image src="/branding/logo.jpg" alt="" width={34} height={34} />
+                  <article
+                    className="assistant-message"
+                    key={entry.id}
+                    data-message-id={entry.id}
+                    data-message-role="assistant"
+                    onContextMenu={event =>
+                      activeBranch
+                        ? handleAssistantContextMenu(
+                            event,
+                            activeBranch,
+                            entry.id
+                          )
+                        : undefined
+                    }
+                  >
+                    <div data-message-body>
+                      <div className="assistant-heading">
+                        <div className="mini-mark">
+                          <Image src="/branding/logo.jpg" alt="" width={34} height={34} />
+                        </div>
+                        <div>
+                          <span>IRIS · 教学输出</span>
+                          <p>{entry.text}</p>
+                        </div>
                       </div>
-                      <div>
-                        <span>IRIS · 教学输出</span>
-                        <p>{entry.text}</p>
-                      </div>
-                    </div>
 
-                    {entry.response ? (
-                      <>
-                        <div className="learning-card-grid">
-                          {entry.response.cards.map((card, index) => (
-                            <CardView card={card} key={`${entry.id}-${card.type}-${index}`} />
-                          ))}
-                        </div>
-                        <div className="response-actions">
-                          {entry.response.actions.map(action => (
-                            <button
-                              key={`${action.type}-${action.question_id ?? "none"}-${action.schedule_id ?? "none"}`}
-                              onClick={() => handleAction(action)}
-                            >
-                              {action.label}
-                              <span>→</span>
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    ) : null}
+                      {entry.response ? (
+                        <>
+                          <div className="learning-card-grid">
+                            {entry.response.cards.map((card, index) => (
+                              <CardView card={card} key={`${entry.id}-${card.type}-${index}`} />
+                            ))}
+                          </div>
+                          <div className="response-actions">
+                            {entry.response.actions.map(action => (
+                              <button
+                                key={`${action.type}-${action.question_id ?? "none"}-${action.schedule_id ?? "none"}`}
+                                onClick={() => handleAction(action)}
+                              >
+                                {action.label}
+                                <span>→</span>
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
                   </article>
                 )
               )}
@@ -446,6 +794,7 @@ export function TutorShell() {
           )}
         </div>
 
+        {workspaceView === "chat" ? (
         <footer className="composer-wrap">
           <div className="mode-switch" aria-label="输入模式">
             {(Object.keys(MODE_LABELS) as InputMode[]).map(item => (
@@ -501,10 +850,11 @@ export function TutorShell() {
           </form>
           <p>
             {gatewayEnabled
-              ? "Enter 发送 · Shift + Enter 换行 · 状态变化以规则层结果为准"
+              ? "Enter 发送 · Shift + Enter 换行 · 框选回答后右键可创建深入卡片"
               : "请配置 NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL 后开始学习"}
           </p>
         </footer>
+        ) : null}
       </section>
 
       <aside className="right-rail">
@@ -573,6 +923,31 @@ export function TutorShell() {
           但不决定状态如何变化。”
         </blockquote>
       </aside>
+
+      {pendingAsk && askSource ? (
+        <div
+          className="ask-menu"
+          style={{ left: pendingAsk.x, top: pendingAsk.y }}
+          onMouseDown={event => event.stopPropagation()}
+        >
+          <button
+            type="button"
+            onClick={() => createBranch(askSource, "child", pendingAsk)}
+          >
+            <Icon name="plus" size={16} />
+            Ask：创建深入卡片
+          </button>
+          <q>{pendingAsk.quote}</q>
+          <button
+            type="button"
+            className="ask-menu-close"
+            aria-label="关闭"
+            onClick={() => setPendingAsk(null)}
+          >
+            ×
+          </button>
+        </div>
+      ) : null}
     </main>
   )
 }

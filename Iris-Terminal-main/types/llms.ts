@@ -64,6 +64,7 @@ export type PerplexityLLMID =
 
 // DeepSeek Models
 export type DeepSeekLLMID =
+  | "deepseek-v4-pro" // DeepSeek V4 Pro
   | "deepseek-chat" // DeepSeek Chat
   | "deepseek-reasoner" // DeepSeek Reasoner
 

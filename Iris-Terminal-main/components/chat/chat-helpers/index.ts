@@ -299,6 +299,8 @@ export const processResponse = async (
 ) => {
   let fullText = ""
   let pendingText = ""
+  let flushTimer: ReturnType<typeof setTimeout> | null = null
+  let lastFlushAt = 0
 
   const setAssistantText = (text: string) => {
     setChatMessages(prev =>
@@ -318,47 +320,24 @@ export const processResponse = async (
     )
   }
 
-  const appendAndFlushByLine = (incomingText: string, forceFlush: boolean) => {
-    if (incomingText) {
-      pendingText += incomingText
-    }
-
-    pendingText = pendingText.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
-
-    let didFlush = false
-
-    if (!forceFlush) {
-      const lines = pendingText.split("\n")
-
-      if (lines.length > 1) {
-        const completeLines = lines.slice(0, -1).join("\n")
-        pendingText = lines[lines.length - 1] || ""
-
-        if (completeLines.length > 0) {
-          fullText += `${completeLines}\n`
-          didFlush = true
-        }
-      }
-
-      // Fallback for models that rarely emit newlines: flush a long completed sentence.
-      if (
-        !didFlush &&
-        pendingText.length >= 120 &&
-        /[。！？.!?]\s*$/.test(pendingText)
-      ) {
-        fullText += pendingText
-        pendingText = ""
-        didFlush = true
-      }
-    } else if (pendingText.length > 0) {
+  const flushPendingText = () => {
+    flushTimer = null
+    if (pendingText.length > 0) {
       fullText += pendingText
       pendingText = ""
-      didFlush = true
-    }
-
-    if (didFlush) {
       setAssistantText(fullText)
+      lastFlushAt = Date.now()
     }
+  }
+
+  const appendStreamingText = (incomingText: string) => {
+    if (!incomingText) return
+
+    pendingText += incomingText
+    if (flushTimer) return
+
+    const delay = Math.max(0, 48 - (Date.now() - lastFlushAt))
+    flushTimer = setTimeout(flushPendingText, delay)
   }
 
   if (response.body) {
@@ -381,7 +360,7 @@ export const processResponse = async (
                   ""
                 )
 
-          appendAndFlushByLine(contentToAdd, false)
+          appendStreamingText(contentToAdd)
         } catch (error) {
           console.error("Error parsing JSON:", error)
         }
@@ -389,7 +368,8 @@ export const processResponse = async (
       controller.signal
     )
 
-    appendAndFlushByLine("", true)
+    if (flushTimer) clearTimeout(flushTimer)
+    flushPendingText()
 
     return fullText
   } else {

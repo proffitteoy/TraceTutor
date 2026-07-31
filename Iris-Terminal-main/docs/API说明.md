@@ -1,6 +1,6 @@
 # API说明
 
-更新日期：2026-04-29
+更新日期：2026-07-28
 
 本文档只描述当前仓库里已经存在、且可从代码验证的接口。
 
@@ -10,6 +10,13 @@
 
 - `GET /api/local/bootstrap`
 - 作用：初始化并返回本地 Profile 与默认工作区
+
+### Startup
+
+- `GET /api/local/startup?workspace_id=...`
+- 作用：首屏聚合返回 `profile`、`workspaces`、规范化后的 `workspace`、根 `chats` 与 `envKeyMap`
+- 请求的工作区不存在时返回默认本地工作区，由客户端替换 URL
+- 数据库缺少迁移表或字段时返回 `409` 与 `MIGRATION_REQUIRED`
 
 ### Workspaces
 
@@ -22,10 +29,28 @@
 ### Chats
 
 - `GET /api/local/chats?workspace_id=...`
+  - 侧栏列表只返回 `card_relation=root` 的根卡片
 - `POST /api/local/chats`
+  - 事务创建新的 `ChatTree` 和根卡片
 - `GET /api/local/chats/[id]`
 - `PUT /api/local/chats/[id]`
 - `DELETE /api/local/chats/[id]`
+  - 删除根卡片时级联删除整棵树；子卡片由卡片树接口删除
+
+### Chat Trees / Cards
+
+- `GET /api/local/chat-trees/[id]`
+  - 返回树元数据、全部轻量卡片信息、最后一条消息摘要和直接分支数
+- `POST /api/local/chat-trees/[id]/cards`
+  - 创建 `child`、`divergent` 或 `branch` 卡片
+  - `child` 可携带助手消息引用快照和渲染文本偏移
+  - `branch` 在事务内复制分支点以前的消息和附件关联
+- `PATCH /api/local/chat-trees/[id]/cards/[cardId]`
+  - 更新卡片坐标或名称
+- `DELETE /api/local/chat-trees/[id]/cards/[cardId]?confirm_subtree=true`
+  - 删除非根卡片；有后代时必须显式确认删除子树
+
+共享契约位于 `types/chat-tree.ts`，包括 `CardRelation`、`ChatTreeResponse`、`CreateCardRequest` 和 `UpdateCardRequest`。
 
 ### Messages
 
@@ -44,6 +69,7 @@
 - `GET /api/local/files/[id]`
 - `PUT /api/local/files/[id]`
 - `DELETE /api/local/files/[id]`
+- 列表 `GET` 只加载 Prisma 查询；解析器、Embedding SDK 与本地模型只在 `POST` 上传分支按需加载
 
 ### Chat Files / Message File Items
 
