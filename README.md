@@ -6,7 +6,8 @@ TraceTutor 是一个面向数学学习场景的 Agent 驱动教学系统，目�
 
 当前已落地：
 
-- `apps/iris`：可运行的 Next.js 学习终端，提供对话/卡片树画布与分支交互，只负责输入、浏览器端工作区状态和 Agent 结果渲染。
+- `Iris-Terminal-main`：正式的完整鸢尾花终端，提供本地工作区、持久化对话、卡片树、文件检索、总结与知识探索能力。
+- `apps/iris`：面向 TraceTutor `/agent/chat` 契约的轻量集成客户端，只负责输入、浏览器端工作区状态和 Agent 结果渲染；它不是正式前端的替代品。
 - `apps/api`：可运行的 Fastify 服务与本地 Agent Runtime，负责模型 API、Workflow、契约、工具白名单、状态证据校验和降级。
 - `db/sqlite`：已合并可运行的 Python 状态服务、6 个迁移和 `ToolExecutionPort` 内部契约，保存用户学习事实、掌握状态、复习调度与运行日志。
 - `db/pgsql`：已落地 7 个迁移、真实 PgSQL 适配器、8 个资产工具、题库摄取/审核事务和 66 道已批准初始化题输入。
@@ -27,9 +28,10 @@ SQLite 与 PgSQL 已通过组合端口接入 `apps/api`。只有两套数据库�
 
 ```text
 TraceTutor/
+├── Iris-Terminal-main/   # 正式完整前端
 ├── apps/
 │   ├── api/             # Fastify API / Tool Gateway
-│   └── iris/            # Next.js 前端
+│   └── iris/            # TraceTutor Agent 契约轻量客户端
 ├── db/
 │   ├── pgsql/           # 迁移、初始化题库与题目资产实现
 │   └── sqlite/          # 迁移 + 用户状态内部服务
@@ -58,6 +60,10 @@ TraceTutor/
 模型配置保存在 Git 忽略的 `apps/api/.env`；Iris 只持有公开 API 地址。
 运行日志和项目专用 PostgreSQL 数据均位于 Git 忽略的 `runtime/`。
 
+根目录一键启动当前用于 TraceTutor API 联调，因此启动的是 `apps/iris` 轻量客户端。
+正式前端 `Iris-Terminal-main` 使用自己的 Prisma/PostgreSQL 启动链路，运行方式见
+[鸢尾花终端说明](./Iris-Terminal-main/README.md)。两条链路尚未合并，不应把轻量客户端误称为正式前端。
+
 ### API
 
 ```powershell
@@ -77,7 +83,7 @@ npm run dev
 Set-Location db/sqlite/state-service
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -e "."
 Copy-Item .env.example .env
 tracetutor-state migrate
 uvicorn tracetutor_state.main:app --app-dir src --host 127.0.0.1 --port 8000
@@ -85,7 +91,7 @@ uvicorn tracetutor_state.main:app --app-dir src --host 127.0.0.1 --port 8000
 
 再在 `apps/api/.env` 配置同一个内部服务地址和 Token。完整说明见 [db/sqlite/README.md](./db/sqlite/README.md)。
 
-### Iris
+### TraceTutor Agent 契约轻量客户端
 
 ```powershell
 Set-Location apps/iris

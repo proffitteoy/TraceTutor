@@ -1,3 +1,4 @@
+export * from "./chunk-text"
 export * from "./csv"
 export * from "./docx"
 export * from "./json"

@@ -1,6 +1,8 @@
 # Iris 前端
 
-`apps/iris` 是 TraceTutor 的前端交互层，基于原有 `Iris-Terminal-main` 的品牌素材和终端式交互语言收敛为独立 Next.js 应用。
+`apps/iris` 是面向 TraceTutor `/agent/chat` 契约的轻量集成客户端。它复用正式前端
+`Iris-Terminal-main` 的品牌素材和终端式交互语言，但不替代正式前端，也不包含正式前端的
+Prisma、本地知识库、文件检索和多模型能力。
 
 ## 当前能力
 
@@ -70,7 +72,7 @@ apps/iris/
 │   ├── gateway.ts       # 网关配置选择
 │   ├── learning-tree.ts # 浏览器端卡片树状态与持久化契约
 │   └── gateways/        # HTTP 网关适配器
-└── public/branding/     # 从旧 Iris 前端复用的品牌素材
+└── public/branding/     # 从正式鸢尾花终端复用的品牌素材
 ```
 
 ## 边界

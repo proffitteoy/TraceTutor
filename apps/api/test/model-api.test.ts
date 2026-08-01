@@ -214,4 +214,35 @@ describe("OpenAICompatibleModel", () => {
       await api.close()
     }
   })
+
+  it("客户端错误不重试，避免重复提交无效模型请求", async () => {
+    let requestCount = 0
+    server = Fastify({ logger: false })
+    server.post("/v1/chat/completions", async (_request, reply) => {
+      requestCount += 1
+      return reply.code(400).send({ error: { message: "invalid schema" } })
+    })
+
+    const baseUrl = await server.listen({
+      host: "127.0.0.1",
+      port: 0
+    })
+    const model = new OpenAICompatibleModel(
+      `${baseUrl}/v1`,
+      "test-model",
+      undefined,
+      2_000,
+      "json_schema"
+    )
+
+    await expect(
+      model.generateJson({
+        name: "query_plan",
+        system: "return json",
+        prompt: "plan",
+        schema: queryPlanSchema
+      })
+    ).rejects.toMatchObject({ code: "MODEL_UNAVAILABLE" })
+    expect(requestCount).toBe(1)
+  })
 })

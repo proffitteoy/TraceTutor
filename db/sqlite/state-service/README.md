@@ -75,7 +75,7 @@ Windows PowerShell：
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -e "."
 Copy-Item .env.example .env
 tracetutor-state migrate
 uvicorn tracetutor_state.main:app --app-dir src --host 127.0.0.1 --port 8000
@@ -86,7 +86,7 @@ Linux/macOS：
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev]"
+python -m pip install -e "."
 cp .env.example .env
 tracetutor-state migrate
 uvicorn tracetutor_state.main:app --app-dir src --host 127.0.0.1 --port 8000
@@ -138,6 +138,12 @@ src/tracetutor_state/sql_migrations/
 新增迁移时必须同时更新两处，且不得修改已经发布的旧迁移。`scripts/verify_release.py` 会检查两处文件完全一致。
 
 ## 验证
+
+测试前安装开发依赖：
+
+```powershell
+python -m pip install -e ".[dev]"
+```
 
 ```powershell
 python -m compileall -q src tests scripts

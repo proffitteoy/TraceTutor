@@ -223,7 +223,7 @@ if (-not (Test-Path -LiteralPath $venvUvicorn)) {
   }
   Push-Location $sqliteRoot
   try {
-    Invoke-Native $venvPython "-m" "pip" "install" "-e" ".[dev]"
+    Invoke-Native $venvPython "-m" "pip" "install" "-e" "."
   } finally {
     Pop-Location
   }

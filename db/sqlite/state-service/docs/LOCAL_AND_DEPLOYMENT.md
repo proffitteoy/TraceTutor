@@ -7,7 +7,7 @@ SQLite 不是独立数据库服务器。需要运行的是本目录的 FastAPI �
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -e "."
 Copy-Item .env.example .env
 tracetutor-state migrate
 uvicorn tracetutor_state.main:app --app-dir src --host 127.0.0.1 --port 8000
@@ -64,4 +64,3 @@ ready 会检查迁移版本 6 和数据库一致性。TraceTutor 的总体状态
 ## 何时迁移到 PostgreSQL
 
 出现多写副本、高并发写、跨服务器共享状态、复杂多租户权限或高可用要求时，应评估迁移。迁移时保持 `ToolExecutionPort` 业务合同不变，替换内部持久化实现。
-

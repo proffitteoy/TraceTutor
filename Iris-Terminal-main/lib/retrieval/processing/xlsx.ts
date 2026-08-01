@@ -1,8 +1,6 @@
-import { FileItemChunk } from "@/types"
-import { encode } from "gpt-tokenizer"
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
+import type { FileItemChunk } from "@/types"
 import * as XLSX from "xlsx"
-import { CHUNK_OVERLAP, CHUNK_SIZE } from "./constants"
+import { chunkText } from "./chunk-text"
 
 export const processXLSX = async (
   spreadsheet: Blob
@@ -33,15 +31,5 @@ export const processXLSX = async (
     return []
   }
 
-  const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: CHUNK_SIZE,
-    chunkOverlap: CHUNK_OVERLAP,
-    separators: ["\n\n", "\n", " "]
-  })
-  const splitDocs = await splitter.createDocuments([completeText])
-
-  return splitDocs.map(doc => ({
-    content: doc.pageContent,
-    tokens: encode(doc.pageContent).length
-  }))
+  return chunkText(completeText)
 }

@@ -1,4 +1,3 @@
-import OpenAI from "openai"
 import { z, type ZodType } from "zod"
 import { AppError } from "../errors.js"
 
@@ -20,6 +19,30 @@ export interface LocalModel {
   generateJson<T>(request: JsonGenerationRequest<T>): Promise<T>
 }
 
+const modelsResponseSchema = z.object({
+  data: z.array(z.object({ id: z.string() }))
+})
+
+const chatCompletionSchema = z.object({
+  choices: z.array(
+    z.object({
+      message: z.object({
+        content: z.string().nullable()
+      })
+    })
+  )
+})
+
+class ModelApiResponseError extends Error {
+  constructor(
+    message: string,
+    readonly retryable: boolean
+  ) {
+    super(message)
+    this.name = "ModelApiResponseError"
+  }
+}
+
 function normalizeJsonContent(content: string): string {
   const trimmed = content.trim()
   if (!trimmed.startsWith("```")) return trimmed
@@ -35,29 +58,81 @@ function normalizeJsonContent(content: string): string {
  * API 可以是本机推理服务，也可以是用户控制的模型网关。
  */
 export class OpenAICompatibleModel implements LocalModel {
-  private readonly client: OpenAI
+  private readonly baseUrl: string
+  private readonly apiKey: string
 
   constructor(
     baseUrl: string,
     private readonly model: string,
     apiKey: string | undefined,
-    timeoutMs: number,
+    private readonly timeoutMs: number,
     private readonly responseFormat: "json_schema" | "json_object"
   ) {
-    this.client = new OpenAI({
-      baseURL: baseUrl,
-      apiKey: apiKey ?? "local-model-api",
-      timeout: timeoutMs,
-      maxRetries: 1
-    })
+    this.baseUrl = baseUrl.replace(/\/$/, "")
+    this.apiKey = apiKey ?? "local-model-api"
+  }
+
+  private async requestJson(
+    path: string,
+    init: RequestInit,
+    timeoutMs: number,
+    retries: number
+  ): Promise<unknown> {
+    let lastError: unknown
+
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(`${this.baseUrl}${path}`, {
+          ...init,
+          headers: {
+            accept: "application/json",
+            authorization: `Bearer ${this.apiKey}`,
+            "content-type": "application/json",
+            ...init.headers
+          },
+          signal: AbortSignal.timeout(timeoutMs)
+        })
+        const body = await response.text()
+
+        if (!response.ok) {
+          throw new ModelApiResponseError(
+            `模型 API 返回 HTTP ${response.status}${
+              body ? `：${body.slice(0, 500)}` : ""
+            }`,
+            (response.status === 408 ||
+              response.status === 409 ||
+              response.status === 429 ||
+              response.status >= 500)
+          )
+        }
+
+        try {
+          return JSON.parse(body) as unknown
+        } catch {
+          throw new ModelApiResponseError(
+            "模型 API 返回的响应不是合法 JSON",
+            false
+          )
+        }
+      } catch (error) {
+        lastError = error
+        if (
+          attempt >= retries ||
+          (error instanceof ModelApiResponseError && !error.retryable)
+        ) {
+          throw error
+        }
+      }
+    }
+
+    throw lastError
   }
 
   async health(): Promise<ModelHealth> {
     try {
-      const models = await this.client.models.list({
-        timeout: 3_000,
-        maxRetries: 0
-      })
+      const models = modelsResponseSchema.parse(
+        await this.requestJson("/models", { method: "GET" }, 3_000, 0)
+      )
       const available = models.data.some(item => item.id === this.model)
       return available
         ? { ready: true, detail: `模型 API 与 ${this.model} 已就绪` }
@@ -77,27 +152,37 @@ export class OpenAICompatibleModel implements LocalModel {
   }
 
   async generateJson<T>(request: JsonGenerationRequest<T>): Promise<T> {
-    let completion: OpenAI.Chat.Completions.ChatCompletion
+    let completion: z.infer<typeof chatCompletionSchema>
     try {
-      completion = await this.client.chat.completions.create({
-        model: this.model,
-        messages: [
-          { role: "system", content: request.system },
-          { role: "user", content: request.prompt }
-        ],
-        response_format:
-          this.responseFormat === "json_schema"
-            ? {
-                type: "json_schema",
-                json_schema: {
-                  name: request.name.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                  strict: true,
-                  schema: z.toJSONSchema(request.schema)
-                }
-              }
-            : { type: "json_object" },
-        temperature: request.temperature ?? 0.2
-      })
+      completion = chatCompletionSchema.parse(
+        await this.requestJson(
+          "/chat/completions",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              model: this.model,
+              messages: [
+                { role: "system", content: request.system },
+                { role: "user", content: request.prompt }
+              ],
+              response_format:
+                this.responseFormat === "json_schema"
+                  ? {
+                      type: "json_schema",
+                      json_schema: {
+                        name: request.name.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                        strict: true,
+                        schema: z.toJSONSchema(request.schema)
+                      }
+                    }
+                  : { type: "json_object" },
+              temperature: request.temperature ?? 0.2
+            })
+          },
+          this.timeoutMs,
+          1
+        )
+      )
     } catch (error) {
       throw new AppError(
         "MODEL_UNAVAILABLE",
