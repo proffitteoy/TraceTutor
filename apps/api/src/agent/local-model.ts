@@ -153,6 +153,11 @@ export class OpenAICompatibleModel implements LocalModel {
 
   async generateJson<T>(request: JsonGenerationRequest<T>): Promise<T> {
     let completion: z.infer<typeof chatCompletionSchema>
+    const jsonSchema = z.toJSONSchema(request.schema)
+    const schemaInstruction =
+      this.responseFormat === "json_object"
+        ? `Return exactly one JSON object that satisfies this JSON Schema. Do not add keys outside the schema and do not wrap the object in Markdown:\n${JSON.stringify(jsonSchema)}`
+        : undefined
     try {
       completion = chatCompletionSchema.parse(
         await this.requestJson(
@@ -162,7 +167,12 @@ export class OpenAICompatibleModel implements LocalModel {
             body: JSON.stringify({
               model: this.model,
               messages: [
-                { role: "system", content: request.system },
+                {
+                  role: "system",
+                  content: schemaInstruction
+                    ? `${request.system}\n\n${schemaInstruction}`
+                    : request.system
+                },
                 { role: "user", content: request.prompt }
               ],
               response_format:
@@ -170,9 +180,9 @@ export class OpenAICompatibleModel implements LocalModel {
                   ? {
                       type: "json_schema",
                       json_schema: {
-                        name: request.name.replace(/[^a-zA-Z0-9_-]/g, "_"),
-                        strict: true,
-                        schema: z.toJSONSchema(request.schema)
+                      name: request.name.replace(/[^a-zA-Z0-9_-]/g, "_"),
+                      strict: true,
+                      schema: jsonSchema
                       }
                     }
                   : { type: "json_object" },
@@ -214,6 +224,57 @@ export class OpenAICompatibleModel implements LocalModel {
 
     const parsed = request.schema.safeParse(decoded)
     if (!parsed.success) {
+      if (this.responseFormat === "json_object") {
+        let repairCompletion: z.infer<typeof chatCompletionSchema>
+        try {
+          repairCompletion = chatCompletionSchema.parse(
+            await this.requestJson(
+              "/chat/completions",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  model: this.model,
+                  messages: [
+                    {
+                      role: "system",
+                      content: `${request.system}\n\n${schemaInstruction}`
+                    },
+                    { role: "user", content: request.prompt },
+                    { role: "assistant", content },
+                    {
+                      role: "user",
+                      content: `The previous JSON failed validation. Correct every listed issue and return only the complete corrected JSON object. Validation issues:\n${JSON.stringify(parsed.error.issues)}`
+                    }
+                  ],
+                  response_format: { type: "json_object" },
+                  temperature: 0
+                })
+              },
+              this.timeoutMs,
+              1
+            )
+          )
+        } catch (error) {
+          throw new AppError(
+            "MODEL_UNAVAILABLE",
+            "模型 API 结构修复调用失败",
+            503,
+            error instanceof Error ? error.message : undefined
+          )
+        }
+
+        const repairedContent = repairCompletion.choices[0]?.message.content
+        if (repairedContent) {
+          try {
+            const repaired = request.schema.safeParse(
+              JSON.parse(normalizeJsonContent(repairedContent))
+            )
+            if (repaired.success) return repaired.data
+          } catch {
+            // The original validation error remains the stable public error.
+          }
+        }
+      }
       throw new AppError(
         "MODEL_OUTPUT_INVALID",
         `模型 API 输出不符合 Schema：${request.name}`,

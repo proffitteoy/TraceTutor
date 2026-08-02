@@ -113,10 +113,14 @@ npm run dev
 - [docs/SQLite设计.md](./docs/SQLite设计.md)：学习状态库设计
 - [docs/数据库协作边界.md](./docs/数据库协作边界.md)：数据库、API 与 Iris 的并行协作边界
 
-## 当前尚未完成
+## 本机联合验收
 
-- 在目标 PostgreSQL 上执行迁移并导入 66 道已批准初始化题。
-- 携带目标 PostgreSQL、SQLite、模型 API 和 Iris 的联合端到端验收。
-- CI/CD 与生产部署脚本。
+2026-08-02 已使用根目录 `start-local.cmd` 完成一次干净停止后的完整重启，并验证：
 
-模型 API 通过 `MODEL_API_BASE_URL`、`MODEL_API_KEY` 和 `MODEL_NAME` 配置。当前验证覆盖隔离 PostgreSQL 迁移/约束、SQLite 状态服务与 API 适配契约，但不能替代目标部署联合端到端验证。
+- 项目专用 PostgreSQL 18 在 `127.0.0.1:55432` 启动，7 个迁移全部记录成功。
+- 批次 `tracetutor-curated-15ab68105feb44acc3f89caa` 完成 66/66 道导入，0 失败；66 道题均为 `active`、`is_public` 且具有 approved 审核记录。
+- SQLite 状态服务 Schema 版本为 6，外键检查无违规；真实 `/agent/chat` 作答产生了 attempt、mastery event/state 与复习调度记录。
+- 已配置的 OpenAI-compatible 模型 API、PgSQL、SQLite、15 个工具能力、题库摄取端口和本地 Agent Runtime 在 `/health/ready` 中全部为 ready。
+- Iris、API 和 SQLite 健康入口分别在 `http://127.0.0.1:3000`、`http://127.0.0.1:4100`、`http://127.0.0.1:8000` 返回 200。
+
+模型 API 通过 `MODEL_API_BASE_URL`、`MODEL_API_KEY` 和 `MODEL_NAME` 配置。当前仍未覆盖 CI/CD 与生产部署；本节只记录本机联合验收，不等同于生产环境验收。

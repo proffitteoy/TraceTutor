@@ -245,4 +245,106 @@ describe("OpenAICompatibleModel", () => {
     ).rejects.toMatchObject({ code: "MODEL_UNAVAILABLE" })
     expect(requestCount).toBe(1)
   })
+
+  it("json_object 模式会把目标 Schema 明确交给模型", async () => {
+    let receivedBody: unknown
+    server = Fastify({ logger: false })
+    server.post("/v1/chat/completions", async request => {
+      receivedBody = request.body
+      return {
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                version: "1.0",
+                intent: "NEW_QUESTION_SOLVE",
+                task_types: ["NEW_QUESTION_SOLVE"],
+                state_queries: [],
+                asset_queries: [],
+                expected_output: {
+                  include_old_review: false,
+                  include_new_question: false,
+                  include_method_comparison: false,
+                  include_state_update: false
+                }
+              })
+            }
+          }
+        ]
+      }
+    })
+
+    const baseUrl = await server.listen({ host: "127.0.0.1", port: 0 })
+    const model = new OpenAICompatibleModel(
+      `${baseUrl}/v1`,
+      "test-model",
+      undefined,
+      2_000,
+      "json_object"
+    )
+
+    await model.generateJson({
+      name: "query_plan",
+      system: "return json",
+      prompt: "plan",
+      schema: queryPlanSchema
+    })
+
+    expect(receivedBody).toMatchObject({
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: expect.stringContaining('"task_types"')
+        },
+        { role: "user", content: "plan" }
+      ]
+    })
+  })
+
+  it("json_object 模式会携带校验错误修复一次响应", async () => {
+    let requestCount = 0
+    server = Fastify({ logger: false })
+    server.post("/v1/chat/completions", async () => {
+      requestCount += 1
+      const content =
+        requestCount === 1
+          ? { steps: [] }
+          : {
+              version: "1.0",
+              intent: "NEW_QUESTION_SOLVE",
+              task_types: ["NEW_QUESTION_SOLVE"],
+              state_queries: [],
+              asset_queries: [],
+              expected_output: {
+                include_old_review: false,
+                include_new_question: false,
+                include_method_comparison: false,
+                include_state_update: false
+              }
+            }
+      return {
+        choices: [{ message: { content: JSON.stringify(content) } }]
+      }
+    })
+
+    const baseUrl = await server.listen({ host: "127.0.0.1", port: 0 })
+    const model = new OpenAICompatibleModel(
+      `${baseUrl}/v1`,
+      "test-model",
+      undefined,
+      2_000,
+      "json_object"
+    )
+
+    await expect(
+      model.generateJson({
+        name: "query_plan",
+        system: "return json",
+        prompt: "plan",
+        schema: queryPlanSchema
+      })
+    ).resolves.toMatchObject({ intent: "NEW_QUESTION_SOLVE" })
+    expect(requestCount).toBe(2)
+  })
 })

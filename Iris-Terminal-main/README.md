@@ -113,6 +113,7 @@ npm run build
 npm run start
 npm run lint
 npm run type-check
+npm run verify:processing
 npm run db-generate
 npm run db-migrate
 start-manor.bat

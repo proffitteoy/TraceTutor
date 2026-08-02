@@ -82,6 +82,8 @@ TRACE_TUTOR_PGSQL_TIMEOUT_MS
 
 Agent Runtime、Prompt、Workflow、工具调度和结果校验全部在本地 API 进程内完成。模型 API Key 只保存在 API 服务端，不能放入 Iris 的 `NEXT_PUBLIC_*` 变量。
 
+当供应商只支持 `response_format=json_object` 时，客户端会把目标 JSON Schema 明确加入系统指令；若首次 JSON 形状不符合 Schema，会携带具体校验错误进行一次修复重试。修复结果仍必须通过同一份本地 Zod Schema，不会放宽字段或状态证据校验。
+
 ## SQLite 内部服务接入
 
 当前已实现 [src/adapters/sqlite-tool-execution.ts](./src/adapters/sqlite-tool-execution.ts)，通过内部 HTTP 调用 `db/sqlite/state-service`：

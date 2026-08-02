@@ -41,6 +41,30 @@ function Resolve-CommandPath {
   throw "Cannot find $Name. Install the required runtime or configure its path."
 }
 
+function Resolve-PythonPath {
+  $candidates = @(
+    $env:TRACETUTOR_PYTHON,
+    (Join-Path $env:LOCALAPPDATA "Programs\Python\Python312\python.exe"),
+    (Join-Path $env:LOCALAPPDATA "Programs\Python\Python311\python.exe"),
+    (Get-Command "python.exe" -ErrorAction SilentlyContinue).Source
+  ) | Where-Object { $_ }
+
+  foreach ($candidate in $candidates) {
+    if (-not (Test-Path -LiteralPath $candidate)) {
+      continue
+    }
+    try {
+      & $candidate --version *> $null
+      if ($LASTEXITCODE -eq 0) {
+        return (Resolve-Path -LiteralPath $candidate).Path
+      }
+    } catch {
+      # Continue to the next installed Python when a stale launcher is found.
+    }
+  }
+  throw "Cannot find a working Python 3.11+ runtime. Set TRACETUTOR_PYTHON."
+}
+
 function Invoke-Native {
   param(
     [Parameter(Mandatory)]
@@ -85,11 +109,7 @@ function Test-ProcessId {
 
 $node = Resolve-CommandPath -Name "node.exe"
 $npm = Resolve-CommandPath -Name "npm.cmd"
-$python = Resolve-CommandPath -Name "python.exe" -Candidates @(
-  $env:TRACETUTOR_PYTHON,
-  (Join-Path $env:LOCALAPPDATA "Programs\Python\Python312\python.exe"),
-  (Join-Path $env:LOCALAPPDATA "Programs\Python\Python311\python.exe")
-)
+$python = Resolve-PythonPath
 $postgresBin = if ($env:TRACETUTOR_POSTGRES_BIN) {
   $env:TRACETUTOR_POSTGRES_BIN
 } else {
@@ -212,10 +232,25 @@ Invoke-Native $psql `
 
 Write-Host "[2/7] Preparing SQLite state service"
 $sqliteRoot = Join-Path $projectRoot "db\sqlite\state-service"
+$venvRoot = Join-Path $sqliteRoot ".venv"
 $venvPython = Join-Path $sqliteRoot ".venv\Scripts\python.exe"
 $venvUvicorn = Join-Path $sqliteRoot ".venv\Scripts\uvicorn.exe"
-if (-not (Test-Path -LiteralPath $venvPython)) {
-  Invoke-Native $python "-m" "venv" (Join-Path $sqliteRoot ".venv")
+$venvReady = $false
+if (Test-Path -LiteralPath $venvPython) {
+  try {
+    & $venvPython --version *> $null
+    $venvReady = $LASTEXITCODE -eq 0
+  } catch {
+    $venvReady = $false
+  }
+}
+if (-not $venvReady) {
+  if (Test-Path -LiteralPath $venvRoot) {
+    # A virtual environment contains only generated dependencies; rebuilding
+    # it is safe and fixes environments bound to a removed Python install.
+    Remove-Item -LiteralPath $venvRoot -Recurse -Force
+  }
+  Invoke-Native $python "-m" "venv" $venvRoot
 }
 if (-not (Test-Path -LiteralPath $venvUvicorn)) {
   if ($SkipInstall) {
