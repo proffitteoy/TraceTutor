@@ -4,7 +4,11 @@ import { LocalAgentRuntime } from "../src/agent/local-agent.js"
 import type { LocalModel } from "../src/agent/local-model.js"
 import { createApp } from "../src/app.js"
 import type { AppConfig } from "../src/config.js"
-import type { ToolExecutionPort } from "../src/ports.js"
+import type {
+  PracticeQuestionCatalogPort,
+  QuestionHistoryPort,
+  ToolExecutionPort
+} from "../src/ports.js"
 
 const config: AppConfig = {
   nodeEnv: "test",
@@ -85,6 +89,93 @@ describe("health routes", () => {
 })
 
 describe("boundary routes", () => {
+  it("返回经过批准且可公开练习的题目目录", async () => {
+    const questionCatalog: PracticeQuestionCatalogPort = {
+      async listPracticeQuestions(input) {
+        expect(input).toEqual({ limit: 12, subjectCode: "advanced_algebra" })
+        return [
+          {
+            questionId: "question-1",
+            title: "矩阵像空间维数",
+            stem: "设线性变换由左乘矩阵定义，求其像空间维数。",
+            questionType: "proof",
+            difficulty: 2,
+            subjectCode: "advanced_algebra",
+            subjectName: "高等代数"
+          }
+        ]
+      }
+    }
+    app = await createApp({ config, questionCatalog })
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/questions/practice?limit=12&subject_code=advanced_algebra"
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.json()).toEqual({
+      questions: [
+        expect.objectContaining({
+          questionId: "question-1",
+          subjectName: "高等代数"
+        })
+      ]
+    })
+  })
+
+  it("题库目录未装配时不返回假题", async () => {
+    app = await createApp({ config })
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/questions/practice"
+    })
+
+    expect(response.statusCode).toBe(503)
+    expect(response.json()).toMatchObject({
+      error: { code: "DEPENDENCY_UNAVAILABLE" }
+    })
+  })
+
+  it("按用户与题目返回 SQLite 作答历史", async () => {
+    const questionHistory: QuestionHistoryPort = {
+      async listQuestionAttempts(input) {
+        expect(input).toEqual({
+          userId: "user-1",
+          questionId: "question-1",
+          limit: 8
+        })
+        return [{
+          attemptId: "attempt-1",
+          sessionId: "session-1",
+          userAnswerText: "答案是 2",
+          isCorrect: true,
+          score: 1,
+          attemptStatus: "checked",
+          errorDetailText: null,
+          createdAt: "2026-08-03 10:00:00",
+          checkedAt: "2026-08-03 10:00:01"
+        }]
+      }
+    }
+    app = await createApp({ config, questionHistory })
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/questions/question-1/attempts?user_id=user-1&limit=8"
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.json()).toEqual({
+      attempts: [expect.objectContaining({
+        attemptId: "attempt-1",
+        userAnswerText: "答案是 2",
+        isCorrect: true
+      })]
+    })
+  })
+
   it("本地 Agent Runtime 未装配时不伪造教学结果", async () => {
     app = await createApp({ config })
 

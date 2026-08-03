@@ -81,9 +81,87 @@ export interface LearningResponse {
   }
 }
 
-export interface IrisGateway {
-  send(request: LearningRequest, signal?: AbortSignal): Promise<LearningResponse>
+export interface PracticeQuestion {
+  questionId: string
+  title: string
+  stem: string
+  questionType: string
+  difficulty: number
+  subjectCode: string
+  subjectName: string
 }
+
+export interface QuestionAttemptHistoryItem {
+  attemptId: string
+  sessionId: string | null
+  userAnswerText: string | null
+  isCorrect: boolean | null
+  score: number | null
+  attemptStatus: "viewed" | "submitted" | "checked" | "abandoned" | "skipped"
+  errorDetailText: string | null
+  createdAt: string
+  checkedAt: string | null
+}
+
+export interface ServiceReadiness {
+  ready: boolean
+  dependencies: Record<string, string>
+}
+
+export interface IrisGateway {
+  checkReadiness(signal?: AbortSignal): Promise<ServiceReadiness>
+  send(request: LearningRequest, signal?: AbortSignal): Promise<LearningResponse>
+  listPracticeQuestions(
+    input?: { limit?: number; subjectCode?: string },
+    signal?: AbortSignal
+  ): Promise<PracticeQuestion[]>
+  listQuestionAttempts(
+    input: { userId: string; questionId: string; limit?: number },
+    signal?: AbortSignal
+  ): Promise<QuestionAttemptHistoryItem[]>
+}
+
+export const questionAttemptHistorySchema = z
+  .object({
+    attempts: z.array(
+      z.object({
+        attemptId: z.string().min(1),
+        sessionId: z.string().nullable(),
+        userAnswerText: z.string().nullable(),
+        isCorrect: z.boolean().nullable(),
+        score: z.number().nullable(),
+        attemptStatus: z.enum([
+          "viewed",
+          "submitted",
+          "checked",
+          "abandoned",
+          "skipped"
+        ]),
+        errorDetailText: z.string().nullable(),
+        createdAt: z.string().min(1),
+        checkedAt: z.string().nullable()
+      }).strict()
+    )
+  })
+  .strict()
+
+export const practiceQuestionListSchema = z
+  .object({
+    questions: z.array(
+      z
+        .object({
+          questionId: z.string().min(1),
+          title: z.string().min(1),
+          stem: z.string().min(1),
+          questionType: z.string().min(1),
+          difficulty: z.number().int().min(1).max(5),
+          subjectCode: z.string().min(1),
+          subjectName: z.string().min(1)
+        })
+        .strict()
+    )
+  })
+  .strict()
 
 const learningCardSchema = z.union([
   z

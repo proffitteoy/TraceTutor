@@ -5,6 +5,8 @@
 ## 已实现能力
 
 - `POST /agent/chat`：在本地执行 QueryPlan、工具调度、可选判题/写回与教学输出，并校验 `LearningResponse`。
+- `GET /questions/practice`：只读返回 `active + is_public + approved` 的练习题目录，不暴露答案、解析或数据库实现。
+- `GET /questions/:questionId/attempts?user_id=...`：通过 SQLite 状态端口返回当前用户在指定题目上的作答历史；Iris 不直连 SQLite。
 - `POST /internal/query-plans/validate`：校验 Agent 查询计划、工具白名单、参数形态与 `limit <= 20`，拒绝 SQL 字段。
 - `POST /internal/state-deltas/validate`：校验状态建议必须引用真实题目及 `attempt_id` / `review_event_id`，结果只进入 `pending`。
 - 15 个静态 `/tools/*` 业务工具入口，覆盖读取、作答事实、pending delta 应用与日志。
@@ -63,6 +65,9 @@ npm run questions:import -- `
 - `/tools/*`：数据库工具端口未接入或未声明能力时返回 `DEPENDENCY_UNAVAILABLE`。
 - `/internal/question-ingestion/*`：PgSQL 摄取端口未接入时返回 `DEPENDENCY_UNAVAILABLE`。
 - `/agent/chat`：模型 API 不可用时返回 `MODEL_UNAVAILABLE`，不会生成假答案。
+- `/questions/practice`：PgSQL 题库目录未装配时返回 `DEPENDENCY_UNAVAILABLE`，不会返回占位题。
+- `/questions/:questionId/attempts`：SQLite 历史端口未装配时返回 `DEPENDENCY_UNAVAILABLE`，不会用浏览器内存伪造历史。
+- PgSQL 连接池会接管空闲连接的重置事件；项目 PostgreSQL 重启时 API 不再因未处理的 `ECONNRESET` 直接退出，后续请求会重新建连。
 
 模型通过 OpenAI-compatible Chat Completions API 接入：
 
@@ -103,6 +108,7 @@ SQLite 适配器声明 7 个状态能力，PgSQL 适配器声明 8 个资产能�
 
 - `ToolExecutionPort` 提供 15 个运行期业务工具；
 - `QuestionIngestionPort` 提供批量导入、用户题 draft 和人工复核事务。
+- `PracticeQuestionCatalogPort` 提供已批准公开题目的只读练习目录。
 
 生产入口已按以下方式装配：
 

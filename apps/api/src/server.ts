@@ -46,6 +46,8 @@ const dependencies: AppDependencies = {
   ...(toolExecution ? { toolExecution } : {}),
   ...(sqliteToolExecution ? { sqliteToolExecution } : {}),
   ...(pgsql ? { pgsqlToolExecution: pgsql } : {}),
+  ...(pgsql ? { questionCatalog: pgsql } : {}),
+  ...(sqliteToolExecution ? { questionHistory: sqliteToolExecution } : {}),
   ...(questionIngestion ? { questionIngestion } : {})
 }
 

@@ -21,7 +21,11 @@ import {
   toolResultSchema
 } from "./contracts.js"
 import { AppError } from "./errors.js"
-import type { ToolExecutionPort } from "./ports.js"
+import type {
+  PracticeQuestionCatalogPort,
+  QuestionHistoryPort,
+  ToolExecutionPort
+} from "./ports.js"
 import { toolInputSchemas, toolRoutes } from "./tool-schemas.js"
 
 export interface AppDependencies {
@@ -31,7 +35,27 @@ export interface AppDependencies {
   sqliteToolExecution?: ToolExecutionPort
   pgsqlToolExecution?: ToolExecutionPort
   questionIngestion?: QuestionIngestionService
+  questionCatalog?: PracticeQuestionCatalogPort
+  questionHistory?: QuestionHistoryPort
 }
+
+const practiceQuestionQuerySchema = z
+  .object({
+    limit: z.coerce.number().int().min(1).max(100).default(66),
+    subject_code: z.string().trim().min(1).max(128).optional()
+  })
+  .strict()
+
+const questionHistoryParamsSchema = z
+  .object({ questionId: z.string().trim().min(1).max(128) })
+  .strict()
+
+const questionHistoryQuerySchema = z
+  .object({
+    user_id: z.string().trim().min(1).max(128),
+    limit: z.coerce.number().int().min(1).max(50).default(20)
+  })
+  .strict()
 
 const reviewQueueQuerySchema = z
   .object({
@@ -252,6 +276,47 @@ function registerAgentRoutes(
   })
 }
 
+function registerQuestionCatalogRoutes(
+  app: FastifyInstance,
+  dependencies: AppDependencies
+): void {
+  app.get("/questions/practice", async request => {
+    if (!dependencies.questionCatalog) {
+      throw new AppError(
+        "DEPENDENCY_UNAVAILABLE",
+        "已批准题库目录尚未接入",
+        503
+      )
+    }
+
+    const query = parseWith(practiceQuestionQuerySchema, request.query)
+    const questions = await dependencies.questionCatalog.listPracticeQuestions({
+      limit: query.limit,
+      ...(query.subject_code ? { subjectCode: query.subject_code } : {})
+    })
+
+    return { questions }
+  })
+
+  app.get("/questions/:questionId/attempts", async request => {
+    if (!dependencies.questionHistory) {
+      throw new AppError(
+        "DEPENDENCY_UNAVAILABLE",
+        "SQLite 作答历史尚未接入",
+        503
+      )
+    }
+    const params = parseWith(questionHistoryParamsSchema, request.params)
+    const query = parseWith(questionHistoryQuerySchema, request.query)
+    const attempts = await dependencies.questionHistory.listQuestionAttempts({
+      userId: query.user_id,
+      questionId: params.questionId,
+      limit: query.limit
+    })
+    return { attempts }
+  })
+}
+
 function registerValidationRoutes(
   app: FastifyInstance,
   dependencies: AppDependencies
@@ -465,6 +530,7 @@ export async function createApp(
   })
 
   registerHealthRoutes(app, dependencies)
+  registerQuestionCatalogRoutes(app, dependencies)
   registerAgentRoutes(app, dependencies)
   registerValidationRoutes(app, dependencies)
   registerQuestionIngestionRoutes(app, dependencies)

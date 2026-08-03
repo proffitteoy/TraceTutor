@@ -74,4 +74,56 @@ describe("HttpSQLiteToolExecutionPort", () => {
 
     await expect(port.health()).resolves.toMatchObject({ ready: false })
   })
+
+  it("按题读取并收窄 SQLite 作答历史", async () => {
+    const fetchMock = vi.fn(
+      async (input: string | URL | Request, init?: RequestInit) => {
+        expect(String(input)).toContain(
+          "/api/v1/state/users/U1/attempts?question_id=Q1&limit=10"
+        )
+        expect(init?.headers).toMatchObject({
+          Authorization: "Bearer sqlite-service-token"
+        })
+        return new Response(JSON.stringify([{
+          id: "A1",
+          user_id: "U1",
+          session_id: "S1",
+          question_id: "Q1",
+          user_answer_text: "x=2",
+          is_correct: 1,
+          score: 1,
+          attempt_status: "checked",
+          error_detail_text: null,
+          created_at: "2026-08-03 10:00:00",
+          checked_at: "2026-08-03 10:00:01",
+          metadata_json: {},
+          tags: []
+        }]), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        })
+      }
+    )
+    vi.stubGlobal("fetch", fetchMock)
+    const port = new HttpSQLiteToolExecutionPort(
+      "http://127.0.0.1:8000",
+      "sqlite-service-token"
+    )
+
+    await expect(port.listQuestionAttempts({
+      userId: "U1",
+      questionId: "Q1",
+      limit: 10
+    })).resolves.toEqual([{
+      attemptId: "A1",
+      sessionId: "S1",
+      userAnswerText: "x=2",
+      isCorrect: true,
+      score: 1,
+      attemptStatus: "checked",
+      errorDetailText: null,
+      createdAt: "2026-08-03 10:00:00",
+      checkedAt: "2026-08-03 10:00:01"
+    }])
+  })
 })

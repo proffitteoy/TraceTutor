@@ -1,20 +1,23 @@
 # Iris 前端
 
-`apps/iris` 是面向 TraceTutor `/agent/chat` 契约的轻量集成客户端。它复用正式前端
-`Iris-Terminal-main` 的品牌素材和终端式交互语言，但不替代正式前端，也不包含正式前端的
-Prisma、本地知识库、文件检索和多模型能力。
+`apps/iris` 是当前 TraceTutor 一键启动链路使用的数学做题工作台。它通过公开 API 读取
+已批准题目目录，并通过 `/agent/chat` 完成判题、提示和追问；不包含 Prisma、本地知识库、
+文件检索或数据库直连能力。
 
 ## 当前能力
 
 - Next.js 16 + React 19 + TypeScript。
-- 新题解析、复习调度、自由追问三种输入模式。
-- 对话与卡片树画布双视图；支持深入子卡片、同级发散卡片和历史分支卡片。
-- 可在单条 Agent 回答中框选文本并右键使用 Ask 创建引用式深入卡片。
-- 卡片位置、分支关系和各分支对话保存在浏览器本地，刷新后可恢复；它们不是数据库学习状态。
+- 从已批准题库按学科浏览、搜索并选择真实题目。
+- 在题目内读取该用户保存在 SQLite 的历史作答；新建对话只清空当前对话，不删除本题历史。
+- “新建对话”立即打开无题也可使用的独立对话窗；之后选择题目会把题目加入当前对话，不会清空已有消息。
+- 判题、方法、学习状态和后续动作统一显示在中间对话流，不再设置重复且容易挤压公式的右侧反馈栏。
+- 顶部 Iris 状态来自真实 `/health/ready`，服务降级时禁用提交，不再仅因配置了 API 地址就显示“已连接”。
+- 在同一工作台中提交答案、请求提示或继续追问。
+- 提交答案时显式携带当前真实 `question_id`，前端不自行判题。
 - 解题步骤、方法诊断、变式题、旧题回顾和状态写回卡片。
 - 浏览器生成并保存稳定的 `user_id` 与会话级 `session_id`，不再使用固定预览身份。
 - 对 `LearningResponse` 做 Zod 运行时校验，拒绝不符合契约的网关响应。
-- 响应式三栏学习终端，右栏只展示真实 Agent 响应，不伪造掌握度。
+- 右侧反馈栏只在真实 Agent 响应后出现，集中展示判题结论、关键方法、学习记录和下一步动作。
 
 Iris 不包含 Prisma、数据库访问、LLM SDK、Agent 密钥或本地知识库逻辑。
 
@@ -46,6 +49,8 @@ NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL=http://localhost:4100
 前端只调用：
 
 ```text
+GET  {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/questions/practice
+GET  {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/questions/{questionId}/attempts?user_id={userId}
 POST {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/agent/chat
 ```
 
@@ -57,6 +62,7 @@ POST {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/agent/chat
 
 - `LearningRequest` 只携带用户任务、会话身份、附件引用和当前题目引用。
 - `LearningResponse` 只携带 Iris 可渲染的卡片、动作与写回状态。
+- `PracticeQuestion` 只包含做题所需的题目 ID、题干、学科、题型和难度，不包含答案或解析。
 - 前端不发送 SQL、题库过滤实现或掌握度变化。
 - `state_change` 只展示 API/Agent 返回的 `pending`、`applied` 或 `rejected`。
 

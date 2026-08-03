@@ -17,6 +17,43 @@ export interface ToolExecutionHealth {
   detail: string
 }
 
+export interface PracticeQuestionSummary {
+  questionId: string
+  title: string
+  stem: string
+  questionType: string
+  difficulty: number
+  subjectCode: string
+  subjectName: string
+}
+
+export interface PracticeQuestionCatalogPort {
+  listPracticeQuestions(input: {
+    limit: number
+    subjectCode?: string
+  }): Promise<PracticeQuestionSummary[]>
+}
+
+export interface QuestionAttemptHistoryItem {
+  attemptId: string
+  sessionId: string | null
+  userAnswerText: string | null
+  isCorrect: boolean | null
+  score: number | null
+  attemptStatus: "viewed" | "submitted" | "checked" | "abandoned" | "skipped"
+  errorDetailText: string | null
+  createdAt: string
+  checkedAt: string | null
+}
+
+export interface QuestionHistoryPort {
+  listQuestionAttempts(input: {
+    userId: string
+    questionId: string
+    limit: number
+  }): Promise<QuestionAttemptHistoryItem[]>
+}
+
 /**
  * 数据库协作者只需实现这个业务工具端口。
  * API 不共享连接对象、ORM model、SQL 字符串或表级 repository。

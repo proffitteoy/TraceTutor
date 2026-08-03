@@ -140,8 +140,30 @@ if (-not (Test-Path -LiteralPath (Join-Path $pgsqlData "PG_VERSION"))) {
     "--auth-host=trust"
 }
 
-& $pgCtl status "--pgdata=$pgsqlData" *> $null
-if ($LASTEXITCODE -ne 0) {
+$projectPostgreSQLReady = $false
+try {
+  $runningDataDirectory = & $psql `
+    "--host=127.0.0.1" `
+    "--port=$pgsqlPort" `
+    "--username=postgres" `
+    "--dbname=postgres" `
+    "--tuples-only" `
+    "--no-align" `
+    "--command=SHOW data_directory"
+  if ($LASTEXITCODE -eq 0) {
+    $expectedDataDirectory = [System.IO.Path]::GetFullPath(
+      (Resolve-Path -LiteralPath $pgsqlData).Path
+    ).TrimEnd("\")
+    $actualDataDirectory = [System.IO.Path]::GetFullPath(
+      ($runningDataDirectory | Out-String).Trim().Replace("/", "\")
+    ).TrimEnd("\")
+    $projectPostgreSQLReady = $actualDataDirectory -ieq $expectedDataDirectory
+  }
+} catch {
+  $projectPostgreSQLReady = $false
+}
+
+if (-not $projectPostgreSQLReady) {
   Invoke-Native $pgCtl `
     "start" `
     "--pgdata=$pgsqlData" `
@@ -286,6 +308,22 @@ foreach ($appRoot in @($apiRoot, $irisRoot)) {
     }
   }
 }
+$existing = if (Test-Path -LiteralPath $pidFile) {
+  Get-Content -LiteralPath $pidFile -Raw | ConvertFrom-Json
+} else {
+  $null
+}
+if (-not $SkipBuild -and $existing) {
+  foreach ($name in @("api", "iris")) {
+    $existingId = $existing.$name
+    if ($existingId -and (Test-ProcessId ([int]$existingId))) {
+      Stop-Process -Id ([int]$existingId)
+      Wait-Process -Id ([int]$existingId) -Timeout 15 -ErrorAction SilentlyContinue
+      $existing.$name = $null
+      Write-Host "[restart] Stopped previous $name process"
+    }
+  }
+}
 if (-not $SkipBuild) {
   Push-Location $apiRoot
   try {
@@ -303,11 +341,6 @@ if (-not $SkipBuild) {
 
 Write-Host "[4/7] Starting local services"
 $servicePids = [ordered]@{}
-$existing = if (Test-Path -LiteralPath $pidFile) {
-  Get-Content -LiteralPath $pidFile -Raw | ConvertFrom-Json
-} else {
-  $null
-}
 
 if ($existing -and $existing.sqlite -and (Test-ProcessId ([int]$existing.sqlite))) {
   $servicePids.sqlite = [int]$existing.sqlite

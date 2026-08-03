@@ -4,6 +4,8 @@ import type {
   ImportBatchStart,
   ImportItemWrite,
   ImportItemWriteResult,
+  PracticeQuestionCatalogPort,
+  PracticeQuestionSummary,
   QuestionIngestionPort,
   RequestContext,
   ReviewApplyResult,
@@ -309,10 +311,11 @@ async function persistQuestion(
 }
 
 export class PgSQLAssetAdapter
-  implements ToolExecutionPort, QuestionIngestionPort
+  implements ToolExecutionPort, QuestionIngestionPort, PracticeQuestionCatalogPort
 {
   readonly capabilities = capabilities
   readonly pool: Pool
+  private lastIdleClientError: string | undefined
 
   constructor(connectionString: string, max = 10, timeoutMs = 5_000) {
     this.pool = new Pool({
@@ -321,6 +324,13 @@ export class PgSQLAssetAdapter
       connectionTimeoutMillis: timeoutMs,
       statement_timeout: timeoutMs,
       options: "-c search_path=pg_catalog,public"
+    })
+    this.pool.on("error", error => {
+      // pg-pool emits idle connection failures as EventEmitter errors. Without
+      // a listener, a PostgreSQL restart terminates the whole API process.
+      // The failed client is already discarded by pg-pool; the next query can
+      // reconnect normally, so retain only a concise diagnostic here.
+      this.lastIdleClientError = error.message
     })
   }
 
@@ -333,15 +343,73 @@ export class PgSQLAssetAdapter
       const value = await this.pool.query<{ ok: number }>(
         "SELECT 1 AS ok FROM pg_catalog.pg_class WHERE relname = 'question_asset'"
       )
+      this.lastIdleClientError = undefined
       return value.rowCount
         ? { ready: true, detail: "PostgreSQL 题目资产库已就绪" }
         : { ready: false, detail: "PostgreSQL 迁移尚未执行" }
     } catch (error) {
       return {
         ready: false,
-        detail: error instanceof Error ? error.message : "PostgreSQL 健康检查失败"
+        detail:
+          error instanceof Error
+            ? error.message
+            : this.lastIdleClientError ?? "PostgreSQL 健康检查失败"
       }
     }
+  }
+
+  async listPracticeQuestions(input: {
+    limit: number
+    subjectCode?: string
+  }): Promise<PracticeQuestionSummary[]> {
+    const parameters: unknown[] = []
+    const subjectFilter = input.subjectCode
+      ? `AND subject.code = $${parameters.push(input.subjectCode)}`
+      : ""
+    parameters.push(input.limit)
+
+    const questions = await this.pool.query<{
+      question_id: string
+      title: string | null
+      stem: string
+      question_type: string
+      difficulty: number
+      subject_code: string
+      subject_name: string
+    }>(
+      `SELECT q.id::text AS question_id,
+              COALESCE(NULLIF(q.title, ''), '未命名题目') AS title,
+              q.stem,
+              q.question_type,
+              q.difficulty_level AS difficulty,
+              subject.code AS subject_code,
+              subject.name AS subject_name
+         FROM question_asset q
+         JOIN subject_domain subject ON subject.id = q.subject_id
+        WHERE q.status = 'active'
+          AND q.is_public
+          AND EXISTS (
+            SELECT 1
+              FROM asset_review_log review
+             WHERE review.asset_type = 'question'
+               AND review.asset_id = q.id
+               AND review.review_status = 'approved'
+          )
+          ${subjectFilter}
+        ORDER BY subject.name, q.difficulty_level, q.created_at, q.id
+        LIMIT $${parameters.length}`,
+      parameters
+    )
+
+    return questions.rows.map(question => ({
+      questionId: question.question_id,
+      title: question.title ?? "未命名题目",
+      stem: question.stem,
+      questionType: question.question_type,
+      difficulty: question.difficulty,
+      subjectCode: question.subject_code,
+      subjectName: question.subject_name
+    }))
   }
 
   async execute(tool: ToolName, input: Input, context: RequestContext): Promise<ToolResult> {
