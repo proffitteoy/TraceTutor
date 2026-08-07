@@ -107,7 +107,7 @@ SQLite 适配器声明 7 个状态能力，PgSQL 适配器声明 8 个资产能�
 所有数据库实现都必须收敛到 [src/ports.ts](./src/ports.ts)：
 
 - `ToolExecutionPort` 提供 15 个运行期业务工具；
-- `QuestionIngestionPort` 提供批量导入、用户题 draft 和人工复核事务。
+- `QuestionIngestionPort` 提供批量导入、用户新题自动入库和人工复核事务。
 - `PracticeQuestionCatalogPort` 提供已批准公开题目的只读练习目录。
 
 生产入口已按以下方式装配：
@@ -136,8 +136,8 @@ const app = await createApp({
 - 不向 Agent 暴露连接对象、ORM model、表级 repository 或 SQL 字符串。
 - 每次执行必须使用 `RequestContext` 校验用户与会话归属。
 - 返回结果必须符合 `ToolResult`，包含 `meta.source`、`meta.status` 和可解释的 `meta.reason`。
-- 未审核题不得从正式检索工具返回；生成题只能经 `asset.create_draft_question` 进入草稿。
-- 题目摄取写入必须事务性维护 staging、题目资产和审核记录；普通题审批前不能进入 `active`，经哈希与 external_id 对账的明确批准 manifest 可在写入 approved 证据后直接激活。
+- 未通过完整性校验的题不得从正式检索工具返回；用户新题和 AI 变式题经 `asset.create_question` 在同一事务内补齐资产、写入自动批准证据并激活。
+- 题目摄取写入必须事务性维护 staging、题目资产和审核记录；普通批量导入题审批前不能进入 `active`，用户新题、AI 变式题和经哈希与 external_id 对账的批准 manifest 可在写入 approved 证据后直接激活。
 
 ## 代码结构
 

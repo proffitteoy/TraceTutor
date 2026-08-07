@@ -46,7 +46,7 @@ npm run questions:import -- --file ../../db/pgsql/question-bank/approved-initial
 
 ## 不变量
 
-- 普通导入题先进入 `imported`，用户题和 AI 题先进入 `draft`。
+- 普通导入题先进入 `imported`；用户新题和 AI 变式题在单一事务内先以 `draft` 组装完整资产，写入自动批准证据后立即切换为 `active`，不会把半成品暴露给召回。
 - 只有最新审核为 approved 且具备主答案、主解析、解析步骤、主知识点和主方法
   的题目可成为 `active`。
 - active 后删除或破坏上述资产、修改核心题干、回退状态都会被数据库拒绝。

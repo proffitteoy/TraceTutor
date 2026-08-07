@@ -474,7 +474,7 @@ export class PgSQLAssetAdapter
         const q = await client.query<{ id: string }>(
           `INSERT INTO question_asset(
              source_id,subject_id,title,stem,question_type,difficulty_level,status,origin_type,metadata
-           ) VALUES ($1,$2,$3,$4,'essay',3,'active',$5,$6::jsonb)
+           ) VALUES ($1,$2,$3,$4,'essay',3,'draft',$5,$6::jsonb)
            RETURNING id::text AS id`,
           [
             source.rows[0]!.id,
@@ -486,6 +486,11 @@ export class PgSQLAssetAdapter
           ]
         )
         const questionId = q.rows[0]!.id
+        await client.query(
+          `INSERT INTO question_version(question_id,version_no,stem,change_note,created_by)
+           VALUES ($1,1,$2,'自动生成并入库','tracetutor-api')`,
+          [questionId, input.stem]
+        )
         await client.query(
           "INSERT INTO answer_asset(question_id,answer_text,is_primary) VALUES ($1,$2,true)",
           [questionId, input.answer]
@@ -522,6 +527,28 @@ export class PgSQLAssetAdapter
           `INSERT INTO asset_review_log(asset_type,asset_id,review_status,review_note)
            VALUES ('question',$1,'approved','题目直接录入正式题库')
            RETURNING id::text AS id`,
+          [questionId]
+        )
+        if (input.source_type === "ai_generated" && input.source_reference) {
+          await client.query(
+            `INSERT INTO question_variant_edge(
+               base_question_id,variant_question_id,variant_type,
+               change_description,generated_by,quality_status
+             )
+             SELECT id,$2,'changed_condition',
+                    'TraceTutor 基于原题自动生成变式','llm','active'
+             FROM question_asset
+             WHERE id=$1 AND status='active'
+             ON CONFLICT DO NOTHING`,
+            [input.source_reference, questionId]
+          )
+        }
+        await client.query(
+          "UPDATE solution_asset SET status='active' WHERE id=$1",
+          [s.rows[0]!.id]
+        )
+        await client.query(
+          "UPDATE question_asset SET status='active' WHERE id=$1",
           [questionId]
         )
         return { question_id: questionId, review_item_id: review.rows[0]!.id, status: "active" }

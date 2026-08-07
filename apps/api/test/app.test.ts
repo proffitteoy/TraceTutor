@@ -41,7 +41,7 @@ describe("health routes", () => {
     expect(live.json()).toMatchObject({ status: "ok" })
     expect(ready.statusCode).toBe(503)
     expect(ready.json()).toMatchObject({
-      status: "degraded",
+      status: "unavailable",
       dependencies: {
         local_agent_runtime: "unconfigured",
         tool_execution: "unconfigured"
@@ -77,7 +77,7 @@ describe("health routes", () => {
 
     expect(ready.statusCode).toBe(503)
     expect(ready.json()).toMatchObject({
-      status: "degraded",
+      status: "unavailable",
       dependencies: {
         local_agent_runtime: "ready",
         model_api: "ready",

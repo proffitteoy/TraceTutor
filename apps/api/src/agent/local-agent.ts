@@ -185,7 +185,12 @@ function collectReferencedIds(value: unknown, target: Set<string>): void {
   }
 }
 
-function collectTagIds(value: unknown, target: Set<string>): void {
+interface KnownTagIds {
+  knowledgePointIds: Set<string>
+  methodIds: Set<string>
+}
+
+function collectTagIds(value: unknown, target: KnownTagIds): void {
   if (Array.isArray(value)) {
     value.forEach(item => collectTagIds(item, target))
     return
@@ -193,17 +198,35 @@ function collectTagIds(value: unknown, target: Set<string>): void {
   if (value === null || typeof value !== "object") return
 
   for (const [key, child] of Object.entries(value)) {
-    if (
-      (key === "knowledge_point_id" || key === "method_id") &&
-      typeof child === "string"
-    ) {
-      target.add(child)
+    if (key === "knowledge_point_id" && typeof child === "string") {
+      target.knowledgePointIds.add(child)
+    } else if (key === "method_id" && typeof child === "string") {
+      target.methodIds.add(child)
+    } else if (key === "knowledge_point_ids" && Array.isArray(child)) {
+      child.forEach(id => {
+        if (typeof id === "string") target.knowledgePointIds.add(id)
+      })
+    } else if (key === "method_ids" && Array.isArray(child)) {
+      child.forEach(id => {
+        if (typeof id === "string") target.methodIds.add(id)
+      })
     } else if (
-      (key === "knowledge_point_ids" || key === "method_ids") &&
+      (key === "knowledge_points" || key === "methods") &&
       Array.isArray(child)
     ) {
-      child.forEach(id => {
-        if (typeof id === "string") target.add(id)
+      const ids =
+        key === "knowledge_points"
+          ? target.knowledgePointIds
+          : target.methodIds
+      child.forEach(item => {
+        if (
+          item !== null &&
+          typeof item === "object" &&
+          "id" in item &&
+          typeof item.id === "string"
+        ) {
+          ids.add(item.id)
+        }
       })
     }
     collectTagIds(child, target)
@@ -425,14 +448,17 @@ ${JSON.stringify(request)}
       temperature: 0
     })
 
-    const knownIds = new Set<string>()
+    const knownIds: KnownTagIds = {
+      knowledgePointIds: new Set<string>(),
+      methodIds: new Set<string>()
+    }
     observations.forEach(item => collectTagIds(item.result, knownIds))
     return {
       ...grade,
       knowledge_point_ids: grade.knowledge_point_ids.filter(id =>
-        knownIds.has(id)
+        knownIds.knowledgePointIds.has(id)
       ),
-      method_ids: grade.method_ids.filter(id => knownIds.has(id))
+      method_ids: grade.method_ids.filter(id => knownIds.methodIds.has(id))
     }
   }
 
@@ -470,8 +496,20 @@ ${JSON.stringify(request)}
       temperature: 0.35
     })
 
-    const knownTagIds = new Set<string>()
-    observations.forEach(item => collectTagIds(item.result, knownTagIds))
+    const knownTagIds: KnownTagIds = {
+      knowledgePointIds: new Set<string>(),
+      methodIds: new Set<string>()
+    }
+    observations
+      .filter(item => item.tool === "asset.get_question_detail")
+      .forEach(item => collectTagIds(item.result, knownTagIds))
+    const proposedKnowledgePointIds =
+      generated.proposed_knowledge_point_ids.filter(id =>
+        knownTagIds.knowledgePointIds.has(id)
+      )
+    const proposedMethodIds = generated.proposed_method_ids.filter(id =>
+      knownTagIds.methodIds.has(id)
+    )
     const tool = "asset.create_question" as const
     const input = toolInputSchemas[tool].parse({
       user_id: request.user_id,
@@ -482,10 +520,13 @@ ${JSON.stringify(request)}
       source_type: "ai_generated",
       source_reference: request.active_question_id,
       proposed_knowledge_point_ids:
-        generated.proposed_knowledge_point_ids.filter(id => knownTagIds.has(id)),
-      proposed_method_ids: generated.proposed_method_ids.filter(id =>
-        knownTagIds.has(id)
-      )
+        proposedKnowledgePointIds.length > 0
+          ? proposedKnowledgePointIds
+          : [...knownTagIds.knowledgePointIds].slice(0, 1),
+      proposed_method_ids:
+        proposedMethodIds.length > 0
+          ? proposedMethodIds
+          : [...knownTagIds.methodIds].slice(0, 1)
     })
 
     if (

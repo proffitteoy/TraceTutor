@@ -5,7 +5,15 @@ import type {
   ModelHealth
 } from "../src/agent/local-model.js"
 import { LocalAgentRuntime } from "../src/agent/local-agent.js"
-import type { LearningRequest } from "../src/contracts.js"
+import type {
+  LearningRequest,
+  ToolName,
+  ToolResult
+} from "../src/contracts.js"
+import type {
+  RequestContext,
+  ToolExecutionPort
+} from "../src/ports.js"
 
 class ScriptedModel implements LocalModel {
   readonly prompts: Array<{ name: string; prompt: string }> = []
@@ -23,6 +31,56 @@ class ScriptedModel implements LocalModel {
   ): Promise<T> {
     this.prompts.push({ name: request.name, prompt: request.prompt })
     return request.schema.parse(this.outputs[request.name])
+  }
+}
+
+class RecordingToolExecution implements ToolExecutionPort {
+  readonly capabilities = new Set<ToolName>([
+    "asset.get_question_detail",
+    "asset.create_question"
+  ])
+  readonly calls: Array<{
+    tool: ToolName
+    input: Readonly<Record<string, unknown>>
+  }> = []
+
+  async execute(
+    tool: ToolName,
+    input: Readonly<Record<string, unknown>>,
+    context: RequestContext
+  ): Promise<ToolResult> {
+    this.calls.push({ tool, input })
+    if (tool === "asset.get_question_detail") {
+      return {
+        items: [
+          {
+            question_id: "Q-BASE",
+            stem: "原题",
+            knowledge_points: [{ id: "KP-BASE", name: "极限" }],
+            methods: [{ id: "M-BASE", name: "夹逼定理" }]
+          }
+        ],
+        meta: {
+          source: "pgsql",
+          status: "ok",
+          reason: "题目详情",
+          request_id: context.requestId
+        }
+      }
+    }
+    return {
+      result: {
+        question_id: "Q-VARIANT",
+        review_item_id: "R-VARIANT",
+        status: "active"
+      },
+      meta: {
+        source: "pgsql",
+        status: "ok",
+        reason: "题目已直接录入正式题库",
+        request_id: context.requestId
+      }
+    }
   }
 }
 
@@ -161,7 +219,77 @@ describe("LocalAgentRuntime", () => {
     })
   })
 
-  it("拒绝模型在没有写入证据时声称状态 pending", async () => {
+  it("生成变式题时从原题详情继承有效标签并写入正式题库", async () => {
+    const model = new ScriptedModel({
+      query_plan: {
+        version: "1.0",
+        intent: "GENERATE_SIMILAR_QUESTION",
+        task_types: ["GENERATE_SIMILAR_QUESTION"],
+        state_queries: [],
+        asset_queries: [
+          {
+            tool: "asset.get_question_detail",
+            base_question_id: "Q-BASE",
+            filters: { only_active: true }
+          }
+        ],
+        expected_output: {
+          include_old_review: false,
+          include_new_question: true,
+          include_method_comparison: false,
+          include_state_update: false
+        }
+      },
+      variant_question: {
+        stem: "求一个参数变化后的极限。",
+        answer: "1",
+        analysis: "使用夹逼定理。",
+        proposed_knowledge_point_ids: [],
+        proposed_method_ids: []
+      },
+      teaching_output: {
+        summary: "已生成并保存变式题。",
+        cards: [
+          {
+            type: "new_question",
+            title: "变式题",
+            question_id: "Q-VARIANT",
+            content: "求一个参数变化后的极限。"
+          }
+        ],
+        actions: []
+      }
+    })
+    const tools = new RecordingToolExecution()
+    const runtime = new LocalAgentRuntime(model, tools)
+
+    const response = await runtime.run(
+      {
+        ...request,
+        input_mode: "review",
+        active_question_id: "Q-BASE",
+        action: {
+          type: "generate_variant",
+          question_id: "Q-BASE",
+          client_event_id: "EV-VARIANT"
+        }
+      },
+      { requestId: "REQ-VARIANT" }
+    )
+
+    const createCall = tools.calls.find(call => call.tool === "asset.create_question")
+    expect(createCall?.input).toMatchObject({
+      source_reference: "Q-BASE",
+      proposed_knowledge_point_ids: ["KP-BASE"],
+      proposed_method_ids: ["M-BASE"]
+    })
+    expect(response.cards[0]).toMatchObject({
+      type: "new_question",
+      question_id: "Q-VARIANT"
+    })
+  })
+
+  it("过滤模型在没有写入证据时声称 pending 的状态卡", async () => {
     const model = new ScriptedModel({
       query_plan: {
         version: "1.0",
@@ -191,10 +319,9 @@ describe("LocalAgentRuntime", () => {
     })
     const runtime = new LocalAgentRuntime(model)
 
-    await expect(
-      runtime.run(request, { requestId: "REQ4" })
-    ).rejects.toMatchObject({
-      code: "MODEL_OUTPUT_INVALID"
-    })
+    const response = await runtime.run(request, { requestId: "REQ4" })
+
+    expect(response.cards).toEqual([])
+    expect(response.pending_state_write).toBe(false)
   })
 })

@@ -161,7 +161,7 @@ DONE
 - `asset.search_same_knowledge_different_method`
 - `asset.search_same_method_different_knowledge`
 - `asset.search_similar_questions`
-- `asset.create_draft_question`
+- `asset.create_question`
 - `asset.get_solution_steps`
 
 ### 日志
@@ -283,7 +283,7 @@ state.apply_state_delta
 | 模型 API 不可用 | 返回结构化 503，不生成假答案 |
 | SQLite 未接入 | 可以讲解当前题，但不声称个性化 |
 | PgSQL 未接入 | 可以解用户原题，但不伪造题库 ID 或历史题 |
-| 召回为空 | 只做已有内容；生成题必须先成功创建 draft |
+| 召回为空 | 只做已有内容；生成题必须先成功写入并取得真实 active ID |
 | 方法标签不确定 | 只按知识点讲解，不做方法迁移 |
 | 作答写入失败 | 返回判定反馈并明确状态未保存 |
 | delta 应用失败 | 保留 pending，等待重试 |
