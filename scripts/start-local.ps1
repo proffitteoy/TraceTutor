@@ -107,6 +107,40 @@ function Test-ProcessId {
   return $null -ne (Get-Process -Id $Id -ErrorAction SilentlyContinue)
 }
 
+function Test-Endpoint {
+  param([Parameter(Mandatory)][string]$Url)
+  try {
+    $response = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 3
+    return $response.StatusCode -ge 200 -and $response.StatusCode -lt 300
+  } catch {
+    return $false
+  }
+}
+
+function Test-ExpectedProcess {
+  param(
+    [int]$Id,
+    [Parameter(Mandatory)][string]$ExecutablePath,
+    [Parameter(Mandatory)][string]$CommandFragment
+  )
+
+  if (-not (Test-ProcessId $Id)) {
+    return $false
+  }
+  try {
+    $process = Get-CimInstance Win32_Process -Filter "ProcessId = $Id"
+    if (-not $process -or -not $process.ExecutablePath -or -not $process.CommandLine) {
+      return $false
+    }
+    $actualPath = [System.IO.Path]::GetFullPath($process.ExecutablePath)
+    $expectedPath = [System.IO.Path]::GetFullPath($ExecutablePath)
+    return $actualPath -ieq $expectedPath -and
+      $process.CommandLine -like "*$CommandFragment*"
+  } catch {
+    return $false
+  }
+}
+
 $node = Resolve-CommandPath -Name "node.exe"
 $npm = Resolve-CommandPath -Name "npm.cmd"
 $python = Resolve-PythonPath
@@ -296,10 +330,12 @@ Write-Host "[3/7] Preparing API and Iris"
 $apiRoot = Join-Path $projectRoot "apps\api"
 $irisRoot = Join-Path $projectRoot "apps\iris"
 foreach ($appRoot in @($apiRoot, $irisRoot)) {
-  if (-not (Test-Path -LiteralPath (Join-Path $appRoot "node_modules"))) {
-    if ($SkipInstall) {
+  $nodeModules = Join-Path $appRoot "node_modules"
+  if ($SkipInstall) {
+    if (-not (Test-Path -LiteralPath $nodeModules)) {
       throw "Node.js dependencies are missing in $appRoot and -SkipInstall was specified."
     }
+  } else {
     Push-Location $appRoot
     try {
       Invoke-Native $npm "install"
@@ -314,14 +350,18 @@ $existing = if (Test-Path -LiteralPath $pidFile) {
   $null
 }
 if (-not $SkipBuild -and $existing) {
-  foreach ($name in @("api", "iris")) {
+  $restartTargets = @{
+    api = "dist/server.js"
+    iris = "next\dist\bin\next"
+  }
+  foreach ($name in $restartTargets.Keys) {
     $existingId = $existing.$name
-    if ($existingId -and (Test-ProcessId ([int]$existingId))) {
+    if ($existingId -and (Test-ExpectedProcess ([int]$existingId) $node $restartTargets[$name])) {
       Stop-Process -Id ([int]$existingId)
       Wait-Process -Id ([int]$existingId) -Timeout 15 -ErrorAction SilentlyContinue
-      $existing.$name = $null
       Write-Host "[restart] Stopped previous $name process"
     }
+    $existing.$name = $null
   }
 }
 if (-not $SkipBuild) {
@@ -342,9 +382,22 @@ if (-not $SkipBuild) {
 Write-Host "[4/7] Starting local services"
 $servicePids = [ordered]@{}
 
-if ($existing -and $existing.sqlite -and (Test-ProcessId ([int]$existing.sqlite))) {
+if (
+  $existing -and
+  $existing.sqlite -and
+  (Test-ExpectedProcess ([int]$existing.sqlite) $venvPython "tracetutor_state.main:app") -and
+  (Test-Endpoint "http://127.0.0.1:8000/health/ready")
+) {
   $servicePids.sqlite = [int]$existing.sqlite
 } else {
+  if (
+    $existing -and
+    $existing.sqlite -and
+    (Test-ExpectedProcess ([int]$existing.sqlite) $venvPython "tracetutor_state.main:app")
+  ) {
+    Stop-Process -Id ([int]$existing.sqlite)
+    Wait-Process -Id ([int]$existing.sqlite) -Timeout 15 -ErrorAction SilentlyContinue
+  }
   $sqliteProcess = Start-Process `
     -FilePath $venvPython `
     -ArgumentList @(
@@ -359,9 +412,22 @@ if ($existing -and $existing.sqlite -and (Test-ProcessId ([int]$existing.sqlite)
   $servicePids.sqlite = $sqliteProcess.Id
 }
 
-if ($existing -and $existing.api -and (Test-ProcessId ([int]$existing.api))) {
+if (
+  $existing -and
+  $existing.api -and
+  (Test-ExpectedProcess ([int]$existing.api) $node "dist/server.js") -and
+  (Test-Endpoint "http://127.0.0.1:4100/health/live")
+) {
   $servicePids.api = [int]$existing.api
 } else {
+  if (
+    $existing -and
+    $existing.api -and
+    (Test-ExpectedProcess ([int]$existing.api) $node "dist/server.js")
+  ) {
+    Stop-Process -Id ([int]$existing.api)
+    Wait-Process -Id ([int]$existing.api) -Timeout 15 -ErrorAction SilentlyContinue
+  }
   $apiProcess = Start-Process `
     -FilePath $node `
     -ArgumentList @("dist/server.js") `
@@ -373,9 +439,22 @@ if ($existing -and $existing.api -and (Test-ProcessId ([int]$existing.api))) {
   $servicePids.api = $apiProcess.Id
 }
 
-if ($existing -and $existing.iris -and (Test-ProcessId ([int]$existing.iris))) {
+if (
+  $existing -and
+  $existing.iris -and
+  (Test-ExpectedProcess ([int]$existing.iris) $node "next\dist\bin\next") -and
+  (Test-Endpoint "http://127.0.0.1:3000")
+) {
   $servicePids.iris = [int]$existing.iris
 } else {
+  if (
+    $existing -and
+    $existing.iris -and
+    (Test-ExpectedProcess ([int]$existing.iris) $node "next\dist\bin\next")
+  ) {
+    Stop-Process -Id ([int]$existing.iris)
+    Wait-Process -Id ([int]$existing.iris) -Timeout 15 -ErrorAction SilentlyContinue
+  }
   $nextCli = Join-Path $irisRoot "node_modules\next\dist\bin\next"
   $irisProcess = Start-Process `
     -FilePath $node `

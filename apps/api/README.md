@@ -5,6 +5,8 @@
 ## 已实现能力
 
 - `POST /agent/chat`：在本地执行 QueryPlan、工具调度、可选判题/写回与教学输出，并校验 `LearningResponse`。
+- `POST /questions/deposit`：把新对话中的原题与已校验教学输出交给题目摄取服务，供前端手动入库或自动入库失败后重试。
+- 自动入库只在查询计划确认为 `NEW_QUESTION_SOLVE` 时执行；澄清语句和“我需要相似题”等操作指令不会作为题目资产写入。手动入库失败返回结构化 `failed + reason`，不升级为通用 500。
 - `GET /questions/practice`：只读返回 `active + is_public + approved` 的练习题目录，不暴露答案、解析或数据库实现。
 - `GET /questions/:questionId/attempts?user_id=...`：通过 SQLite 状态端口返回当前用户在指定题目上的作答历史；Iris 不直连 SQLite。
 - `POST /internal/query-plans/validate`：校验 Agent 查询计划、工具白名单、参数形态与 `limit <= 20`，拒绝 SQL 字段。
@@ -137,6 +139,7 @@ const app = await createApp({
 - 每次执行必须使用 `RequestContext` 校验用户与会话归属。
 - 返回结果必须符合 `ToolResult`，包含 `meta.source`、`meta.status` 和可解释的 `meta.reason`。
 - 未通过完整性校验的题不得从正式检索工具返回；用户新题和 AI 变式题经 `asset.create_question` 在同一事务内补齐资产、写入自动批准证据并激活。
+- 用户用自然语言索要相似题且存在 `active_question_id` 时，Workflow 会确定性补齐题目详情与相似题查询；相似题查询同时使用显式相似边、共享知识点、共享方法和共享结构，真实结果为空后才生成并入库变式题。
 - 题目摄取写入必须事务性维护 staging、题目资产和审核记录；普通批量导入题审批前不能进入 `active`，用户新题、AI 变式题和经哈希与 external_id 对账的批准 manifest 可在写入 approved 证据后直接激活。
 
 ## 代码结构

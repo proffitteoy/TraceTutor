@@ -633,12 +633,32 @@ export class PgSQLAssetAdapter
     const rows = await questionSummary(
       this.pool,
       `q.id<>$1 AND q.difficulty_level BETWEEN $2 AND $3
-       AND EXISTS (SELECT 1 FROM question_similarity_edge edge
-         WHERE edge.source_question_id=$1 AND edge.target_question_id=q.id
-           AND edge.similarity_type=ANY($4::text[]) AND edge.status='active')`,
+       AND (
+         EXISTS (SELECT 1 FROM question_similarity_edge edge
+           WHERE edge.source_question_id=$1 AND edge.target_question_id=q.id
+             AND edge.similarity_type=ANY($4::text[]) AND edge.status='active')
+         OR ('knowledge'=ANY($4::text[]) AND EXISTS (
+           SELECT 1 FROM question_knowledge_point base_kp
+           JOIN question_knowledge_point candidate_kp
+             ON candidate_kp.knowledge_point_id=base_kp.knowledge_point_id
+           WHERE base_kp.question_id=$1 AND candidate_kp.question_id=q.id
+         ))
+         OR ('method'=ANY($4::text[]) AND EXISTS (
+           SELECT 1 FROM question_method base_method
+           JOIN question_method candidate_method
+             ON candidate_method.method_id=base_method.method_id
+           WHERE base_method.question_id=$1 AND candidate_method.question_id=q.id
+         ))
+         OR ('structure'=ANY($4::text[]) AND EXISTS (
+           SELECT 1 FROM question_structure_feature base_structure
+           JOIN question_structure_feature candidate_structure
+             ON candidate_structure.structure_code=base_structure.structure_code
+           WHERE base_structure.question_id=$1 AND candidate_structure.question_id=q.id
+         ))
+       )`,
       [input.base_question_id, range[0], range[1], dimensions, limit]
     )
-    return result(context.requestId, rows, "多维相似题召回")
+    return result(context.requestId, rows, "相似边与共享标签联合召回")
   }
 
   async loadTaggingContext(query: TaggingContextQuery): Promise<TagDictionary> {

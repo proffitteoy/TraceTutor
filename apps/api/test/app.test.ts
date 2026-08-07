@@ -4,6 +4,7 @@ import { LocalAgentRuntime } from "../src/agent/local-agent.js"
 import type { LocalModel } from "../src/agent/local-model.js"
 import { createApp } from "../src/app.js"
 import type { AppConfig } from "../src/config.js"
+import type { QuestionIngestionService } from "../src/ingestion/question-ingestion.js"
 import type {
   PracticeQuestionCatalogPort,
   QuestionHistoryPort,
@@ -89,6 +90,85 @@ describe("health routes", () => {
 })
 
 describe("boundary routes", () => {
+  it("公开手动入库入口把本轮题目与已校验教学输出交给摄取服务", async () => {
+    let received: Record<string, unknown> | undefined
+    const questionIngestion = {
+      async depositUserQuestion(input: Record<string, unknown>) {
+        received = input
+        return {
+          status: "active_created" as const,
+          reason: "已写入正式题库",
+          questionId: "question-deposited",
+          reviewItemId: "review-deposited"
+        }
+      }
+    } as unknown as QuestionIngestionService
+    app = await createApp({ config, questionIngestion })
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/questions/deposit",
+      payload: {
+        session_id: "session-1",
+        user_id: "user-1",
+        user_text: "求极限 $\\lim_{x\\to0}\\sin x/x$",
+        workflow_run_id: "workflow-1",
+        teaching_output: {
+          summary: "该极限等于 1。",
+          cards: [{
+            type: "solution",
+            title: "参考解法",
+            content: "使用夹逼定理。",
+            steps: ["构造不等式"],
+            methods: ["夹逼定理"]
+          }]
+        }
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(received).toMatchObject({
+      userId: "user-1",
+      sessionId: "session-1",
+      workflowRunId: "workflow-1"
+    })
+    expect(response.json()).toEqual({
+      status: "active_created",
+      reason: "已写入正式题库",
+      question_id: "question-deposited",
+      review_item_id: "review-deposited"
+    })
+  })
+
+  it("手动入库失败返回可展示原因而不是服务内部错误", async () => {
+    const questionIngestion = {
+      async depositUserQuestion() {
+        throw new Error("未知学科 code：invented_subject")
+      }
+    } as unknown as QuestionIngestionService
+    app = await createApp({ config, questionIngestion })
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/questions/deposit",
+      payload: {
+        session_id: "session-1",
+        user_id: "user-1",
+        user_text: "一道待入库题目",
+        teaching_output: {
+          summary: "讲解完成。",
+          cards: []
+        }
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.json()).toEqual({
+      status: "failed",
+      reason: "题目入库失败：未知学科 code：invented_subject"
+    })
+  })
+
   it("返回经过批准且可公开练习的题目目录", async () => {
     const questionCatalog: PracticeQuestionCatalogPort = {
       async listPracticeQuestions(input) {

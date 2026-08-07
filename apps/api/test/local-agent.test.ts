@@ -37,12 +37,17 @@ class ScriptedModel implements LocalModel {
 class RecordingToolExecution implements ToolExecutionPort {
   readonly capabilities = new Set<ToolName>([
     "asset.get_question_detail",
+    "asset.search_similar_questions",
     "asset.create_question"
   ])
   readonly calls: Array<{
     tool: ToolName
     input: Readonly<Record<string, unknown>>
   }> = []
+
+  constructor(
+    private readonly similarItems: Record<string, unknown>[] = []
+  ) {}
 
   async execute(
     tool: ToolName,
@@ -64,6 +69,17 @@ class RecordingToolExecution implements ToolExecutionPort {
           source: "pgsql",
           status: "ok",
           reason: "题目详情",
+          request_id: context.requestId
+        }
+      }
+    }
+    if (tool === "asset.search_similar_questions") {
+      return {
+        items: this.similarItems,
+        meta: {
+          source: "pgsql",
+          status: this.similarItems.length > 0 ? "ok" : "empty",
+          reason: this.similarItems.length > 0 ? "题库命中相似题" : "题库没有相似题",
           request_id: context.requestId
         }
       }
@@ -287,6 +303,110 @@ describe("LocalAgentRuntime", () => {
       type: "new_question",
       question_id: "Q-VARIANT"
     })
+  })
+
+  it("自然语言索要相似题时自动检索当前题，命中题库后不再生成", async () => {
+    const model = new ScriptedModel({
+      query_plan: {
+        version: "1.0",
+        intent: "CLARIFY_INTENT",
+        task_types: ["CLARIFY_INTENT"],
+        state_queries: [],
+        asset_queries: [],
+        expected_output: {
+          include_old_review: false,
+          include_new_question: false,
+          include_method_comparison: false,
+          include_state_update: false
+        }
+      },
+      teaching_output: {
+        summary: "题库中找到一道相似题。",
+        cards: [{
+          type: "new_question",
+          title: "题库相似题",
+          question_id: "Q-SIMILAR",
+          content: "用另一组矩阵求相同类型的秩与核。"
+        }],
+        actions: []
+      }
+    })
+    const tools = new RecordingToolExecution([{
+      question_id: "Q-SIMILAR",
+      stem: "用另一组矩阵求相同类型的秩与核。",
+      knowledge_points: [{ id: "KP-BASE", name: "极限" }],
+      methods: [{ id: "M-BASE", name: "夹逼定理" }]
+    }])
+    const runtime = new LocalAgentRuntime(model, tools)
+
+    const response = await runtime.run({
+      ...request,
+      input_mode: "free_chat",
+      user_text: "给我相似题",
+      active_question_id: "Q-BASE"
+    }, { requestId: "REQ-SIMILAR" })
+
+    expect(tools.calls.map(call => call.tool)).toEqual([
+      "asset.get_question_detail",
+      "asset.search_similar_questions"
+    ])
+    expect(response.cards[0]).toMatchObject({
+      type: "new_question",
+      question_id: "Q-SIMILAR"
+    })
+    expect(model.prompts).toEqual([])
+  })
+
+  it("自然语言索要相似题但题库为空时才生成并入库", async () => {
+    const model = new ScriptedModel({
+      query_plan: {
+        version: "1.0",
+        intent: "CLARIFY_INTENT",
+        task_types: ["CLARIFY_INTENT"],
+        state_queries: [],
+        asset_queries: [],
+        expected_output: {
+          include_old_review: false,
+          include_new_question: false,
+          include_method_comparison: false,
+          include_state_update: false
+        }
+      },
+      variant_question: {
+        stem: "求参数变化后的同类极限。",
+        answer: "1",
+        analysis: "使用夹逼定理。",
+        proposed_knowledge_point_ids: [],
+        proposed_method_ids: []
+      },
+      teaching_output: {
+        summary: "题库没有命中，已生成一道新题。",
+        cards: [{
+          type: "new_question",
+          title: "新生成的相似题",
+          question_id: "Q-VARIANT",
+          content: "求参数变化后的同类极限。"
+        }],
+        actions: []
+      }
+    })
+    const tools = new RecordingToolExecution()
+    const runtime = new LocalAgentRuntime(model, tools)
+
+    await runtime.run({
+      ...request,
+      input_mode: "free_chat",
+      user_text: "给我相似题",
+      active_question_id: "Q-BASE"
+    }, { requestId: "REQ-SIMILAR-FALLBACK" })
+
+    expect(tools.calls.map(call => call.tool)).toEqual([
+      "asset.get_question_detail",
+      "asset.search_similar_questions",
+      "asset.create_question"
+    ])
+    expect(model.prompts.map(item => item.name)).toContain("variant_question")
+    expect(model.prompts.map(item => item.name)).not.toContain("query_plan")
   })
 
   it("过滤模型在没有写入证据时声称 pending 的状态卡", async () => {

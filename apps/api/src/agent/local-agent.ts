@@ -162,6 +162,78 @@ function materializePlan(
   return calls
 }
 
+function requestsSimilarQuestion(request: LearningRequest): boolean {
+  if (request.action?.type === "generate_variant") return true
+
+  const text = request.user_text.normalize("NFKC").toLocaleLowerCase("zh-CN")
+  return (
+    /(?:相似|类似|同类|同型|变式)\s*(?:题|练习)/u.test(text) ||
+    /(?:再|另|换)\s*(?:来|给)?\s*(?:一|1)\s*道/u.test(text) ||
+    /(?:similar|variant)\s+(?:question|exercise)/iu.test(text)
+  )
+}
+
+function ensureSimilarQuestionRetrieval(
+  request: LearningRequest,
+  plan: QueryPlan
+): QueryPlan {
+  if (!requestsSimilarQuestion(request) || request.active_question_id === null) {
+    return plan
+  }
+
+  const baseQuestionId = request.active_question_id
+  const assetQueries = [...plan.asset_queries]
+  if (
+    !assetQueries.some(
+      query =>
+        query.tool === "asset.get_question_detail" &&
+        (query.base_question_id ?? query.filters.question_id) === baseQuestionId
+    )
+  ) {
+    assetQueries.unshift({
+      tool: "asset.get_question_detail",
+      base_question_id: baseQuestionId,
+      filters: { only_active: true }
+    })
+  }
+  if (
+    !assetQueries.some(
+      query =>
+        query.tool === "asset.search_similar_questions" &&
+        query.base_question_id === baseQuestionId
+    )
+  ) {
+    assetQueries.push({
+      tool: "asset.search_similar_questions",
+      base_question_id: baseQuestionId,
+      filters: {
+        similarity_dimensions: [
+          "knowledge",
+          "method",
+          "structure",
+          "solution_path"
+        ],
+        only_active: true
+      },
+      difficulty_policy: "near",
+      limit: 3
+    })
+  }
+
+  return queryPlanSchema.parse({
+    ...plan,
+    intent: "GENERATE_SIMILAR_QUESTION",
+    task_types: [
+      ...new Set([...plan.task_types, "GENERATE_SIMILAR_QUESTION" as const])
+    ],
+    asset_queries: assetQueries,
+    expected_output: {
+      ...plan.expected_output,
+      include_new_question: true
+    }
+  })
+}
+
 function collectReferencedIds(value: unknown, target: Set<string>): void {
   if (Array.isArray(value)) {
     value.forEach(item => collectReferencedIds(item, target))
@@ -255,9 +327,10 @@ function collectScheduleIds(value: unknown, target: Set<string>): void {
 function ensureKnownQuestionReferences(
   output: z.infer<typeof teachingOutputSchema>,
   request: LearningRequest,
-  observations: ToolObservation[]
+  observations: ToolObservation[],
+  extraKnownIds: readonly string[] = []
 ): void {
-  const known = new Set<string>()
+  const known = new Set<string>(extraKnownIds)
   if (request.active_question_id) known.add(request.active_question_id)
   observations.forEach(observation =>
     collectReferencedIds(observation.result, known)
@@ -298,6 +371,57 @@ function ensureKnownQuestionReferences(
   }
 }
 
+type DeferredQuestionCard = Extract<
+  z.infer<typeof teachingOutputSchema>["cards"][number],
+  { type: "new_question" | "old_question_review" }
+>
+
+interface DeferredQuestionReferences {
+  cards: DeferredQuestionCard[]
+  actions: z.infer<typeof teachingOutputSchema>["actions"]
+}
+
+function deferUngroundedNewQuestionReferences(
+  output: z.infer<typeof teachingOutputSchema>,
+  request: LearningRequest,
+  observations: ToolObservation[]
+): DeferredQuestionReferences {
+  const known = new Set<string>()
+  observations.forEach(observation =>
+    collectReferencedIds(observation.result, known)
+  )
+
+  const cards = output.cards.filter(
+    (card): card is DeferredQuestionCard =>
+      "question_id" in card && !known.has(card.question_id)
+  )
+  const actions = output.actions.filter(
+    action => action.question_id !== undefined && !known.has(action.question_id)
+  )
+
+  if (request.active_question_id === null) {
+    output.cards = output.cards.filter(card => !cards.includes(card as DeferredQuestionCard))
+    output.actions = output.actions.filter(action => !actions.includes(action))
+  }
+
+  return request.active_question_id === null
+    ? { cards, actions }
+    : { cards: [], actions: [] }
+}
+
+function restoreDeferredQuestionReferences(
+  output: z.infer<typeof teachingOutputSchema>,
+  deferred: DeferredQuestionReferences,
+  questionId: string
+): void {
+  output.cards.push(
+    ...deferred.cards.map(card => ({ ...card, question_id: questionId }))
+  )
+  output.actions.push(
+    ...deferred.actions.map(action => ({ ...action, question_id: questionId }))
+  )
+}
+
 function ensureStateClaims(
   output: z.infer<typeof teachingOutputSchema>,
   observations: ToolObservation[]
@@ -336,6 +460,37 @@ function compactObservations(observations: ToolObservation[]): string {
       : {})
   }))
   return JSON.stringify(compact).slice(0, 20_000)
+}
+
+function composeRecalledQuestions(
+  observations: ToolObservation[]
+): z.infer<typeof teachingOutputSchema> | null {
+  const recalled = observations.find(
+    item =>
+      item.tool === "asset.search_similar_questions" && item.status === "ok"
+  )
+  const cards = (recalled?.result?.items ?? []).flatMap(item => {
+    const questionId = item.question_id
+    const stem = item.stem
+    if (typeof questionId !== "string" || typeof stem !== "string") return []
+    const difficulty = item.difficulty_level
+    return [{
+      type: "new_question" as const,
+      title: typeof item.title === "string" ? item.title : "题库相似题",
+      question_id: questionId,
+      content: stem,
+      ...(typeof difficulty === "number" && difficulty >= 1 && difficulty <= 5
+        ? { difficulty: Math.round(difficulty) }
+        : {})
+    }]
+  }).slice(0, 3)
+
+  if (cards.length === 0) return null
+  return teachingOutputSchema.parse({
+    summary: `已先检索正式题库，为你召回 ${cards.length} 道相似题。`,
+    cards,
+    actions: []
+  })
 }
 
 export class LocalAgentRuntime {
@@ -404,6 +559,22 @@ export class LocalAgentRuntime {
   }
 
   private async plan(request: LearningRequest): Promise<QueryPlan> {
+    if (requestsSimilarQuestion(request) && request.active_question_id !== null) {
+      return ensureSimilarQuestionRetrieval(request, {
+        version: "1.0",
+        intent: "GENERATE_SIMILAR_QUESTION",
+        task_types: ["GENERATE_SIMILAR_QUESTION"],
+        state_queries: [],
+        asset_queries: [],
+        expected_output: {
+          include_old_review: false,
+          include_new_question: true,
+          include_method_comparison: false,
+          include_state_update: false
+        }
+      })
+    }
+
     const plan = await this.model.generateJson({
       name: "query_plan",
       system: INTENT_PLANNER_POLICY,
@@ -416,7 +587,7 @@ ${JSON.stringify(request)}
       temperature: 0
     })
 
-    return plan
+    return ensureSimilarQuestionRetrieval(request, plan)
   }
 
   private async gradeSubmission(
@@ -467,12 +638,17 @@ ${JSON.stringify(request)}
     observations: ToolObservation[],
     context: RequestContext
   ): Promise<ToolObservation | null> {
-    if (
-      request.action?.type !== "generate_variant" ||
-      request.active_question_id === null
-    ) {
+    if (!requestsSimilarQuestion(request) || request.active_question_id === null) {
       return null
     }
+
+    const recalledQuestion = observations.some(
+      item =>
+        item.tool === "asset.search_similar_questions" &&
+        item.status === "ok" &&
+        (item.result?.items?.length ?? 0) > 0
+    )
+    if (recalledQuestion) return null
 
     const hasQuestionEvidence = observations.some(
       item =>
@@ -794,10 +970,11 @@ ${JSON.stringify(request)}
       }
     }
 
-    const output = await this.model.generateJson({
-      name: "teaching_output",
-      system: TEACHING_COMPOSER_POLICY,
-      prompt: `请根据请求、已校验查询计划和工具结果组织教学输出。
+    const output = composeRecalledQuestions(observations) ??
+      await this.model.generateJson({
+        name: "teaching_output",
+        system: TEACHING_COMPOSER_POLICY,
+        prompt: `请根据请求、已校验查询计划和工具结果组织教学输出。
 输入模式：${request.input_mode}
 动作：${request.action?.type ?? "none"}
 用户输入：${request.user_text}
@@ -805,10 +982,14 @@ QueryPlan：${JSON.stringify(plan)}
 工具结果：${compactObservations(observations)}
 ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
 工具 unavailable/failed 时，仅在影响用户请求的核心功能时才在内容中说明降级。对于非当前请求必需的工具（如用户未提交答案时的状态写入工具），不要在内容中提及。不要输出 meta、mode 或 pending_state_write。`,
-      schema: teachingOutputSchema,
-      temperature: request.action?.type === "request_hint" ? 0 : 0.2
-    })
+        schema: teachingOutputSchema,
+        temperature: request.action?.type === "request_hint" ? 0 : 0.2
+      })
 
+    const deferredQuestionReferences =
+      this.questionIngestion && request.active_question_id === null
+        ? deferUngroundedNewQuestionReferences(output, request, observations)
+        : { cards: [], actions: [] }
     ensureKnownQuestionReferences(output, request, observations)
     ensureStateClaims(output, observations)
 
@@ -823,6 +1004,7 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
     if (
       this.questionIngestion &&
       request.active_question_id === null &&
+      plan.intent === "NEW_QUESTION_SOLVE" &&
       (request.input_mode === "new_question" || request.input_mode === "free_chat") &&
       request.action === undefined
     ) {
@@ -857,6 +1039,20 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
       }
     } else {
       console.log(`[QuestionDeposit] Skipped: questionIngestion=${!!this.questionIngestion}, active_question_id=${request.active_question_id}, input_mode=${request.input_mode}, has_action=${!!request.action}`)
+    }
+
+    if (questionDeposit?.question_id) {
+      restoreDeferredQuestionReferences(
+        output,
+        deferredQuestionReferences,
+        questionDeposit.question_id
+      )
+      ensureKnownQuestionReferences(
+        output,
+        request,
+        observations,
+        [questionDeposit.question_id]
+      )
     }
 
     const writeObservation = observations.find(

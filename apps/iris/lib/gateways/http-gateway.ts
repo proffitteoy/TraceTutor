@@ -1,11 +1,14 @@
 import {
   learningResponseSchema,
   practiceQuestionListSchema,
+  questionDepositResultSchema,
   questionAttemptHistorySchema,
   type IrisGateway,
   type LearningRequest,
   type LearningResponse,
   type PracticeQuestion,
+  type QuestionDepositRequest,
+  type QuestionDepositResult,
   type QuestionAttemptHistoryItem,
   type ServiceReadiness
 } from "@/lib/contracts"
@@ -130,5 +133,35 @@ export class HttpGateway implements IrisGateway {
     }
 
     return parsed.data as LearningResponse
+  }
+
+  async depositQuestion(
+    request: QuestionDepositRequest,
+    signal?: AbortSignal
+  ): Promise<QuestionDepositResult> {
+    let response: Response
+    try {
+      response = await fetch(`${this.baseUrl}/questions/deposit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+        signal
+      })
+    } catch {
+      throw new Error("无法连接题目入库服务")
+    }
+
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as {
+        error?: { message?: string }
+      } | null
+      throw new Error(
+        payload?.error?.message ?? `题目入库失败（${response.status}）`
+      )
+    }
+
+    const parsed = questionDepositResultSchema.safeParse(await response.json())
+    if (!parsed.success) throw new Error("题目入库响应不符合契约")
+    return parsed.data
   }
 }

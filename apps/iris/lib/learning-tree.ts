@@ -7,6 +7,8 @@ export interface ConversationEntry {
   role: "user" | "assistant"
   text: string
   response?: LearningResponse
+  sourceUserText?: string
+  sourceQuestionId?: string | null
 }
 
 export interface LearningTreeBranch {

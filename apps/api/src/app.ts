@@ -4,7 +4,7 @@ import Fastify, {
   type FastifyReply,
   type FastifyRequest
 } from "fastify"
-import { timingSafeEqual } from "node:crypto"
+import { randomUUID, timingSafeEqual } from "node:crypto"
 import { z, ZodError, type ZodType } from "zod"
 import type { LocalAgentRuntime } from "./agent/local-agent.js"
 import type { AppConfig } from "./config.js"
@@ -15,6 +15,7 @@ import {
 } from "./ingestion/contracts.js"
 import {
   learningRequestSchema,
+  learningCardSchema,
   queryPlanSchema,
   stateDeltaSchema,
   toolNames,
@@ -68,6 +69,21 @@ const reviewQueueQuerySchema = z
 const reviewParamsSchema = z
   .object({
     reviewItemId: z.string().trim().min(1).max(128)
+  })
+  .strict()
+
+const questionDepositRequestSchema = z
+  .object({
+    session_id: z.string().trim().min(1).max(128),
+    user_id: z.string().trim().min(1).max(128),
+    user_text: z.string().trim().min(1).max(20_000),
+    workflow_run_id: z.string().trim().min(1).max(128).optional(),
+    teaching_output: z
+      .object({
+        summary: z.string().trim().min(1).max(2_000),
+        cards: z.array(learningCardSchema).max(10)
+      })
+      .strict()
   })
   .strict()
 
@@ -340,6 +356,42 @@ function registerQuestionIngestionRoutes(
   app: FastifyInstance,
   dependencies: AppDependencies
 ): void {
+  app.post("/questions/deposit", async request => {
+    if (!dependencies.questionIngestion) {
+      throw new AppError(
+        "DEPENDENCY_UNAVAILABLE",
+        "PgSQL 题目入库端口尚未接入",
+        503
+      )
+    }
+    const input = parseWith(questionDepositRequestSchema, request.body)
+    let report: Awaited<
+      ReturnType<QuestionIngestionService["depositUserQuestion"]>
+    >
+    try {
+      report = await dependencies.questionIngestion.depositUserQuestion({
+        userId: input.user_id,
+        sessionId: input.session_id,
+        requestId: request.id,
+        workflowRunId: input.workflow_run_id ?? randomUUID(),
+        userText: input.user_text,
+        teachingOutput: input.teaching_output
+      })
+    } catch (error) {
+      request.log.warn({ error }, "Manual question deposit failed")
+      return {
+        status: "failed" as const,
+        reason: error instanceof Error ? `题目入库失败：${error.message}` : "题目入库失败"
+      }
+    }
+    return {
+      status: report.status,
+      reason: report.reason,
+      ...(report.questionId ? { question_id: report.questionId } : {}),
+      ...(report.reviewItemId ? { review_item_id: report.reviewItemId } : {})
+    }
+  })
+
   app.post("/internal/question-ingestion/import-chunk", async request => {
     await requireToolAuthentication(request, dependencies.config)
     if (!dependencies.questionIngestion) {

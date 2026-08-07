@@ -180,6 +180,7 @@ export function TutorShell({
   const [historyError, setHistoryError] = useState<string | null>(null)
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(initialQuestions.length === 0)
   const [isSending, setIsSending] = useState(false)
+  const [depositingEntryId, setDepositingEntryId] = useState<string | null>(null)
   const [catalogError, setCatalogError] = useState<string | null>(null)
   const [requestError, setRequestError] = useState<string | null>(null)
   const [serviceStatus, setServiceStatus] = useState<"checking" | "ready" | "degraded">(initialServiceStatus)
@@ -208,7 +209,7 @@ export function TutorShell({
     })
   }, [questions, search, subjectCode])
 
-  const loadQuestions = useCallback(async () => {
+  const loadQuestions = useCallback(async (preserveEmptySelection = false) => {
     if (!gateway) {
       setCatalogError("本地教学服务尚未配置")
       setIsLoadingQuestions(false)
@@ -218,9 +219,11 @@ export function TutorShell({
     setIsLoadingQuestions(true)
     setCatalogError(null)
     try {
-      const loaded = await gateway.listPracticeQuestions({ limit: 66 }, controller.signal)
+      const loaded = await gateway.listPracticeQuestions({ limit: 100 }, controller.signal)
       setQuestions(loaded)
-      setSelectedQuestionId(current => current ?? loaded[0]?.questionId ?? null)
+      if (!preserveEmptySelection) {
+        setSelectedQuestionId(current => current ?? loaded[0]?.questionId ?? null)
+      }
     } catch (error) {
       setCatalogError(error instanceof Error ? error.message : "题库暂时不可用")
     } finally {
@@ -335,28 +338,41 @@ export function TutorShell({
 
     const controller = new AbortController()
     requestController.current = controller
+    const sourceQuestionId = selectedQuestion?.questionId ?? null
     const request: LearningRequest = {
       session_id: sessionId || getBrowserIdentity(sessionStorage, "tracetutor.session_id"),
       user_id: getBrowserIdentity(localStorage, "tracetutor.user_id"),
       input_mode: inputMode,
       user_text: normalized,
       attachments: [],
-      active_question_id: selectedQuestion?.questionId ?? null,
+      active_question_id: sourceQuestionId,
       ...(action ? { action } : {})
     }
 
     try {
       const response = await gateway.send(request, controller.signal)
       setServiceStatus("ready")
+      const assistantEntryId = `assistant-${response.meta.request_id}`
       setEntries(current => [
         ...current,
         {
-          id: `assistant-${response.meta.request_id}`,
+          id: assistantEntryId,
           role: "assistant",
           text: response.summary,
-          response
+          response,
+          sourceUserText: normalized,
+          sourceQuestionId
         }
       ])
+      if (
+        response.meta.question_deposit?.status === "active_created" ||
+        response.meta.question_deposit?.status === "duplicate"
+      ) {
+        await loadQuestions(true)
+        if (response.meta.question_deposit.question_id) {
+          setSelectedQuestionId(response.meta.question_deposit.question_id)
+        }
+      }
       if (selectedQuestion) {
         await loadQuestionHistory(selectedQuestion.questionId)
       }
@@ -428,6 +444,54 @@ export function TutorShell({
       },
       action.label
     )
+  }
+
+  const depositEntry = async (entry: ConversationEntry) => {
+    if (
+      !gateway ||
+      !entry.response ||
+      !entry.sourceUserText ||
+      entry.sourceQuestionId !== null ||
+      depositingEntryId
+    ) return
+
+    setDepositingEntryId(entry.id)
+    setRequestError(null)
+    try {
+      const result = await gateway.depositQuestion({
+        session_id: sessionId || getBrowserIdentity(sessionStorage, "tracetutor.session_id"),
+        user_id: getBrowserIdentity(localStorage, "tracetutor.user_id"),
+        user_text: entry.sourceUserText,
+        ...(entry.response.meta.workflow_run_id
+          ? { workflow_run_id: entry.response.meta.workflow_run_id }
+          : {}),
+        teaching_output: {
+          summary: entry.response.summary,
+          cards: entry.response.cards
+        }
+      })
+      setEntries(current => current.map(item =>
+        item.id === entry.id && item.response
+          ? {
+              ...item,
+              response: {
+                ...item.response,
+                meta: {
+                  ...item.response.meta,
+                  question_deposit: result
+                }
+              }
+            }
+          : item
+      ))
+      if (result.status === "active_created" || result.status === "duplicate") {
+        await loadQuestions(true)
+      }
+    } catch (error) {
+      setRequestError(error instanceof Error ? error.message : "题目入库失败")
+    } finally {
+      setDepositingEntryId(null)
+    }
   }
 
   return (
@@ -675,6 +739,37 @@ export function TutorShell({
                                     {action.label}<Icon name="arrow" size={14} />
                                   </button>
                                 ))}
+                              </div>
+                            ) : null}
+                            {entry.sourceQuestionId === null &&
+                            (entry.response.meta.question_deposit !== undefined ||
+                              entry.response.cards.some(card => card.type === "solution")) ? (
+                              <div className={`deposit-status deposit-status-${entry.response.meta.question_deposit?.status ?? "manual"}`}>
+                                <div>
+                                  <strong>
+                                    {entry.response.meta.question_deposit?.status === "active_created"
+                                      ? "已自动入库"
+                                      : entry.response.meta.question_deposit?.status === "duplicate"
+                                        ? "题库已存在"
+                                        : entry.response.meta.question_deposit?.status === "failed"
+                                          ? "自动入库未完成"
+                                          : "尚未入库"}
+                                  </strong>
+                                  <span>
+                                    {entry.response.meta.question_deposit?.reason ?? "可将本轮题目、答案与解析写入正式题库。"}
+                                  </span>
+                                </div>
+                                {entry.response.meta.question_deposit?.status !== "active_created" &&
+                                entry.response.meta.question_deposit?.status !== "duplicate" ? (
+                                  <button
+                                    disabled={depositingEntryId !== null}
+                                    onClick={() => void depositEntry(entry)}
+                                    type="button"
+                                  >
+                                    <Icon name="plus" size={15} />
+                                    {depositingEntryId === entry.id ? "正在入库" : "手动入库"}
+                                  </button>
+                                ) : null}
                               </div>
                             ) : null}
                           </>

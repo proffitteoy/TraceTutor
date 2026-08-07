@@ -30,6 +30,7 @@ const TAGGING_POLICY = `你是 TraceTutor 题库标注器。知识点表示“�
 const USER_QUESTION_POLICY = `你是 TraceTutor 用户题目沉淀处理器。把用户明确提交的新题整理成可复核的题目资产。
 输出必须含一个主答案、一个主解析和可执行步骤。知识点表示“学什么”，方法表示“怎么做”。
 标签只能使用候选字典中存在的 code，不得发明 code 或 UUID。AI 标签置信度不得写成 1。
+subject.code 只能使用候选知识点中出现的 subject_code，不得自创学科 code。
 题目直接录入正式题库（active 状态），无需人工审核。中文数学表达使用 Markdown + LaTeX。`
 
 function compactDictionary(dictionary: TagDictionary): string {
@@ -184,6 +185,39 @@ function userQuestionToPersistable(
   }
 }
 
+function normalizeDepositSubject(
+  normalized: UserQuestionNormalization,
+  dictionary: TagDictionary
+): UserQuestionNormalization {
+  const availableSubjectCodes = new Set(
+    dictionary.knowledge_points.map(item => item.subject_code)
+  )
+  if (availableSubjectCodes.has(normalized.subject.code)) return normalized
+
+  const knowledgeSubjectByCode = new Map(
+    dictionary.knowledge_points.map(item => [item.code, item.subject_code])
+  )
+  const inferredSubjectCode = normalized.knowledge_points
+    .map(label => knowledgeSubjectByCode.get(label.code))
+    .find((code): code is string => code !== undefined) ??
+    dictionary.knowledge_points[0]?.subject_code
+  if (!inferredSubjectCode) {
+    throw new Error("题库没有可用于新题入库的有效学科")
+  }
+
+  return {
+    ...normalized,
+    subject: {
+      ...normalized.subject,
+      code: inferredSubjectCode
+    },
+    review_notes: [
+      ...normalized.review_notes,
+      `学科 code 已从 ${normalized.subject.code} 纠正为 ${inferredSubjectCode}`
+    ]
+  }
+}
+
 function errorText(error: unknown): string {
   if (error instanceof Error) return error.message.slice(0, 4_000)
   return "未知题目摄取错误"
@@ -332,7 +366,7 @@ ${JSON.stringify(question)}
         proposedMethodCodes: []
       })
     )
-    const normalized = await this.model.generateJson({
+    const normalized = normalizeDepositSubject(await this.model.generateJson({
       name: "user_question_deposit",
       system: USER_QUESTION_POLICY,
       prompt: `候选标签字典：
@@ -347,7 +381,7 @@ ${JSON.stringify(input.teachingOutput).slice(0, 30_000)}
 把题目、答案和解析整理为可直接入库的正式题目。`,
       schema: userQuestionNormalizationSchema,
       temperature: 0
-    })
+    }), dictionary)
 
     return this.port.writeUserQuestion({
       question: userQuestionToPersistable(normalized, dictionary, input),

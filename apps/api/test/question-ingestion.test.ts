@@ -283,7 +283,7 @@ describe("QuestionIngestionService", () => {
   it("用户新题直接存入正式题库，并记录会话来源", async () => {
     const normalizedUserQuestion = {
         subject: {
-          code: "higher_math",
+          code: "basis_and_linear_maps",
           chapter_code: "function_limit"
         },
         title: "基本极限",
@@ -329,7 +329,11 @@ describe("QuestionIngestionService", () => {
           source_user_id: "U1",
           source_session_id: "S1",
           source_workflow_run_id: "W1"
-        }
+        },
+        subject: { code: "higher_math" },
+        reviewNotes: expect.arrayContaining([
+          "学科 code 已从 basis_and_linear_maps 纠正为 higher_math"
+        ])
       }
     })
   })
@@ -358,9 +362,19 @@ describe("QuestionIngestionService", () => {
             content: "使用等价无穷小。",
             steps: ["使用 $\\sin x\\sim x$。"],
             methods: ["等价无穷小"]
+          },
+          {
+            type: "new_question",
+            title: "当前新题",
+            question_id: "MODEL-INVENTED-ID",
+            content: importedQuestion.stem
           }
         ],
-        actions: []
+        actions: [{
+          type: "request_hint",
+          label: "给我提示",
+          question_id: "MODEL-INVENTED-ID"
+        }]
       },
       user_question_deposit: {
         subject: {
@@ -408,11 +422,67 @@ describe("QuestionIngestionService", () => {
       question_id: "Q2",
       review_item_id: "R2"
     })
+    expect(response.cards).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: "new_question",
+        question_id: "Q2"
+      })
+    ]))
+    expect(response.actions).toEqual([
+      expect.objectContaining({
+        type: "request_hint",
+        question_id: "Q2"
+      })
+    ])
     expect(model.calls).toEqual([
       "query_plan",
       "teaching_output",
       "user_question_deposit"
     ])
+  })
+
+  it("澄清和操作指令不会被误当成新题自动入库", async () => {
+    const model = new ScriptedModel({
+      query_plan: {
+        version: "1.0",
+        intent: "CLARIFY_INTENT",
+        task_types: ["CLARIFY_INTENT"],
+        state_queries: [],
+        asset_queries: [],
+        expected_output: {
+          include_old_review: false,
+          include_new_question: false,
+          include_method_comparison: false,
+          include_state_update: false
+        }
+      },
+      teaching_output: {
+        summary: "需要当前题目上下文。",
+        cards: [{
+          type: "method_summary",
+          title: "请指定题目",
+          content: "请选择当前题目。"
+        }],
+        actions: []
+      }
+    })
+    const ingestion = new QuestionIngestionService(
+      model,
+      new RecordingIngestionPort()
+    )
+    const runtime = new LocalAgentRuntime(model, undefined, ingestion)
+
+    const response = await runtime.run({
+      user_id: "U1",
+      session_id: "S-follow-up",
+      input_mode: "free_chat",
+      user_text: "我需要相似题",
+      attachments: [],
+      active_question_id: null
+    }, { requestId: "REQ-FOLLOW-UP" })
+
+    expect(response.meta.question_deposit).toBeUndefined()
+    expect(model.calls).toEqual(["query_plan", "teaching_output"])
   })
 
   it("人工 approve 决策由 PgSQL 端口事务性应用", async () => {

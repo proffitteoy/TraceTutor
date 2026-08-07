@@ -10,6 +10,9 @@
 - 从已批准题库按学科浏览、搜索并选择真实题目。
 - 在题目内读取该用户保存在 SQLite 的历史作答；新建对话只清空当前对话，不删除本题历史。
 - “新建对话”立即打开无题也可使用的独立对话窗；之后选择题目会把题目加入当前对话，不会清空已有消息。
+- 新对话中的用户新题在讲解完成后自动入库；对话流会显示“已自动入库 / 题库已存在 / 自动入库未完成”，失败或未触发时可点击“手动入库”重试。
+- 自动入库创建或命中重复题后，Iris 会把数据库返回的真实 `question_id` 设为当前题，后续“相似题”“提示”等请求自动沿用该上下文；普通聊天或操作指令不显示入库按钮。
+- 在已选题目中说“给我相似题”等自然语言时，前端会携带当前真实 `question_id`；API 先检索正式题库，只有没有命中时才生成新题。
 - 判题、方法、学习状态和后续动作统一显示在中间对话流，不再设置重复且容易挤压公式的右侧反馈栏。
 - 顶部 Iris 状态来自真实 `/health/ready`，服务降级时禁用提交，不再仅因配置了 API 地址就显示“已连接”。
 - 在同一工作台中提交答案、请求提示或继续追问。
@@ -52,6 +55,7 @@ NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL=http://localhost:4100
 GET  {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/questions/practice
 GET  {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/questions/{questionId}/attempts?user_id={userId}
 POST {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/agent/chat
+POST {NEXT_PUBLIC_TRACE_TUTOR_GATEWAY_URL}/questions/deposit
 ```
 
 未配置网关时，页面保持可打开但禁用发送，并明确提示配置缺失；不会用 Demo、Mock 或本地规则伪造教学结果。禁止把模型 API Key、工具 Bearer Token、数据库口令或其他密钥放进 `NEXT_PUBLIC_*`。

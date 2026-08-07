@@ -81,6 +81,24 @@ export interface LearningResponse {
   }
 }
 
+export interface QuestionDepositRequest {
+  session_id: string
+  user_id: string
+  user_text: string
+  workflow_run_id?: string
+  teaching_output: {
+    summary: string
+    cards: LearningCard[]
+  }
+}
+
+export interface QuestionDepositResult {
+  status: "active_created" | "duplicate" | "failed"
+  reason: string
+  question_id?: string
+  review_item_id?: string
+}
+
 export interface PracticeQuestion {
   questionId: string
   title: string
@@ -111,6 +129,10 @@ export interface ServiceReadiness {
 export interface IrisGateway {
   checkReadiness(signal?: AbortSignal): Promise<ServiceReadiness>
   send(request: LearningRequest, signal?: AbortSignal): Promise<LearningResponse>
+  depositQuestion(
+    request: QuestionDepositRequest,
+    signal?: AbortSignal
+  ): Promise<QuestionDepositResult>
   listPracticeQuestions(
     input?: { limit?: number; subjectCode?: string },
     signal?: AbortSignal
@@ -160,6 +182,15 @@ export const practiceQuestionListSchema = z
         })
         .strict()
     )
+  })
+  .strict()
+
+export const questionDepositResultSchema = z
+  .object({
+    status: z.enum(["active_created", "duplicate", "failed"]),
+    reason: z.string().min(1),
+    question_id: z.string().min(1).optional(),
+    review_item_id: z.string().min(1).optional()
   })
   .strict()
 
