@@ -1,0 +1,9 @@
+{
+  "name": "tracetutor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd apps/iris && pnpm install && pnpm run build",
+    "start": "cd apps/iris && pnpm run start"
+  }
+}

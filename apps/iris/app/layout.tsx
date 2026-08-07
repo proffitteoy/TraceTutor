@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 import "@xyflow/react/dist/style.css"
-import "../../../Iris-Terminal-main/node_modules/katex/dist/katex.min.css"
+import "katex/dist/katex.min.css"
 import "./globals.css"
 
 export const metadata: Metadata = {

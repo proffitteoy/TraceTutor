@@ -96,7 +96,7 @@ textarea:focus-visible {
 
 .catalog-brand strong {
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
@@ -104,7 +104,7 @@ textarea:focus-visible {
 .catalog-brand span {
   margin-top: 2px;
   color: rgba(245, 241, 232, 0.48);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
 }
 
@@ -119,7 +119,7 @@ textarea:focus-visible {
   cursor: pointer;
   background: var(--ochre);
   border-radius: 3px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 650;
   transition: background 160ms ease, transform 160ms ease;
 }
@@ -142,13 +142,13 @@ textarea:focus-visible {
 
 .catalog-heading strong {
   font-family: var(--serif);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
 }
 
 .catalog-heading span {
   color: rgba(245, 241, 232, 0.4);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .catalog-search {
@@ -175,7 +175,7 @@ textarea:focus-visible {
   background: transparent;
   border: 0;
   outline: 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .catalog-search input::placeholder {
@@ -201,7 +201,7 @@ textarea:focus-visible {
   cursor: pointer;
   background: transparent;
   border-bottom: 1px solid transparent;
-  font-size: 9px;
+  font-size: 10px;
   white-space: nowrap;
 }
 
@@ -252,7 +252,7 @@ textarea:focus-visible {
   padding-top: 1px;
   color: var(--ochre);
   font-family: Georgia, serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.04em;
 }
 
@@ -268,7 +268,7 @@ textarea:focus-visible {
 .question-list-copy strong {
   overflow: hidden;
   font-family: var(--serif);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.55;
   text-overflow: ellipsis;
@@ -278,7 +278,7 @@ textarea:focus-visible {
 .question-list-copy small {
   margin-top: 3px;
   color: rgba(245, 241, 232, 0.34);
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .question-list > button > .difficulty {
@@ -293,7 +293,7 @@ textarea:focus-visible {
   gap: 9px;
   padding: 18px;
   color: rgba(245, 241, 232, 0.42);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.6;
   text-align: center;
 }
@@ -314,7 +314,7 @@ textarea:focus-visible {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 2px;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .practice-workspace {
@@ -343,7 +343,7 @@ textarea:focus-visible {
 
 .workspace-label {
   color: var(--ochre-dark);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.16em;
 }
@@ -351,7 +351,7 @@ textarea:focus-visible {
 .workspace-bar > div strong {
   margin-top: 3px;
   font-family: var(--serif);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -360,7 +360,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 7px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .workspace-statuses {
@@ -374,7 +374,7 @@ textarea:focus-visible {
   color: #8b8377;
   border-right: 1px solid var(--line);
   font-family: Georgia, serif;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.06em;
 }
 
@@ -409,14 +409,14 @@ textarea:focus-visible {
   background: rgba(98, 121, 102, 0.1);
   border: 1px solid rgba(98, 121, 102, 0.2);
   border-radius: 3px;
-  font-size: 10px;
+  font-size: 11px;
   text-align: left;
 }
 
 .session-notice span {
   margin-left: auto;
   color: #728075;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .practice-content {
@@ -438,7 +438,7 @@ textarea:focus-visible {
 
 .free-chat-heading > span {
   color: var(--ochre-dark);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
 }
@@ -446,14 +446,14 @@ textarea:focus-visible {
 .free-chat-heading h1 {
   margin: 8px 0 5px;
   font-family: var(--serif);
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 550;
 }
 
 .free-chat-heading p {
   margin: 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .free-chat-content .dialogue-section {
@@ -500,7 +500,7 @@ textarea:focus-visible {
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--line);
   border-radius: 2px;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .difficulty {
@@ -524,7 +524,7 @@ textarea:focus-visible {
 .question-sheet h1 {
   margin: 18px 0 15px;
   font-family: var(--serif);
-  font-size: clamp(24px, 3vw, 35px);
+  font-size: clamp(25px, 3vw, 36px);
   font-weight: 550;
   line-height: 1.3;
   letter-spacing: -0.03em;
@@ -533,7 +533,7 @@ textarea:focus-visible {
 .question-stem {
   color: #383a35;
   font-family: var(--serif);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 2;
 }
 
@@ -562,14 +562,14 @@ textarea:focus-visible {
 .question-history > header strong {
   color: var(--ink-800);
   font-family: var(--serif);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .question-history > header span,
 .history-empty,
 .history-error {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .history-loading {
@@ -602,7 +602,7 @@ textarea:focus-visible {
   color: #6d665c;
   background: #eee8de;
   border-radius: 2px;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .history-verdict.correct {
@@ -618,7 +618,7 @@ textarea:focus-visible {
 .history-list > article > div > strong,
 .history-list time {
   display: inline;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .history-list time {
@@ -631,7 +631,7 @@ textarea:focus-visible {
   margin: 5px 0 0;
   color: #4f4b45;
   font-family: var(--serif);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.65;
 }
 
@@ -639,7 +639,7 @@ textarea:focus-visible {
   display: block;
   margin-top: 4px;
   color: #8a4e45;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .history-empty {
@@ -660,12 +660,12 @@ textarea:focus-visible {
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 2px;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .math-markdown {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .math-markdown > :first-child {
@@ -768,7 +768,7 @@ textarea:focus-visible {
 .answer-sheet > label,
 .dialogue-section > header span {
   color: #5e584e;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
@@ -789,7 +789,7 @@ textarea:focus-visible {
   box-shadow: 0 10px 35px rgba(44, 39, 32, 0.06);
   outline: 0;
   font-family: var(--serif);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -820,7 +820,7 @@ textarea:focus-visible {
   background: transparent;
   border: 1px solid #cfc5b7;
   border-radius: 3px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   transition: background 140ms ease, transform 140ms ease;
 }
@@ -848,7 +848,7 @@ textarea:focus-visible {
 .answer-actions > span {
   margin-left: auto;
   color: #9a9184;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .dialogue-section {
@@ -874,8 +874,9 @@ textarea:focus-visible {
 }
 
 .dialogue-user {
-  width: fit-content;
+  width: auto;
   max-width: 76%;
+  min-width: 120px;
   margin: 0 0 24px auto;
   padding: 11px 14px;
   color: #fff;
@@ -883,29 +884,50 @@ textarea:focus-visible {
   border-radius: 9px 2px 9px 9px;
 }
 
-.dialogue-user span {
+.dialogue-user > span {
   display: block;
   margin-bottom: 3px;
   color: #d1aa73;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .dialogue-user p,
 .dialogue-agent p {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.75;
   white-space: pre-wrap;
 }
 
 .dialogue-user .math-markdown,
-.dialogue-agent .math-markdown {
-  font-size: 11px;
+.dialogue-agent .math-markdown,
+.response-card .math-markdown {
+  font-size: 12px;
   line-height: 1.75;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-align: left;
+  direction: ltr;
 }
 
-.dialogue-user .math-markdown .katex {
-  color: #fff;
+.dialogue-user .math-markdown .katex,
+.dialogue-agent .math-markdown .katex,
+.response-card .math-markdown .katex {
+  color: inherit;
+  display: inline;
+  direction: ltr;
+  text-indent: 0;
+  white-space: nowrap;
+}
+
+.dialogue-user .math-markdown .katex-display,
+.dialogue-agent .math-markdown .katex-display,
+.response-card .math-markdown .katex-display {
+  display: block;
+  margin: 0.5em 0;
+  text-align: center;
+  white-space: normal;
 }
 
 .dialogue-agent {
@@ -937,13 +959,13 @@ textarea:focus-visible {
 
 .dialogue-agent > header strong {
   font-family: var(--serif);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dialogue-agent > header small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .agent-summary {
@@ -972,7 +994,7 @@ textarea:focus-visible {
 
 .response-card-label {
   color: var(--ochre-dark);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
@@ -980,13 +1002,13 @@ textarea:focus-visible {
 .response-card h4 {
   margin: 8px 0 6px;
   font-family: var(--serif);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .response-card > .math-markdown {
   color: #656057;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.75;
 }
 
@@ -1003,7 +1025,7 @@ textarea:focus-visible {
   color: #55544e;
   border-top: 1px dashed #ddd4c7;
   font-family: var(--serif);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.65;
   counter-increment: step;
 }
@@ -1015,7 +1037,7 @@ textarea:focus-visible {
   color: var(--ochre-dark);
   content: counter(step, decimal-leading-zero);
   font-family: Georgia, serif;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .method-tags {
@@ -1030,7 +1052,7 @@ textarea:focus-visible {
   color: #5f573f;
   background: #eee3d0;
   border-radius: 2px;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .response-card > .difficulty {
@@ -1054,7 +1076,7 @@ textarea:focus-visible {
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 2px;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .agent-actions button svg {
@@ -1066,7 +1088,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 7px;
   color: var(--ochre-dark);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .agent-thinking > i {
@@ -1087,7 +1109,7 @@ textarea:focus-visible {
   background: rgba(156, 76, 67, 0.08);
   border: 1px solid rgba(156, 76, 67, 0.18);
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .workspace-empty {
@@ -1101,20 +1123,20 @@ textarea:focus-visible {
 .workspace-empty > span {
   color: var(--ochre);
   font-family: Georgia, serif;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .workspace-empty h1 {
   margin: 10px 0 8px;
   font-family: var(--serif);
-  font-size: 34px;
+  font-size: 35px;
   font-weight: 500;
 }
 
 .workspace-empty p {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 @keyframes spin {
@@ -1216,11 +1238,11 @@ textarea:focus-visible {
 
 @media (max-width: 520px) {
   .question-sheet h1 {
-    font-size: 24px;
+    font-size: 25px;
   }
 
   .question-stem {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .answer-actions button {

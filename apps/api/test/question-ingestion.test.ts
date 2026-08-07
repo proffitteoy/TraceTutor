@@ -12,7 +12,7 @@ import type {
   ImportItemWrite,
   ImportItemWriteResult,
   ReviewQueueQuery,
-  UserQuestionDraftWrite
+  UserQuestionWrite
 } from "../src/ports.js"
 import type {
   QuestionDepositReport,
@@ -40,7 +40,7 @@ class ScriptedModel implements LocalModel {
 
 class RecordingIngestionPort implements QuestionIngestionPort {
   readonly importItems: ImportItemWrite[] = []
-  readonly drafts: UserQuestionDraftWrite[] = []
+  readonly drafts: UserQuestionWrite[] = []
   finished = false
   reviewed?: ReviewDecision
 
@@ -89,13 +89,13 @@ class RecordingIngestionPort implements QuestionIngestionPort {
     this.finished = true
   }
 
-  async writeUserQuestionDraft(
-    input: UserQuestionDraftWrite
+  async writeUserQuestion(
+    input: UserQuestionWrite
   ): Promise<QuestionDepositReport> {
     this.drafts.push(input)
     return {
-      status: "draft_created",
-      reason: "已进入人工复核队列",
+      status: "active_created",
+      reason: "已写入正式题库",
       questionId: "Q2",
       reviewItemId: "R2"
     }
@@ -280,7 +280,7 @@ describe("QuestionIngestionService", () => {
     })
   })
 
-  it("用户新题只创建 draft，并记录会话与人工复核项", async () => {
+  it("用户新题直接存入正式题库，并记录会话来源", async () => {
     const normalizedUserQuestion = {
         subject: {
           code: "higher_math",
@@ -319,10 +319,10 @@ describe("QuestionIngestionService", () => {
       teachingOutput: { summary: "答案为 1" }
     })
 
-    expect(report.status).toBe("draft_created")
+    expect(report.status).toBe("active_created")
     expect(port.drafts[0]).toMatchObject({
       question: {
-        status: "draft",
+        status: "active",
         externalId: "user-request:REQ3",
         source: { type: "user_submitted" },
         metadata: {
@@ -403,8 +403,8 @@ describe("QuestionIngestionService", () => {
     )
 
     expect(response.meta.question_deposit).toEqual({
-      status: "draft_created",
-      reason: "已进入人工复核队列",
+      status: "active_created",
+      reason: "已写入正式题库",
       question_id: "Q2",
       review_item_id: "R2"
     })

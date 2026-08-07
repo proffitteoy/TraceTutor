@@ -73,7 +73,7 @@ export interface LearningResponse {
     request_id: string
     workflow_run_id?: string
     question_deposit?: {
-      status: "draft_created" | "duplicate" | "failed"
+      status: "active_created" | "duplicate" | "failed"
       reason: string
       question_id?: string
       review_item_id?: string
@@ -237,7 +237,7 @@ export const learningResponseSchema: z.ZodType<LearningResponse> = z
         workflow_run_id: z.string().min(1).optional(),
         question_deposit: z
           .object({
-            status: z.enum(["draft_created", "duplicate", "failed"]),
+            status: z.enum(["active_created", "duplicate", "failed"]),
             reason: z.string().min(1),
             question_id: z.string().min(1).optional(),
             review_item_id: z.string().min(1).optional()

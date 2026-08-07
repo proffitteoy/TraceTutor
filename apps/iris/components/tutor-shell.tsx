@@ -150,12 +150,24 @@ function LearningCardView({ card }: { card: LearningCard }) {
   )
 }
 
-export function TutorShell() {
+interface TutorShellProps {
+  initialQuestions?: Record<string, unknown>[]
+  initialServiceStatus?: "ready" | "degraded" | "checking"
+  initialServiceError?: string | null
+}
+
+export function TutorShell({
+  initialQuestions = [],
+  initialServiceStatus = "checking",
+  initialServiceError = null,
+}: TutorShellProps) {
   const gateway = useMemo(() => createGateway(), [])
   const requestController = useRef<AbortController | null>(null)
   const answerInput = useRef<HTMLTextAreaElement | null>(null)
   const streamEnd = useRef<HTMLDivElement | null>(null)
-  const [questions, setQuestions] = useState<PracticeQuestion[]>([])
+  const [questions, setQuestions] = useState<PracticeQuestion[]>(() =>
+    initialQuestions.length > 0 ? initialQuestions as unknown as PracticeQuestion[] : []
+  )
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
   const [sessionId, setSessionId] = useState("")
   const [sessionNotice, setSessionNotice] = useState<string | null>(null)
@@ -166,16 +178,16 @@ export function TutorShell() {
   const [questionHistory, setQuestionHistory] = useState<QuestionAttemptHistoryItem[]>([])
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [historyError, setHistoryError] = useState<string | null>(null)
-  const [isLoadingQuestions, setIsLoadingQuestions] = useState(true)
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(initialQuestions.length === 0)
   const [isSending, setIsSending] = useState(false)
   const [catalogError, setCatalogError] = useState<string | null>(null)
   const [requestError, setRequestError] = useState<string | null>(null)
-  const [serviceStatus, setServiceStatus] = useState<"checking" | "ready" | "degraded">("checking")
+  const [serviceStatus, setServiceStatus] = useState<"checking" | "ready" | "degraded">(initialServiceStatus)
 
   const selectedQuestion = questions.find(
     question => question.questionId === selectedQuestionId
   ) ?? null
-  const canUseAgent = gateway !== null && serviceStatus === "ready"
+  const canUseAgent = gateway !== null && (serviceStatus === "ready" || serviceStatus === "degraded")
 
   const subjects = useMemo(() => {
     const seen = new Map<string, string>()
@@ -241,10 +253,12 @@ export function TutorShell() {
   }, [gateway])
 
   useEffect(() => {
+    if (initialQuestions.length > 0) return
     void loadQuestions()
-  }, [loadQuestions])
+  }, [loadQuestions, initialQuestions.length])
 
   useEffect(() => {
+    if (initialServiceStatus !== "checking") return
     if (!gateway) {
       setServiceStatus("degraded")
       return
@@ -254,7 +268,7 @@ export function TutorShell() {
       setServiceStatus(status.ready ? "ready" : "degraded")
     })
     return () => controller.abort()
-  }, [gateway])
+  }, [gateway, initialServiceStatus])
 
   useEffect(() => {
     setSessionId(getBrowserIdentity(sessionStorage, "tracetutor.session_id"))
@@ -506,8 +520,8 @@ export function TutorShell() {
           </div>
           <div className="workspace-statuses">
             {sessionId ? <span className="session-code">对话 {sessionId.slice(0, 8)}</span> : null}
-            <span className={`service-state ${serviceStatus === "ready" ? "ready" : "offline"}`}>
-              <i />{serviceStatus === "ready" ? "Iris 已就绪" : serviceStatus === "checking" ? "正在检查服务" : "Iris 不可用"}
+            <span className={`service-state ${serviceStatus === "ready" || serviceStatus === "degraded" ? "ready" : "offline"}`}>
+              <i />{serviceStatus === "ready" ? "Iris 已就绪" : serviceStatus === "degraded" ? "题库已就绪 · 模型未连接" : serviceStatus === "checking" ? "正在检查服务" : "Iris 不可用"}
             </span>
           </div>
         </header>

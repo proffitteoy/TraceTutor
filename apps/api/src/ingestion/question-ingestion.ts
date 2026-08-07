@@ -30,7 +30,7 @@ const TAGGING_POLICY = `你是 TraceTutor 题库标注器。知识点表示“�
 const USER_QUESTION_POLICY = `你是 TraceTutor 用户题目沉淀处理器。把用户明确提交的新题整理成可复核的题目资产。
 输出必须含一个主答案、一个主解析和可执行步骤。知识点表示“学什么”，方法表示“怎么做”。
 标签只能使用候选字典中存在的 code，不得发明 code 或 UUID。AI 标签置信度不得写成 1。
-题目只能进入 draft，绝不能声称已经审核或 active。中文数学表达使用 Markdown + LaTeX。`
+题目直接录入正式题库（active 状态），无需人工审核。中文数学表达使用 Markdown + LaTeX。`
 
 function compactDictionary(dictionary: TagDictionary): string {
   return JSON.stringify({
@@ -171,7 +171,7 @@ function userQuestionToPersistable(
     unresolvedKnowledgeCodes: knowledge.unresolved,
     unresolvedMethodCodes: methods.unresolved,
     canonicalHash: canonicalQuestionHash(normalized.stem),
-    status: "draft",
+    status: "active",
     metadata: {
       language: "zh",
       estimated_time_minutes: normalized.estimated_time_minutes,
@@ -344,12 +344,12 @@ ${input.userText}
 本轮已经生成并校验的教学输出：
 ${JSON.stringify(input.teachingOutput).slice(0, 30_000)}
 
-把题目、答案和解析整理为待人工复核的 draft。`,
+把题目、答案和解析整理为可直接入库的正式题目。`,
       schema: userQuestionNormalizationSchema,
       temperature: 0
     })
 
-    return this.port.writeUserQuestionDraft({
+    return this.port.writeUserQuestion({
       question: userQuestionToPersistable(normalized, dictionary, input),
       userId: input.userId,
       sessionId: input.sessionId,

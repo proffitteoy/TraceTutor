@@ -152,7 +152,7 @@ export const toolInputSchemas = {
     })
     .strict(),
 
-  "asset.create_draft_question": z
+  "asset.create_question": z
     .object({
       ...contextFields,
       stem: z.string().trim().min(1).max(20_000),
@@ -257,8 +257,8 @@ export const toolRoutes: ReadonlyArray<{
     path: "/tools/asset/search-similar-questions"
   },
   {
-    name: "asset.create_draft_question",
-    path: "/tools/asset/create-draft-question"
+    name: "asset.create_question",
+    path: "/tools/asset/create-question"
   },
   {
     name: "asset.get_solution_steps",

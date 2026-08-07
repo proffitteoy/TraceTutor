@@ -316,7 +316,7 @@ export interface PersistableQuestion {
   unresolvedKnowledgeCodes: string[]
   unresolvedMethodCodes: string[]
   canonicalHash: string
-  status: "imported" | "draft"
+  status: "imported" | "draft" | "active"
   metadata: Record<string, unknown>
   reviewNotes: string[]
 }
@@ -331,7 +331,7 @@ export interface ImportChunkSummary {
 }
 
 export interface QuestionDepositReport {
-  status: "draft_created" | "duplicate" | "failed"
+  status: "active_created" | "duplicate" | "failed"
   reason: string
   questionId?: string
   reviewItemId?: string

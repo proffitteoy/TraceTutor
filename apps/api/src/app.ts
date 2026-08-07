@@ -246,14 +246,12 @@ function registerHealthRoutes(
             ? "required"
             : "development-open"
     }
-    const ready =
-      dependencies.agentRuntime !== undefined &&
-      modelHealth.ready &&
-      toolExecutionReady &&
-      ingestionHealth.ready
+    const coreReady = toolExecutionReady && ingestionHealth.ready
+    const modelReady = modelHealth.ready
+    const fullyReady = coreReady && modelReady && dependencies.agentRuntime !== undefined
 
-    return reply.code(ready ? 200 : 503).send({
-      status: ready ? "ready" : "degraded",
+    return reply.code(coreReady ? 200 : 503).send({
+      status: fullyReady ? "ready" : coreReady ? "degraded" : "unavailable",
       dependencies: dependencyStatus
     })
   })

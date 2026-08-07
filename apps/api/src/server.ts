@@ -35,10 +35,10 @@ const ports = [sqliteToolExecution, pgsql].filter(
 )
 const toolExecution =
   ports.length > 0 ? new CompositeToolExecutionPort(ports) : undefined
-const agentRuntime = new LocalAgentRuntime(model, toolExecution)
 const questionIngestion = pgsql
   ? new QuestionIngestionService(model, pgsql)
   : undefined
+const agentRuntime = new LocalAgentRuntime(model, toolExecution, questionIngestion)
 
 const dependencies: AppDependencies = {
   config,

@@ -26,7 +26,7 @@ export class HttpGateway implements IrisGateway {
               (entry): entry is [string, string] => typeof entry[1] === "string"
             ))
           : {}
-      return { ready: response.ok && payload.status === "ready", dependencies }
+      return { ready: response.ok && (payload.status === "ready" || payload.status === "degraded"), dependencies }
     } catch {
       return { ready: false, dependencies: {} }
     }

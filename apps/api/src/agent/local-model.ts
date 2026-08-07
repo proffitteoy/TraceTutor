@@ -186,7 +186,8 @@ export class OpenAICompatibleModel implements LocalModel {
                       }
                     }
                   : { type: "json_object" },
-              temperature: request.temperature ?? 0.2
+              temperature: request.temperature ?? 0.2,
+              max_tokens: 16384
             })
           },
           this.timeoutMs,

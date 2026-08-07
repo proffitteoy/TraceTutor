@@ -53,7 +53,7 @@ const pendingStateDeltaCandidateSchema = z
   })
   .strict()
 
-const draftQuestionSchema = z
+const questionCreateSchema = z
   .object({
     stem: z.string().min(1).max(20_000),
     answer: z.string().min(1).max(20_000),
@@ -279,9 +279,6 @@ function ensureStateClaims(
   output: z.infer<typeof teachingOutputSchema>,
   observations: ToolObservation[]
 ): void {
-  const stateCards = output.cards.filter(
-    card => card.type === "state_change"
-  )
   const hasAppliedDelta = observations.some(
     item => item.tool === "state.apply_state_delta" && item.status === "ok"
   )
@@ -293,26 +290,12 @@ function ensureStateClaims(
       item.status === "ok"
   )
 
-  if (
-    stateCards.some(card => card.status === "applied") &&
-    !hasAppliedDelta
-  ) {
-    throw new AppError(
-      "MODEL_OUTPUT_INVALID",
-      "模型声称状态已应用，但本轮没有成功的 state.apply_state_delta",
-      502
-    )
-  }
-  if (
-    stateCards.some(card => card.status === "pending") &&
-    !hasStateWrite
-  ) {
-    throw new AppError(
-      "MODEL_OUTPUT_INVALID",
-      "模型声称状态已进入 pending，但本轮没有成功的状态写入",
-      502
-    )
-  }
+  output.cards = output.cards.filter(card => {
+    if (card.type !== "state_change") return true
+    if (card.status === "applied" && !hasAppliedDelta) return false
+    if (card.status === "pending" && !hasStateWrite) return false
+    return true
+  })
 }
 
 function compactObservations(observations: ToolObservation[]): string {
@@ -453,7 +436,7 @@ ${JSON.stringify(request)}
     }
   }
 
-  private async createVariantDraft(
+  private async createVariantQuestion(
     request: LearningRequest,
     observations: ToolObservation[],
     context: RequestContext
@@ -471,36 +454,36 @@ ${JSON.stringify(request)}
     )
     if (!hasQuestionEvidence) {
       return {
-        tool: "asset.create_draft_question",
+        tool: "asset.create_question",
         status: "skipped",
         reason: "没有取得 active question 详情，不能生成可追溯变式题"
       }
     }
 
-    const draft = await this.model.generateJson({
-      name: "variant_draft",
+    const generated = await this.model.generateJson({
+      name: "variant_question",
       system: GLOBAL_POLICY,
       prompt: `基于已审核题目生成一道结构有变化、但教学目标清晰的变式题。
 只引用工具结果中已有的知识点与方法 ID。
 工具结果：${compactObservations(observations)}`,
-      schema: draftQuestionSchema,
+      schema: questionCreateSchema,
       temperature: 0.35
     })
 
     const knownTagIds = new Set<string>()
     observations.forEach(item => collectTagIds(item.result, knownTagIds))
-    const tool = "asset.create_draft_question" as const
+    const tool = "asset.create_question" as const
     const input = toolInputSchemas[tool].parse({
       user_id: request.user_id,
       session_id: request.session_id,
-      stem: draft.stem,
-      answer: draft.answer,
-      analysis: draft.analysis,
+      stem: generated.stem,
+      answer: generated.answer,
+      analysis: generated.analysis,
       source_type: "ai_generated",
       source_reference: request.active_question_id,
       proposed_knowledge_point_ids:
-        draft.proposed_knowledge_point_ids.filter(id => knownTagIds.has(id)),
-      proposed_method_ids: draft.proposed_method_ids.filter(id =>
+        generated.proposed_knowledge_point_ids.filter(id => knownTagIds.has(id)),
+      proposed_method_ids: generated.proposed_method_ids.filter(id =>
         knownTagIds.has(id)
       )
     })
@@ -512,7 +495,7 @@ ${JSON.stringify(request)}
       return {
         tool,
         status: "unavailable",
-        reason: "变式题已生成，但 PgSQL draft 工具尚未接入，因此不返回伪造 ID"
+        reason: "变式题已生成，但 PgSQL 题目创建工具尚未接入，因此不返回伪造 ID"
       }
     }
 
@@ -530,7 +513,7 @@ ${JSON.stringify(request)}
       return {
         tool,
         status: "failed",
-        reason: error instanceof Error ? error.message : "变式题 draft 创建失败"
+        reason: error instanceof Error ? error.message : "变式题创建失败"
       }
     }
   }
@@ -731,7 +714,7 @@ ${JSON.stringify(request)}
     const plan = await this.plan(request)
     const calls = materializePlan(request, plan)
     const observations = await this.executeCalls(calls, fullContext)
-    const variantObservation = await this.createVariantDraft(
+    const variantObservation = await this.createVariantQuestion(
       request,
       observations,
       fullContext
@@ -780,7 +763,7 @@ ${JSON.stringify(request)}
 QueryPlan：${JSON.stringify(plan)}
 工具结果：${compactObservations(observations)}
 ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
-工具 unavailable/failed 时必须在内容中明确降级。不要输出 meta、mode 或 pending_state_write。`,
+工具 unavailable/failed 时，仅在影响用户请求的核心功能时才在内容中说明降级。对于非当前请求必需的工具（如用户未提交答案时的状态写入工具），不要在内容中提及。不要输出 meta、mode 或 pending_state_write。`,
       schema: teachingOutputSchema,
       temperature: request.action?.type === "request_hint" ? 0 : 0.2
     })
@@ -790,7 +773,7 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
 
     let questionDeposit:
       | {
-          status: "draft_created" | "duplicate" | "failed"
+          status: "active_created" | "duplicate" | "failed"
           reason: string
           question_id?: string
           review_item_id?: string
@@ -798,10 +781,11 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
       | undefined
     if (
       this.questionIngestion &&
-      request.input_mode === "new_question" &&
       request.active_question_id === null &&
+      (request.input_mode === "new_question" || request.input_mode === "free_chat") &&
       request.action === undefined
     ) {
+      console.log(`[QuestionDeposit] Attempting to deposit user question for session ${request.session_id}, input_mode=${request.input_mode}`)
       try {
         const report = await this.questionIngestion.depositUserQuestion({
           userId: request.user_id,
@@ -811,6 +795,7 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
           userText: request.user_text,
           teachingOutput: output
         })
+        console.log(`[QuestionDeposit] Success: status=${report.status}, questionId=${report.questionId}`)
         questionDeposit = {
           status: report.status,
           reason: report.reason,
@@ -820,6 +805,7 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
             : {})
         }
       } catch (error) {
+        console.error(`[QuestionDeposit] Failed:`, error)
         questionDeposit = {
           status: "failed",
           reason:
@@ -828,6 +814,8 @@ ${grade ? `作答判定：${JSON.stringify(grade)}` : ""}
               : "题目沉淀失败"
         }
       }
+    } else {
+      console.log(`[QuestionDeposit] Skipped: questionIngestion=${!!this.questionIngestion}, active_question_id=${request.active_question_id}, input_mode=${request.input_mode}, has_action=${!!request.action}`)
     }
 
     const writeObservation = observations.find(

@@ -108,7 +108,7 @@ export const learningResponseSchema = z
         workflow_run_id: z.string().min(1).optional(),
         question_deposit: z
           .object({
-            status: z.enum(["draft_created", "duplicate", "failed"]),
+            status: z.enum(["active_created", "duplicate", "failed"]),
             reason: z.string().min(1),
             question_id: z.string().min(1).optional(),
             review_item_id: z.string().min(1).optional()
@@ -156,7 +156,7 @@ export const writeTools = [
   "state.write_attempt_result",
   "state.write_review_result",
   "state.apply_state_delta",
-  "asset.create_draft_question",
+  "asset.create_question",
   "log.write_agent_event"
 ] as const
 

@@ -1,0 +1,10 @@
+[project]
+requires = ["nodejs-24"]
+
+[dev]
+build = ["sh", "-c", "cd apps/iris && pnpm install && pnpm run build"]
+run = ["sh", "-c", "cd apps/iris && PORT=${DEPLOY_RUN_PORT} NODE_ENV=production pnpm run start"]
+
+[deploy]
+build = ["sh", "-c", "cd apps/iris && pnpm install && pnpm run build"]
+run = ["sh", "-c", "cd apps/iris && PORT=${DEPLOY_RUN_PORT} pnpm run start"]

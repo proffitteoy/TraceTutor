@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import katex from "../../../Iris-Terminal-main/node_modules/katex"
+import katex from "katex"
 
 interface MathMarkdownProps {
   content: string

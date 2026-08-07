@@ -101,7 +101,7 @@ export interface ImportItemWriteResult {
   reviewItemId?: string
 }
 
-export interface UserQuestionDraftWrite {
+export interface UserQuestionWrite {
   question: PersistableQuestion
   userId: string
   sessionId: string
@@ -146,8 +146,8 @@ export interface QuestionIngestionPort {
   beginImportBatch(input: ImportBatchStart): Promise<{ batchId: string }>
   recordImportItem(input: ImportItemWrite): Promise<ImportItemWriteResult>
   finishImportBatch(batchId: string): Promise<void>
-  writeUserQuestionDraft(
-    input: UserQuestionDraftWrite
+  writeUserQuestion(
+    input: UserQuestionWrite
   ): Promise<QuestionDepositReport>
   listReviewQueue(query: ReviewQueueQuery): Promise<ReviewQueuePage>
   applyReview(
