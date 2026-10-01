@@ -41,6 +41,10 @@ TraceTutor/
 └── tests/               # 跨组件测试入口说明
 ```
 
+## Research experiment: Math Research Machine
+
+新增 [research/math-research-machine/](./research/math-research-machine/README.md)。该实验复用 TraceTutor 已有的“Agent 只能提出状态变化、正式状态必须由 evidence gate 决定”的设计，把对象从学习状态替换为数学 Claim。实验重点比较 single LLM、critic、无 ledger 多 Agent、evidence-gated ledger 和形式验证系统的 false acceptance rate、反例检出率与未决纪律。当前研究 harness 与正式教学链路隔离，不修改现有学习状态数据库。
+
 ## 快速开始
 
 ### 一键启动（Windows）
